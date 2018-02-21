@@ -40,7 +40,7 @@ get_pheno_data <- function(f.dir){
   dhs.file <- paste(f.dir, "2a_dbGaP_SubjectPhenotypesDS_AACAC.txt", sep="/")
   dhs.pedigree <- paste(f.dir, "6a_dbGaP_PedigreeDS_AACAC_revised072817.txt", sep="/")
   safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170807_T2D.ped.csv',sep="/")
-  safs.ids.file <- "SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv"
+  safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
   
   map <- read.table(sample.file,
                     header=TRUE, as.is=T, sep="\t") #n=54499 & 16 variables:
