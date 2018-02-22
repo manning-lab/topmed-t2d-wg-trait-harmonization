@@ -9,6 +9,7 @@ args = commandArgs(trailingOnly=TRUE)
 #### testing inputs ####
 
 f.dir <- args[1]
+out.pref <- args[2]
 if(length(args) < 1) {
   stop ("Not enough input args")
 }
@@ -160,16 +161,15 @@ if(length(args) < 1) {
     ### for reordering ID1 and ID2. Used column names for clarity but can use column numbers for simplicity. 
     
     
-    write.table(dups,paste(f.dir,"duplicates.txt",sep="/"),row.names=F,col.names=T,quote=F,sep='\t')
+    write.table(dups,paste(f.dir,"/",out.pref,".duplicates.txt",sep=""),row.names=F,col.names=T,quote=F,sep='\t')
     
   # }
 
 
-if(length(args) == 4) {
-  id.col <- args[2]
-  ped.file <- args[3]
-  trait <- args[4]
-  out.pref <- args[5]
+if(length(args) == 5) {
+  id.col <- args[3]
+  ped.file <- args[4]
+  trait <- args[5]
   
   
   ped <- read.table(paste(f.dir,ped.file,sep="/"),header=T,sep=",")
@@ -296,7 +296,7 @@ if(length(args) == 4) {
     # not_keep <-rbind(not_keep1, not_keep2)
     
     ped$keep_trait <- rep(1,NROW(ped))
-    ped$keep_trait[ped$topmedid %in% keep.ids] <- 0
+    ped$keep_trait[ped$topmedid %in% notkeep.ids] <- 0
     # ped <-merge(ped, not_keep,by.x=id.col,by.y="ID",all.x=T)
     
     # ped$KEEP_TRAIT[is.na(ped$KEEP_TRAIT)] <- 0
@@ -306,7 +306,7 @@ if(length(args) == 4) {
     # final <- subset(p, (!is.na(p$TRAIT)))
     # final <-subset(final, KEEP_TRAIT==1)
     
-    write.table(ped,paste(f.dir,"/",out.pref,".csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
+    write.table(ped,paste(f.dir,"/",out.pref,".no.duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
     
     
     ## for pooled phenotypes file with additional columns (for inspection purposes)
@@ -320,7 +320,7 @@ if(length(args) == 4) {
     
     #### for lists of duplicates that were removed####
     
-    # names <- c("ID", "reason")
+    names <- c("ID", "reason")
     
     removed1_TRAIT <- subset(dups, keep1_TRAIT==0)
     removed1_TRAIT <- removed1_TRAIT[c("ID1", "reason_TRAIT")]
@@ -332,6 +332,6 @@ if(length(args) == 4) {
     
     removed_TRAIT <- rbind(removed1_TRAIT, removed2_TRAIT)
     
-    write.table(removed_TRAIT, paste(f.dir,out.pref,"_removed_IDs.txt",sep="/"), row.names=F, col.names=T, quote=F, sep=',')
+    write.table(removed_TRAIT, paste(f.dir,"/",out.pref,".removed.IDs.txt",sep=""), row.names=F, col.names=T, quote=F, sep=',')
   }
 }
