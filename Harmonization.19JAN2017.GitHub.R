@@ -96,23 +96,23 @@ map$study_topmedid <- paste(map$study,map$sample.id, sep = "_")
 
 # remove some columns
 map <- subset(map,
- select=c("study_topmedid",
-    "topmedid",
-    "individual_id",
-    "sample.id",
-    "unique_subject_key",
-    "submitted_subject_id",
-    "consent", "sexchr.kary",
-    "topmed_phs", "study",
-    "topmed_project",
-    "CENTER",
-    "geno.cntl",
-    "TRIO.dups",
-    "MZtwinID",
-    "keep",
-    "unique.geno",
-    "unique.subj" )
- )
+              select=c("study_topmedid",
+                       "topmedid",
+                       "individual_id",
+                       "sample.id",
+                       "unique_subject_key",
+                       "submitted_subject_id",
+                       "consent", "sexchr.kary",
+                       "topmed_phs", "study",
+                       "topmed_project",
+                       "CENTER",
+                       "geno.cntl",
+                       "TRIO.dups",
+                       "MZtwinID",
+                       "keep",
+                       "unique.geno",
+                       "unique.subj" )
+)
 
 head(map)
 
@@ -179,8 +179,8 @@ raw.MGH$t2d[raw.MGH$t2d == 'yes'] = 2
 raw.MGH$t2d[raw.MGH$t2d == 'no'] = 0
 
 table(raw.MGH$t2d,useNA='always')
- #   0    2 <NA>
- # 857   55    6
+#   0    2 <NA>
+# 857   55    6
 
 table(raw.MGH$race,useNA='always')
 # american_indian american_indian_black                 white
@@ -188,8 +188,8 @@ table(raw.MGH$race,useNA='always')
 #                  <NA>
 #                     0
 table(raw.MGH$ethnicity,useNA='always')
- #  no  yes <NA>
- # 905   13    0
+#  no  yes <NA>
+# 905   13    0
 
 # recode ancestry
 ## AMR = american indian
@@ -199,8 +199,8 @@ raw.MGH$ancestry[raw.MGH$race == 'white' & raw.MGH$ethnicity == 'no'] = "EU"
 raw.MGH$ancestry[raw.MGH$race == 'white' & raw.MGH$ethnicity == 'yes'] = "HS"
 
 table(raw.MGH$ancestry,useNA='always')
-  # AMR    EU    HS MIXED  <NA>
-  #   9   895    13     1     0
+# AMR    EU    HS MIXED  <NA>
+#   9   895    13     1     0
 
 table(raw.MGH$sex,useNA='always')
 # female   male   <NA>
@@ -218,21 +218,21 @@ with(raw.MGH,table(origsex,sex,useNA='always'))
 #   <NA>     0   0    0
 
 summary(raw.MGH$age)
-  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-  # 18.00   48.00   56.00   54.66   62.00   82.00
+#  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 18.00   48.00   56.00   54.66   62.00   82.00
 
 # recode age
 raw.MGH$last_exam_age = raw.MGH$age
 
 #raw.MGH = subset(raw.MGH, age >= 25) #drop 11 individuals
 summary(raw.MGH$height)
-  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's
-  # 54.00   68.00   71.00   70.25   73.00   82.00       8
+#  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's
+# 54.00   68.00   71.00   70.25   73.00   82.00       8
 summary(raw.MGH$weight)
-  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's
-  # 100.0   174.2   198.0   201.7   225.0   480.0       8
+#  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's
+# 100.0   174.2   198.0   201.7   225.0   480.0       8
 
-  # calc bmi
+# calc bmi
 raw.MGH$last_exam_bmi = ((703*raw.MGH$weight)/(raw.MGH$height*raw.MGH$height))
 
 summary(raw.MGH$last_exam_bmi) # low BMI - exclude?
@@ -1435,10 +1435,10 @@ dhs <- dhs[,c('topmedid','individual_id','FamilyID','MaternalID','PaternalID',
 # safs = read.csv(paste(f.dir,'SAFSCVD_HA_MAHANEY_20170807_T2D.ped.csv',sep="/"), header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
 
 # 1: Get rows of map file that correspond to NWD ids from the id file
-safs.map <- map[map$sample.id %in% safs.ids$`NWD ID`,] # 1509
+safs.map <- map[map$sample.id %in% safs.ids$NWD.ID,] # 1509
 
 # 2: Get the unique deidentified subject IDs from the id file
-uniq.deident <- unique(safs.ids$`Deidentified Subject`) # 2624
+uniq.deident <- unique(safs.ids$Deidentified.Subject) # 2624
 
 # 3: Check that we have the only deidentified subject ids in the map file
 length(unique(safs.map$submitted_subject_id)) # 1474, so we have 35 duplicated NWD ids
@@ -1450,7 +1450,7 @@ safs.nwd <- safs.map[safs.map$submitted_subject_id %in% uniq.deident,] # 1502
 safs.ped <- safs[safs$Individual_ID %in% safs.nwd$sample.id,] # 1438
 
 head(safs.ped)
-safs.ped <- merge(safs.ped, map[colnames(map)[colnames(map) != "sex"]], by.x="Individual_ID", by.y="sample.id", all.x=T)
+safs.ped <- merge(safs.ped, map[colnames(map)[colnames(map) != "sex"]], by.x="Individual_ID", by.y="sample.id", all.x=T) # 1438
 safs.ped$topmedid <- safs.ped$Individual_ID
 safs.ped$individual_id <- safs.ped$unique_subject_key
 # safs$Individual_ID_pheno = safs$Individual_ID
@@ -1471,11 +1471,11 @@ with(safs.ped,table(Sex,sex,useNA='always'))
 summary(safs.ped$last_exam_age,useNA='always')
 
 # remove those with NA sex
-safs.ped <- safs.ped[!is.na(safs.ped$sex),]
+safs.ped <- safs.ped[!is.na(safs.ped$sex),] # 1438
 
 summary(safs.ped$last_exam_age,useNA='always')
 # safs = subset(safs, Last_Exam_Age >= 25) #n=1903, drop 552 individuals
-safs.ped = subset(safs.ped, last_exam_age >= 25) #n=1903, drop 552 individuals
+safs.ped = subset(safs.ped, last_exam_age >= 25) # 1021
 summary(safs.ped$last_exam_BMI) # ! low BMI
 # summary(safs$last_exam_BMI) # ! low BMI
 # # safs$last_exam_age = safs$Last_Exam_Age
@@ -1498,12 +1498,12 @@ safs.ped$study_topmedid <- paste(safs.ped$study,safs.ped$Individual_ID, sep="_")
 safs.ped$sample.id <- safs.ped$unique_subject_key
 
 safs.ped <- safs.ped[,c('topmedid','individual_id','FamilyID','MaternalID','PaternalID',
-                'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg',
-                'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','study',
-                'study_topmedid','study_ancestry','JWsource','ancestry',
-                "sample.id", "unique_subject_key", "submitted_subject_id", "consent",
-                "sexchr.kary",  "topmed_phs", "topmed_project", "CENTER",
-                "geno.cntl",  "TRIO.dups", "MZtwinID",  "keep", "unique.geno",  "unique.subj")]
+                        'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg',
+                        'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','study',
+                        'study_topmedid','study_ancestry','JWsource','ancestry',
+                        "sample.id", "unique_subject_key", "submitted_subject_id", "consent",
+                        "sexchr.kary",  "topmed_phs", "topmed_project", "CENTER",
+                        "geno.cntl",  "TRIO.dups", "MZtwinID",  "keep", "unique.geno",  "unique.subj")]
 
 # #n=1021
 
@@ -1733,3 +1733,4 @@ with(pooled,table(study_ancestry,study_ancestry_AFib,useNA='always'))
 
 write.csv(pooled,row.names=F,quote=F,file=paste(out.pref,'.csv',sep=""))
 # save(pooled, file = paste(f.dir,"Pooled_MIXED_WesselJ_27AUG2017_T2D.RData",sep="/"))
+
