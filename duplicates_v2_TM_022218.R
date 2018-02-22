@@ -1,11 +1,11 @@
 args = commandArgs(trailingOnly=TRUE)
 
 #### testing inputs ####
-f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes"
-id.col <- "topmedid"
-ped.file <- "freeze5b_pooled_t2d_tmajarian_021518.csv"
-trait <- "t2d"
-out.pref <- "testing"
+# f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes"
+# id.col <- "topmedid"
+# ped.file <- "freeze5b_pooled_t2d_tmajarian_021518.csv"
+# trait <- "t2d"
+# out.pref <- "testing"
 #### testing inputs ####
 
 f.dir <- args[1]
