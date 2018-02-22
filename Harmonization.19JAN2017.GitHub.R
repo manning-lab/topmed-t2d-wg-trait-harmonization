@@ -9,8 +9,7 @@
 
 args <- commandArgs(trailingOnly=T)
 f.dir <- args[1]
-source.file <- args[2]
-out.pref <- args[3]
+out.pref <- args[2]
 
 #### testing inputs ####
 # f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes"
@@ -19,7 +18,7 @@ out.pref <- args[3]
 ########################
 
 # load all of the phenotype info through the source file
-source(source.file)
+source("Harmonization.19JAN2017.GitHub.SourceFiles.R")
 dat <- get_pheno_data(f.dir)
 
 map <- dat$map
