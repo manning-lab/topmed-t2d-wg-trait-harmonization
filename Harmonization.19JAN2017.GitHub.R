@@ -1731,6 +1731,6 @@ pooled$study_ancestry_AFib[pooled$study_ancestry == "JHS_AF"] = "JHS_AF"
 pooled$study_ancestry_AFib[pooled$study_ancestry == "SAS_AS"] = "SAS_AS"
 with(pooled,table(study_ancestry,study_ancestry_AFib,useNA='always'))
 
-write.csv(pooled,row.names=F,quote=F,file=paste(out.pref,'.csv',sep=""))
+write.csv(pooled,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.csv',sep=""))
 # save(pooled, file = paste(f.dir,"Pooled_MIXED_WesselJ_27AUG2017_T2D.RData",sep="/"))
 
