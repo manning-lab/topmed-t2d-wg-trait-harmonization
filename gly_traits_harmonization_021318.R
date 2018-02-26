@@ -335,6 +335,8 @@ amish$FastingGlucose<-ifelse(amish$FastingGlucose>=7&amish$T2D_FG==1,NA,amish$Fa
 ####set A1C>7 to NA
 amish$HbA1c<-ifelse(amish$HbA1c>=6.5&amish$T2D_HbA1c==1,NA,amish$HbA1c)
 
+# amish$sex.y <- ifelse(amish$sex.y == 1, "M", "F")
+
 ############################## Amish ##############################
 ############################## Amish ##############################
 
@@ -347,7 +349,7 @@ amish$HbA1c<-ifelse(amish$HbA1c>=6.5&amish$T2D_HbA1c==1,NA,amish$HbA1c)
 
 gensalt<-merge(gensalt,linker[which(linker$study=='GenSalt'),],by.x='Individual_ID',by.y="submitted_subject_id")
 
-colnames(gensalt)[which(colnames(gensalt)=="SEX")]<-"sex.y"
+# colnames(gensalt)[which(colnames(gensalt)=="SEX")]<-"sex.y"
 
 colnames(gensalt)[which(colnames(gensalt)=="Age_FG")]<-"age_FG"
 colnames(gensalt)[which(colnames(gensalt)=="Age_FI")]<-"age_FI"
@@ -409,7 +411,7 @@ for (j in 1:nrow(gensalt)){
 gensalt$FastingGlucose<-ifelse(gensalt$FastingGlucose>=7&gensalt$T2D_FG==1,NA,gensalt$FastingGlucose)
 ####set A1C>7 to NA
 gensalt$HbA1c<-ifelse(gensalt$HbA1c>=6.5&gensalt$T2D_HbA1c==1,NA,gensalt$HbA1c)
-
+# gensalt$sex.y <- ifelse(gensalt$sex.y== 1, "M", "F")
 ############################## Gensalt ##############################
 ############################## Gensalt ##############################
 
@@ -939,7 +941,7 @@ names(mesa_ha)[1]<-"Family_ID"
 mesa_ha<-merge(mesa_ha,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
 
 colnames(mesa_ha)[which(colnames(mesa_ha)=="sample.id")]<-"TOPMEDID"
-colnames(mesa_ha)[which(colnames(mesa_ha)=="Sex")]<-"sex.y"
+# colnames(mesa_ha)[which(colnames(mesa_ha)=="sex")]<-"sex.y"
 
 mesa_ha$TwoHourGlucose_HbA1c<-NA
 mesa_ha$Hb_HbA1c<-NA
@@ -990,7 +992,7 @@ names(mesa_ea)[1]<-"Family_ID"
 mesa_ea<-merge(mesa_ea,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
 
 colnames(mesa_ea)[which(colnames(mesa_ea)=="sample.id")]<-"TOPMEDID"
-colnames(mesa_ea)[which(colnames(mesa_ea)=="Sex")]<-"sex.y"
+# colnames(mesa_ea)[which(colnames(mesa_ea)=="Sex")]<-"sex.y"
 
 
 mesa_ea$TwoHourGlucose_HbA1c<-NA
@@ -1048,7 +1050,7 @@ names(mesa_sa)[1]<-"Family_ID"
 mesa_sa<-merge(mesa_sa,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
 
 colnames(mesa_sa)[which(colnames(mesa_sa)=="sample.id")]<-"TOPMEDID"
-colnames(mesa_sa)[which(colnames(mesa_sa)=="Sex")]<-"sex.y"
+# colnames(mesa_sa)[which(colnames(mesa_sa)=="Sex")]<-"sex.y"
 
 mesa_sa$TwoHourGlucose_HbA1c<-NA
 mesa_sa$Hb_HbA1c<-NA
@@ -1098,7 +1100,7 @@ names(mesa_aa)[1]<-"Family_ID"
 mesa_aa<-merge(mesa_aa,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
 
 colnames(mesa_aa)[which(colnames(mesa_aa)=="sample.id")]<-"TOPMEDID"
-colnames(mesa_aa)[which(colnames(mesa_aa)=="Sex")]<-"sex.y"
+# colnames(mesa_aa)[which(colnames(mesa_aa)=="Sex")]<-"sex.y"
 
 mesa_aa$TwoHourGlucose_HbA1c<-NA
 mesa_aa$Hb_HbA1c<-NA
@@ -1211,5 +1213,7 @@ genoa$HbA1c<-ifelse(genoa$HbA1c>=6.5&genoa$T2D_HbA1c==1,NA,genoa$HbA1c)
 p0<-rbind(p0,genoa)
 names(p0)[names(p0) == "sex.y"] <- "sex"
 
+p0$sex[p0$sex == 1] <- "M"
+p0$sex[p0$sex == 2] <- "F"
 # write.table(p0,"Pooled_Glycemic_Traits_freeze5_duplicate_ID_20180116.ped",sep="\t",col=T,row=F,quote=FALSE)
 write.csv(p0,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.csv',sep=""))
