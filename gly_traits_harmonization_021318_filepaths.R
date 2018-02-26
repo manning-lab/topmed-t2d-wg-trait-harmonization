@@ -5,7 +5,7 @@ get_pheno_data <- function(f.dir){
 	# define file paths
 	linker.file <- paste(f.dir, "freeze5b_sample_annot_2017-12-01.txt", sep="/")
 	fhs.file <- paste(f.dir, "FHS_glycemicTraits_20170214_CS.ped", sep="/")
-	fhs.pedigree <- paste(f.dir, "share_unrel_comb_01012017.csv", sep="/")
+	fhs.pedigree <- paste(f.dir, "share_ped_010117.csv", sep="/")
 	jhs.file <- paste(f.dir, "JHS_glycemictraits_29Mar2017.ped", sep="/")
 	sas.file <- paste(f.dir, "SAS_LIULIN_20170212_glycemic_traits.ped", sep="/")
 	cfs.file <- paste(f.dir, "CFS_12May17_glycemic_traits_Freeze4.ped", sep="/")
@@ -21,13 +21,13 @@ get_pheno_data <- function(f.dir){
 	genestar.EU.file <- paste(f.dir, "GeneSTAR_EU_YANEK_20170720_glycemic_traits.ped", sep="/")
 	chs.file <- paste(f.dir, "CHS_FLOYD_201708018_glycemic_traits.PED", sep="/")
 	mesa.HS.file <- paste(f.dir, "MESA_HA_ABIGAILBALDRIDGE_04JAN17_glycemic_traits_sidno.csv", sep="/")
-	mesa.EU.file <- paste(f.dir, "freeze5b_sample_annot_2017-10-16.txt", sep="/")
+	mesa.EU.file <- paste(f.dir, "MESA_EU_ABIGAILBALDRIDGE_04JAN17_glycemic_traits_sidno.csv", sep="/")
 	mesa.AS.file <- paste(f.dir, "MESA_SA_ABIGAILBALDRIDGE_04JAN17_glycemic_traits_sidno.csv", sep="/")
 	mesa.AF.file <- paste(f.dir, "MESA_AA_ABIGAILBALDRIDGE_04JAN17_glycemic_traits_sidno.csv", sep="/")
 	genoa.file <- paste(f.dir, "GENOA_AA_BIELAK_20171124_glycemic_traits.ped", sep="/")
 
 	# load all the data
-	linker <- read.table(linker.file)
+	linker <- read.table(linker.file, header=T)
 
 	fhs <- read.table(fhs.file,header=T)
 	share<-read.csv(fhs.pedigree,header=T)
@@ -37,7 +37,7 @@ get_pheno_data <- function(f.dir){
 	amish<-read.table(amish.file,header=T,na.strings=" ",sep="\t")
 	gensalt<-read.table(gensalt.file,head=T)
 	aric_ea<-read.table(aric.EU.file,header=T,sep=',')
-	aric_aa<-read.csv(aric.AF.file,header=T
+	aric_aa<-read.csv(aric.AF.file,header=T,sep=',')
 	whi_ha<-read.table(whi.HS.file,header=F,fill=T,na.strings=" ",sep="\t")
 	whi_ea<-read.table(whi.EU.file,header=F,fill=T,na.strings=" ",sep="\t")
 	whi_as<-read.table(whi.AS.file,header=F,fill=T,na.strings=" ",sep="\t")
