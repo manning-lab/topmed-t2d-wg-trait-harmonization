@@ -1,12 +1,12 @@
 args = commandArgs(trailingOnly=TRUE)
 
 #### testing inputs ####
-# f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes"
+# f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes/glycemic_traits/"
 # id.col <- "topmedid"
 # ped.file <- "freeze5b_pooled_t2d_tmajarian_021518.csv"
 # trait <- "t2d"
 # out.pref <- "testing"
-#### testing inputs ####
+### testing inputs ####
 
 f.dir <- args[1]
 out.pref <- args[2]
@@ -335,3 +335,5 @@ if(length(args) == 5) {
     write.table(removed_TRAIT, paste(f.dir,"/",out.pref,".removed.IDs.txt",sep=""), row.names=F, col.names=T, quote=F, sep=',')
   }
 }
+
+    
