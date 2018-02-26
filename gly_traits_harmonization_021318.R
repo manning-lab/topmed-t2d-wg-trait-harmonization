@@ -19,8 +19,8 @@ source.file <- args[2]
 
 
 #### testing inputs ####
-f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes/glycemic_traits"
-source.file <- "/Users/tmajaria/Documents/projects/topmed/code/topmed-traitHarmonization/gly_traits_harmonization_021318_filepaths.R"
+# f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes/glycemic_traits"
+# source.file <- "/Users/tmajaria/Documents/projects/topmed/code/topmed-traitHarmonization/gly_traits_harmonization_021318_filepaths.R"
 ########################
 
 # load the data
