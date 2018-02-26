@@ -15,7 +15,7 @@
 
 args <- commandArgs(trailingOnly=T)
 f.dir <- args[1]
-source.file <- args[2]
+out.pref <- args[2]
 
 
 #### testing inputs ####
@@ -24,7 +24,7 @@ source.file <- args[2]
 ########################
 
 # load the data
-source(source.file)
+source("gly_traits_harmonization_021318_filepaths.R")
 dat <- get_pheno_data(f.dir)
 
 # get data to the right variable names to match script
@@ -1211,4 +1211,5 @@ genoa$HbA1c<-ifelse(genoa$HbA1c>=6.5&genoa$T2D_HbA1c==1,NA,genoa$HbA1c)
 p0<-rbind(p0,genoa)
 names(p0)[names(p0) == "sex.y"] <- "sex"
 
-write.table(p0,"Pooled_Glycemic_Traits_freeze5_duplicate_ID_20180116.ped",sep="\t",col=T,row=F,quote=FALSE)
+# write.table(p0,"Pooled_Glycemic_Traits_freeze5_duplicate_ID_20180116.ped",sep="\t",col=T,row=F,quote=FALSE)
+write.csv(p0,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.csv',sep=""))
