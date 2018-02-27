@@ -24,14 +24,14 @@ out.pref <- args[2]
 ########################
 
 # load the data
-# source("gly_traits_harmonization_021318_filepaths.R")
-source(source.file)
+source("gly_traits_harmonization_021318_filepaths.R")
+# source(source.file)
 dat <- get_pheno_data(f.dir)
 
 # get data to the right variable names to match script
 linker <- dat$linker 
 fhs <- dat$fhs
-fhs.ped <- dat$share
+share <- dat$share
 jhs <- dat$jhs 
 sas <- dat$sas
 cfs <- dat$cfs
