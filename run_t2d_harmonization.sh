@@ -4,9 +4,14 @@
 # $3 = trait 
 
 # get a unique identified for the users current branch, this links back to the last commit on the branch that the user is working. Can be used to see the exact code state of the code (to the last remote commit)
-git_tag=$(git rev-list HEAD | head -1)
+git_tag=$(git describe --always --dirty)
 user=$(whoami)
 curdate=$(date +"%m.%d.%Y")
+
+if [[ $git_tag == *dirty ]] ; then
+	echo "You have uncommitted changes. Script will not run until changes are committed. Current Tag: $git_tag"
+	exit 1
+fi
 
 spinner()
 {
