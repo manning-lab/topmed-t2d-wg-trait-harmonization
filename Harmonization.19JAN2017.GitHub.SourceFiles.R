@@ -141,6 +141,6 @@ get_pheno_data <- function(f.dir){
                      header=T,sep='\t',as.is=T,fill = TRUE) #n=972
   safs = read.csv(safs.file, header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
   safs.ids <- read.csv(safs.ids.file, header=T,sep=',',as.is=TRUE)
-  hypergen <- read.csv(hypergen.file, header=T,sep=',',na.strings = '.')
+  hypergen <- read.csv(hypergen.file, header=T,sep=',')
   sapply(ls(),function(x)get(x),simplify=F,USE.NAMES=T)
 }
