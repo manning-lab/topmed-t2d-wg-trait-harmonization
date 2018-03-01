@@ -13,7 +13,7 @@ out.pref <- args[2]
 
 #### testing inputs ####
 # f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes"
-# source.file <- "/Users/tmajaria/Documents/projects/topmed/code/topmed-t2d-glycemia-public/methods/traitHarmonization/Harmonization.19JAN2017.GitHub.SourceFiles.R"
+# source.file <- "/Users/tmajaria/Documents/projects/topmed/code/topmed-traitHarmonization/Harmonization.19JAN2017.GitHub.SourceFiles.R"
 # out.pref <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes/freeze5b_pooled_t2d_tmajarian_021518"
 ########################
 
@@ -50,6 +50,7 @@ dhs <- dat$dhs
 dhsPed <- dat$dhsPed
 safs <- dat$safs
 safs.ids <- dat$safs.ids
+hypergen <- dat$hypergen
 
 rm(dat)
 
@@ -1506,6 +1507,71 @@ safs.ped <- safs.ped[,c('topmedid','individual_id','FamilyID','MaternalID','Pate
 
 # #n=1021
 
+
+
+####################### hypergen ##############################################
+####################### hypergen ##############################################
+
+## hypergen download
+
+hypergen$JWsource = "dbGaP"
+
+
+
+
+maphypergen <- map[which(map$study == "HyperGEN"),] #n=337
+hypergen = hypergen[2:NROW(hypergen),]
+hypergen <- merge(maphypergen,hypergen,by.x='individual_id',by.y="Suject_ID",all.x=TRUE) #n=337
+rm(maphypergen)
+
+# recode & check variable names & distributions
+table(hypergen$T2D.Status,useNA='always')
+hypergen$t2d <- hypergen$T2D.Status
+hypergen$t2d_ctrl <- hypergen$T2D.Status
+hypergen$t2d_ctrl[hypergen$t2d_ctrl == 1] <- NA
+hypergen$t2d_ctrl[hypergen$t2d_ctrl == 2] <- 1
+# hypergen$t2d = ifelse(is.na(hypergen$T2D.Status),-9,hypergen$T2D.Status)
+# hypergen$t2d[hypergen$T2D.Status == 1] = 2
+# hypergen$t2d[hypergen$T2D.Status == 0] = 0
+with(hypergen,table(T2D.Status,t2d,useNA='always'))
+
+hypergen$ancestry = NA
+table(hypergen$ancestry,useNA='always')
+hypergen$sex = hypergen$Sex
+table(hypergen$sex,useNA='always')
+hypergen$Age<- as.numeric(hypergen$Age)
+# summary(hypergen$AGE)
+# summary(hypergen$X_BMI)
+# summary(hypergen$HBA1C)
+# summary(hypergen$FastingGlucose)
+hypergen$last_exam_fg = as.numeric(hypergen$FastingGlucose)*0.0555  # !! convert !!
+# summary(hypergen$last_exam_fg)
+hypergen$t2d_age = NA
+hypergen$t2d_bmi = NA
+hypergen$last_exam_age = hypergen$Age
+hypergen$last_exam_bmi = hypergen$X_BMI
+hypergen$last_exam_hba1c = NA
+hypergen$last_exam_t2d_treatment = NA
+hypergen$FamilyID = NA
+hypergen$PaternalID = NA
+hypergen$MaternalID = NA
+hypergen$study_ancestry <- paste(hypergen$study,hypergen$ancestry, sep = "_")
+
+hypergen <- hypergen[,c('topmedid','individual_id','FamilyID','MaternalID','PaternalID',
+                        'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg',
+                        'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','study',
+                        'study_topmedid','study_ancestry','JWsource','ancestry',
+                        "sample.id", "unique_subject_key", "submitted_subject_id", "consent", 
+                        "sexchr.kary",  "topmed_phs", "topmed_project", "CENTER", 
+                        "geno.cntl",  "TRIO.dups", "MZtwinID",  "keep", "unique.geno",  "unique.subj")]
+#n=337
+
+####################### hypergen ##############################################
+####################### hypergen ##############################################
+
+
+
+
 # ### AWAITING GENOTYPE DATA
 # ##
 # # AFib Australia
@@ -1667,7 +1733,7 @@ safs.ped <- safs.ped[,c('topmedid','individual_id','FamilyID','MaternalID','Pate
 # 
 # studies to add in future safs,thrv, goldn, hypergen
 pooled <- rbind(afccaf,afp,afvub,amish,aric,cfs,chs,copd,dhs,fhs,genestar,genoa,
-                gensalt,jhs,mesa,mesafam,raw.HVH,raw.MGH,raw.VUdaw,sas,whi,safs.ped)
+                gensalt,jhs,mesa,mesafam,raw.HVH,raw.MGH,raw.VUdaw,sas,whi,safs.ped,hypergen)
 
 table(pooled$t2d,useNA='always') #-9 n=2834 NA n=1978
 pooled$t2d[pooled$t2d == -9] = NA
