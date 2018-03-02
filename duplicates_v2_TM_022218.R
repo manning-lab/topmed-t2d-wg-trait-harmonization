@@ -296,7 +296,7 @@ if(length(args) == 5) {
     # not_keep <-rbind(not_keep1, not_keep2)
     
     ped$keep_trait <- rep(1,NROW(ped))
-    ped$keep_trait[ped$topmedid %in% notkeep.ids] <- 0
+    ped$keep_trait[ped[,id.col] %in% notkeep.ids] <- 0
     # ped <-merge(ped, not_keep,by.x=id.col,by.y="ID",all.x=T)
     
     # ped$KEEP_TRAIT[is.na(ped$KEEP_TRAIT)] <- 0
