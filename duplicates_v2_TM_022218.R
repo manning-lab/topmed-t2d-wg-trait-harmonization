@@ -306,7 +306,7 @@ if(length(args) == 5) {
     # final <- subset(p, (!is.na(p$TRAIT)))
     # final <-subset(final, KEEP_TRAIT==1)
     
-    write.table(ped,paste(f.dir,"/",out.pref,".no.duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
+    write.table(ped[ped$keep_trait == 1,],paste(f.dir,"/",out.pref,".no.duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
     
     
     ## for pooled phenotypes file with additional columns (for inspection purposes)
