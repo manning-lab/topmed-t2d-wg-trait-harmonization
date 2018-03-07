@@ -25,6 +25,9 @@ get_pheno_data <- function(f.dir){
 	mesa.AS.file <- paste(f.dir, "MESA_SA_ABIGAILBALDRIDGE_04JAN17_glycemic_traits_sidno.csv", sep="/")
 	mesa.AF.file <- paste(f.dir, "MESA_AA_ABIGAILBALDRIDGE_04JAN17_glycemic_traits_sidno.csv", sep="/")
 	genoa.file <- paste(f.dir, "GENOA_AA_BIELAK_20171124_glycemic_traits.ped", sep="/")
+	safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170721_glycemic_traits.ped.csv',sep="/")
+  	safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
+  
 
 	# load all the data
 	linker <- read.table(linker.file, header=T)
@@ -50,5 +53,7 @@ get_pheno_data <- function(f.dir){
 	mesa_sa<-read.csv(mesa.AS.file,header=T)
 	mesa_aa<-read.csv(mesa.AF.file,header=T)
 	genoa<-read.table(genoa.file,header=T,fill=T,sep='\t',na.strings=" ")
+	safs = read.csv(safs.file, header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
+  	safs.ids <- read.csv(safs.ids.file, header=T,sep=',',as.is=TRUE)
 	sapply(ls(),function(x)get(x),simplify=F,USE.NAMES=T)
 }
