@@ -323,7 +323,7 @@ if(length(args) == 5) {
                  'JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WHI'))
 
     ped <- ped[!is.na(ped[,trait]),]
-    write.table(ped[ped$keep_trait == 1,],paste(f.dir,"/",out.pref,"no.duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
+    write.table(ped[ped$keep_trait == 1,],paste(f.dir,"/",out.pref,".no.duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
     
     ## NOTE: 13MAR2018 sex.x and sex.y from fulldata (harmonization) file is dropped
     
@@ -350,7 +350,7 @@ if(length(args) == 5) {
     
     removed_TRAIT <- rbind(removed1_TRAIT, removed2_TRAIT)
     
-    write.table(removed_TRAIT, paste(f.dir,"/",out.pref,"removed.IDs.txt",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+    write.table(removed_TRAIT, paste(f.dir,"/",out.pref,".removed.IDs.txt",sep=""), row.names=F, col.names=T, quote=F, sep=',')
     }
 }
 
