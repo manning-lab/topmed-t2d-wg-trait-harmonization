@@ -1693,6 +1693,8 @@ with(fulldata,table(study_ancestry,study_ancestry_AFib,useNA='always'))
 table(fulldata$ancestry,useNA = 'always') 
 
 # write.csv(fulldata,row.names=F,quote=F,file=paste(out.pref,"/",'FULLDATA_Test_T2D_15MAR2018.csv',sep=""))
+write.csv(fulldata,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.csv',sep=""))
+
 # save(pooled, file = paste(f.dir,"Pooled_MIXED_WesselJ_27AUG2017_T2D.RData",sep="/"))
 
 
