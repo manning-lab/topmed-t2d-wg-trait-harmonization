@@ -1,27 +1,29 @@
 args = commandArgs(trailingOnly=TRUE)
-
-#### testing inputs ####
-# f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes/glycemic_traits/"
-# id.col <- "topmedid"
-# ped.file <- "freeze5b_pooled_t2d_tmajarian_021518.csv"
-# trait <- "t2d"
-# out.pref <- "testing"
-### testing inputs ####
-
 f.dir <- args[1]
 out.pref <- args[2]
+
+#### testing inputs ####
+# f.dir <- "/N/dc2/scratch/wesselj/OriginalFiles"
+# id.col <- "topmedid"
+# ped.file <- "FULLDATA_Test_T2D_13MAR2018.csv"
+# trait <- "t2d"
+# out.pref <- "/N/dc2/scratch/wesselj/OriginalFiles/"
+### testing inputs ####
+
+
 if(length(args) < 1) {
-  stop ("Not enough input args")
+ stop ("Not enough input args")
 }
 
 
 # if (length(args) == 1){
   ## load duplicates 
-  dups <- read.table(paste(f.dir,"freeze5b_duplicates.txt",sep="/"),header=T)
+  dups <- read.table(paste(f.dir,"freeze5b_duplicates_2018-01-10.txt",sep="/"),header=T)
   # d<-read.table("freeze5b_duplicates.txt",header=T)
   
   ## load map file
   map <- read.table(paste(f.dir,"freeze5b_sample_annot_2017-12-01.txt",sep="/"),header=T)
+  
   # linker <- read.table("freeze5b_sample_annot_2017-12-01.txt",header=T)
   
   ## make some table?
@@ -71,12 +73,18 @@ if(length(args) < 1) {
     ##remove controls####
   dups <- dups[which(!(dups$study1 %in% c("CONTROL")) & !(dups$study2%in%c("CONTROL"))),]
     
-    #####FOR WITHIN THE SAME STUDY: Keeps monozygotic twins and chooses duplicates with highest sequencing call rate
+  # Within study duplicates
+  ## Choose the duplicate from the sequencing center that has the highest sequencing percentage.
+  
+  ## print table of duplicate pairs in the duplicates file
+  print(table(dups$study1,dups$study2))
+  
+  #####FOR WITHIN THE SAME STUDY: Keeps monozygotic twins and chooses duplicates with highest sequencing call rate
   for (j in 1:nrow(dups)) {
       if (as.character(dups$study1[j])==as.character(dups$study2[j])) {
-        if (is.na(dups$MZtwinID[j])==F) { ###keep MZtwin
+        if (!is.na(dups$MZtwinID[j])) { ###keep MZtwin
           dups$keep1[j]<-1;dups$keep2[j]<-1
-        } else if (as.character(dups$center1[j])!=as.character(dups$center2[j])&is.na(dups$p1[j])==F&is.na(dups$p2[j])==F) {
+        } else if (as.character(dups$center1[j])!=as.character(dups$center2[j]) & !is.na(dups$p1[j])& !is.na(dups$p2[j])) {
           dups$keep1[j]<-ifelse(dups$p1[j]>=dups$p2[j],1,0)
           dups$keep2[j]<-1-dups$keep1[j]
         } else if (as.character(dups$center1[j])==as.character(dups$center2[j])){
@@ -87,7 +95,7 @@ if(length(args) < 1) {
       
       ###FOR ACROSS STUDIES: ranks duplicates according to cohort type, such as population-based or with longest follow up#####
       #ARIC>  DHS, GOLDN, GENOA, HyperGEN, Mayo_VTE, MESA, WHI, JHS, GeneSTAR
-      else if ((as.character(dups$study1[j])=='ARIC'&as.character(dups$study2[j])%in%c("DHS","GOLDN","GENOA","HyperGEN","Mayo_VTE", "MESA", "WHI", "JHS", "GeneSTAR"))|
+      else if ((as.character(dups$study1[j])=='ARIC'&as.character(dups$study2[j])%in%c("DHS","GOLDN","GENOA","HyperGEN","Mayo_VTE", "MESA", "WHI", "JHS", "GeneSTAR")) |
                (as.character(dups$study2[j])=='ARIC'&as.character(dups$study1[j])%in%c("DHS","GOLDN","GENOA","HyperGEN","Mayo_VTE", "MESA", "WHI", "JHS", "GeneSTAR")))
       {
         dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='ARIC',1,0)
@@ -161,24 +169,25 @@ if(length(args) < 1) {
     ### for reordering ID1 and ID2. Used column names for clarity but can use column numbers for simplicity. 
     
     
-    write.table(dups,paste(f.dir,"/",out.pref,".duplicates.txt",sep=""),row.names=F,col.names=T,quote=F,sep='\t')
+    write.table(dups,paste(f.dir,"/",out.pref,"duplicates.txt",sep=""),row.names=F,col.names=T,quote=F,sep='\t')
+    
     
   # }
 
 
 if(length(args) == 5) {
-  id.col <- args[3]
-  ped.file <- args[4]
-  trait <- args[5]
+     id.col <- args[3]
+     ped.file <- args[4]
+     trait <- args[5]
   
   
-  ped <- read.table(paste(f.dir,ped.file,sep="/"),header=T,sep=",")
+  ped <- read.table(paste(f.dir,ped.file,sep="/"),header=T,sep=",") #n=54442
   
   # dups <- read.table("duplicates.txt",header=T)
   # dups <- read.table(paste(f.dir,"freeze5b_duplicates.txt",sep="/"),header=T)
   
   if(trait %in% colnames(ped)==FALSE) {
-    print(trait)
+   print(trait)
     stop("Trait entered must match column name in phenotype file")
   }
   
@@ -204,10 +213,13 @@ if(length(args) == 5) {
     
     for (j in 1:nrow(dups)){
       
-      
-      if(is.na(dups$TRAIT1[j])==F&is.na(dups$TRAIT2[j])==F&dups$TRAIT1[j]>=0&dups$TRAIT2[j]>=0){
+      # Assumes that the trait values we want are >= 0 
+      if(is.na(dups$TRAIT1[j])==F & is.na(dups$TRAIT2[j])==F & dups$TRAIT1[j]>=0 & dups$TRAIT2[j]>=0){
+        
+        # what is the purpose of these next two lines?
         dups$keep1_TRAIT[j]<-ifelse(is.na(dups$TRAIT1[j])==F,dups$keep1[j],ifelse(is.na(dups$TRAIT1[j])==T,0,NA))
         dups$keep2_TRAIT[j]<-ifelse(is.na(dups$TRAIT2[j])==F,dups$keep2[j],ifelse(is.na(dups$TRAIT2[j])==T,0,NA))
+        
         ##for additional output files
         if(is.na(dups$keep1[j])==F&is.na(dups$keep2[j])==F){
           if(dups$keep1[j]==1&as.character(dups$study1[j])!=as.character(dups$study2[j])){
@@ -272,7 +284,7 @@ if(length(args) == 5) {
     }
     
     print(table(dups$keep1_TRAIT,dups$keep2_TRAIT,useNA='always'))
-    print("Error if NAs occur")
+  #  print("Error if NAs occur")
     
     
     ####OUTPUT: to subset for TRAIT and to remove duplicates as determined by algorithm####
@@ -297,6 +309,7 @@ if(length(args) == 5) {
     
     ped$keep_trait <- rep(1,NROW(ped))
     ped$keep_trait[ped[,id.col] %in% notkeep.ids] <- 0
+    
     # ped <-merge(ped, not_keep,by.x=id.col,by.y="ID",all.x=T)
     
     # ped$KEEP_TRAIT[is.na(ped$KEEP_TRAIT)] <- 0
@@ -306,8 +319,13 @@ if(length(args) == 5) {
     # final <- subset(p, (!is.na(p$TRAIT)))
     # final <-subset(final, KEEP_TRAIT==1)
     
+    ped <- subset(ped, study %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR','GENOA','GenSalt','GOLDN','HVH','HyperGEN',
+                 'JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WHI'))
+
+    ped <- ped[!is.na(ped[,trait]),]
     write.table(ped[ped$keep_trait == 1,],paste(f.dir,"/",out.pref,".no.duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
     
+    ## NOTE: 13MAR2018 sex.x and sex.y from fulldata (harmonization) file is dropped
     
     ## for pooled phenotypes file with additional columns (for inspection purposes)
     
@@ -333,7 +351,7 @@ if(length(args) == 5) {
     removed_TRAIT <- rbind(removed1_TRAIT, removed2_TRAIT)
     
     write.table(removed_TRAIT, paste(f.dir,"/",out.pref,".removed.IDs.txt",sep=""), row.names=F, col.names=T, quote=F, sep=',')
-  }
+    }
 }
 
     

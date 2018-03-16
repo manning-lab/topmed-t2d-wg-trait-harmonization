@@ -1,51 +1,65 @@
 # LOADING SOURCE FILES FOR T2D PHENO HARMONIZATION
 # NOTE : you need to organize all of these files into a single directory. The input is then the absolutely path (ex: /User/username/Documents/.../t2d_phenotype_files/) to that folder
 
+library(readxl)
 get_pheno_data <- function(f.dir){
   
   ## T2D Harmonization  Source Files
   # list of files:
   sample.file <- paste(f.dir, "freeze5b_sample_annot_2017-12-01.txt", sep="/")
+  
+  afp.file <- paste(f.dir, "phs001024.v2.pht005693.v1.p1.c1.TOPMed_WGS_Partners_AFGen_Subject_Phenotypes.HMB.txt", sep="/")
+  afvub.file <- paste(f.dir, "VUH_Ablation_dbGaP_SubjectPhenotypesDS_v2.txt", sep="/")
+  afccaf.file <- paste(f.dir, "CCAF_dbGaP_SubjectPhenotypesDS_v5.txt", sep="/")
+  amish.file <- paste(f.dir, "Amish_HuichunXu_May152017_T2D.ped", sep="/")
+  
+  ARIC.AF.file <- paste(f.dir, "ARIC_AA_NMAYA_20161220_T2D.ped", sep="/")
+  ARIC.EU.file <- paste(f.dir, "ARIC_EU_NMAYA_20161220_T2D.ped", sep="/")
+  chs.file <- paste(f.dir, "CHS_FLOYD_201708018_T2DPhenotype.PED", sep="/")
+  cfs.file <- paste(f.dir, "CFS_12May17_T2D_Freeze4.ped", sep="/")
+  copd.1.file <- paste(f.dir, "phs000179.v5.pht002239.v4.p2.c1.COPDGene_Subject_Phenotypes.HMB.txt", sep="/")
+  copd.2.file <- paste(f.dir, "phs000179.v5.pht002239.v4.p2.c2.COPDGene_Subject_Phenotypes.DS-CS-RD.txt", sep="/")
+  dhs.file <- paste(f.dir, "2a_dbGaP_SubjectPhenotypesDS_AACAC.txt", sep="/")
+  dhs.pedigree <- paste(f.dir, "6a_dbGaP_PedigreeDS_AACAC_revised072817.txt", sep="/")
+  genoa.file <- paste(f.dir, "GENOA_AA_BIELAK_20171030_T2D.ped", sep="/")
+  gensalt.EU.file <- paste(f.dir, "GenSalt_EA_XuenanMi_20170614_T2D.ped", sep="/")
+  genestar.AF.file <- paste(f.dir, "GeneSTAR_AA_YANEK_20170720_T2D.ped", sep="/")
+  genestar.EU.file <- paste(f.dir, "GeneSTAR_EU_YANEK_20170720_T2D.ped", sep="/")
+  fhs.file <- paste(f.dir, "FHS_T2D_20170214_CS.ped", sep="/")
+  goldn.file <- paste(f.dir, "GOLDN_T2D_20180312_SA.xlsx", sep='/')
+  HVH.file <- paste(f.dir, "HVH_FLOYD_20170818_T2DPhenotype.PED", sep="/")
+  
+  hypergen.file <- paste(f.dir,"HyperGEN_Topmed_Phenotype_Harmonization__T2D_Diab.xlsx",sep="/")
+  jhs.file <- paste(f.dir, "JHS_T2Dincidence_16Aug2017.ped", sep="/")
+  
   MGH.file <- paste(f.dir, "MGH_Parent_dbGaP_SubjectPhenotypesDS_v3.txt", sep="/")
   MGH.pedigree <- paste(f.dir, "MGH_Parent_PedigreeDS_v1.txt", sep="/")
   VU.file <- paste(f.dir, "phs001032.v3.pht005675.v3.p2.c1.TOPMed_WGS_VUH_AF_Subject_Phenotypes.GRU-IRB.txt", sep="/")
   VU.pedigree <- paste(f.dir, "phs001032.v3.pht007135.v1.p2.TOPMed_WGS_VUH_AF_Pedigree.MULTI.txt", sep="/")
-  afp.file <- paste(f.dir, "phs001024.v2.pht005693.v1.p1.c1.TOPMed_WGS_Partners_AFGen_Subject_Phenotypes.HMB.txt", sep="/")
-  afvub.file <- paste(f.dir, "VUH_Ablation_dbGaP_SubjectPhenotypesDS_v2.txt", sep="/")
-  afccaf.file <- paste(f.dir, "CCAF_dbGaP_SubjectPhenotypesDS_v5.txt", sep="/")
-  HVH.file <- paste(f.dir, "HVH_FLOYD_20170818_T2DPhenotype.PED", sep="/")
-  ARIC.AF.file <- paste(f.dir, "ARIC_AA_NMAYA_20161220_T2D.ped", sep="/")
-  ARIC.EU.file <- paste(f.dir, "ARIC_EU_NMAYA_20161220_T2D.ped", sep="/")
-  copd.1.file <- paste(f.dir, "phs000179.v5.pht002239.v4.p2.c1.COPDGene_Subject_Phenotypes.HMB.txt", sep="/")
-  copd.2.file <- paste(f.dir, "phs000179.v5.pht002239.v4.p2.c2.COPDGene_Subject_Phenotypes.DS-CS-RD.txt", sep="/")
-  amish.file <- paste(f.dir, "Amish_HuichunXu_May152017_T2D.ped", sep="/")
-  cfs.file <- paste(f.dir, "CFS_12May17_T2D_Freeze4.ped", sep="/")
+  
+  
+ 
+  safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170807_T2D.ped.csv',sep="/")
+  safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
   sas.file <- paste(f.dir, "SAS_LIULIN_20170212_T2D.ped", sep="/")
-  jhs.file <- paste(f.dir, "JHS_T2Dincidence_16Aug2017.ped", sep="/")
-  fhs.file <- paste(f.dir, "FHS_T2D_20170214_CS.ped", sep="/")
-  whi.EU.file <- paste(f.dir, "WHI_EU_MP_20170726_T2D.ped", sep="/")
-  whi.AF.file <- paste(f.dir, "WHI_AA_MP_20170726_T2D.ped", sep="/")
-  whi.AS.file <- paste(f.dir, "WHI_AS_MP_20170726_T2D.ped", sep="/")
-  whi.HS.file <- paste(f.dir, "WHI_HA_MP_20170726_T2D.ped", sep="/")
-  gensalt.EU.file <- paste(f.dir, "GenSalt_EA_XuenanMi_20170614_T2D.ped", sep="/")
-  genestar.AF.file <- paste(f.dir, "GeneSTAR_AA_YANEK_20170720_T2D.ped", sep="/")
-  genestar.EU.file <- paste(f.dir, "GeneSTAR_EU_YANEK_20170720_T2D.ped", sep="/")
+  
   mesa.AF.file <- paste(f.dir, "MESA_AA_ABIGAILBALDRIDGE_04JAN17_T2D_sidno.csv", sep="/")
   mesa.EU.file <- paste(f.dir, "MESA_EU_ABIGAILBALDRIDGE_04JAN17_T2D_sidno.csv", sep="/")
   mesa.HS.file <- paste(f.dir, "MESA_HA_ABIGAILBALDRIDGE_04JAN17_T2D_sidno.csv", sep="/")
   mesa.AS.file <- paste(f.dir, "MESA_SA_ABIGAILBALDRIDGE_04JAN17_T2D_sidno.csv", sep="/")
   mesa.fam.file <- paste(f.dir, "MESA_Family_AA_YAO_20171031_T2D_sidno.txt", sep="/")
-  chs.file <- paste(f.dir, "CHS_FLOYD_201708018_T2DPhenotype.PED", sep="/")
-  genoa.file <- paste(f.dir, "GENOA_AA_BIELAK_20171030_T2D.ped", sep="/")
-  dhs.file <- paste(f.dir, "2a_dbGaP_SubjectPhenotypesDS_AACAC.txt", sep="/")
-  dhs.pedigree <- paste(f.dir, "6a_dbGaP_PedigreeDS_AACAC_revised072817.txt", sep="/")
-  safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170807_T2D.ped.csv',sep="/")
-  safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
-  hypergen.file <- paste(f.dir,"HyperGEN_Topmed_Phenotype_Harmonization__T2D_Diab.csv",sep="/")
+  whi.EU.file <- paste(f.dir, "WHI_EU_MP_20170726_T2D.ped", sep="/")
+  whi.AF.file <- paste(f.dir, "WHI_AA_MP_20170726_T2D.ped", sep="/")
+  whi.AS.file <- paste(f.dir, "WHI_AS_MP_20170726_T2D.ped", sep="/")
+  whi.HS.file <- paste(f.dir, "WHI_HA_MP_20170726_T2D.ped", sep="/")
+  
   
   map <- read.table(sample.file,
                     header=TRUE, as.is=T, sep="\t") #n=54499 & 16 variables:
   
+  dhs = read.table(dhs.file, header=T,sep='\t',as.is=T) #n=405
+  dhsPed =read.table(dhs.pedigree,
+                     header=T,sep='\t',as.is=T,fill = TRUE) #n=972
   
   raw.MGH =read.table(MGH.file,
                       header=T,sep='\t',as.is=T,fill = TRUE) #n=1025 & 21 variables
@@ -78,6 +92,8 @@ get_pheno_data <- function(f.dir){
   copd.c2 <- read.table(copd.2.file,
                         skip=10, header=TRUE, sep="\t", fill=TRUE) #n=272
   copd <- rbind(copd.c1, copd.c2)  #n=10371
+  rm(copd.c1)
+  rm(copd.c2)
   
   amish = read.table(amish.file, header=T,sep='\t',as.is=T) #n=1013 & 15 variables
   
@@ -135,12 +151,11 @@ get_pheno_data <- function(f.dir){
   
   genoa = read.table(genoa.file, header=T,sep='\t',as.is=T) #n=1854
   
-  dhs = read.table(dhs.file, header=T,sep='\t',as.is=T) #n=405
-  
-  dhsPed =read.table(dhs.pedigree,
-                     header=T,sep='\t',as.is=T,fill = TRUE) #n=972
+
   safs = read.csv(safs.file, header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
   safs.ids <- read.csv(safs.ids.file, header=T,sep=',',as.is=TRUE)
-  hypergen <- read.csv(hypergen.file, header=T,sep=',')
+  hypergen <- data.frame(read_excel(hypergen.file, skip = 1, col_names=TRUE))
+  goldn <- data.frame(read_excel(goldn.file, col_names=TRUE))
+  
   sapply(ls(),function(x)get(x),simplify=F,USE.NAMES=T)
 }
