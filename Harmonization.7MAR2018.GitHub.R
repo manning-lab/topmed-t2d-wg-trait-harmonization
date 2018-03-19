@@ -11,10 +11,10 @@ args <- commandArgs(trailingOnly=T)
 f.dir <- args[1]
 out.pref <- args[2]
 
-### testing inputs ####
-# f.dir <- "/N/dc2/scratch/wesselj/OriginalFiles"
-# #source.file <- "/N/dc2/scratch/wesselj/OriginalFiles/Harmonization.19JAN2017.GitHub.SourceFiles.R"
-# out.pref <- "/N/dc2/scratch/wesselj/OriginalFiles"
+# ### testing inputs ####
+# f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes/"
+# source.file <- "/Users/tmajaria/Documents/projects/topmed/code/topmed-traitHarmonization/Harmonization.19JAN2017.GitHub.SourceFiles.R"
+# out.pref <- "test"
 # ########################
 
 # load all of the phenotype info through the source file
@@ -184,8 +184,8 @@ afp$study_ancestry <- paste(afp$study,afp$ancestry, sep = "_")
 afp$JWsource = "dbGaP"
 
 afp <- afp[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
-                      'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                      'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+              'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
+              'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=127
 
 ####################### AFib Partners ##############################################
@@ -246,8 +246,8 @@ afvub$study_ancestry <- paste(afvub$study,afvub$ancestry, sep = "_")
 afvub$JWsource = "dbGaP"
 
 afvub <- afvub[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
-                      'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                      'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+                  'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
+                  'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=171
 
 ####################### VU_Ben ##############################################
@@ -357,8 +357,8 @@ aric$JWsource = "dbGaP_Ex"
 
 
 aric <- aric[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
-                      'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                      'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+                'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
+                'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=4230 49 missing T2D
 
 
@@ -423,8 +423,8 @@ cfs$JWsource = "dbGaP_Ex"
 
 
 cfs <- cfs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
-                      'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                      'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+              'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
+              'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=2531 880 missing T2D 
 
 ####################### CFS ##############################################
@@ -533,8 +533,8 @@ copd <- copd[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID'
                 'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=10371 
 #n=102 with missing phenotype data
-  
-  ####################### COPD Gene Sample & C1 & C2 ##############################################
+
+####################### COPD Gene Sample & C1 & C2 ##############################################
 ####################### COPD Gene Sample & C1 & C2 ##############################################
 
 
@@ -764,8 +764,8 @@ genestar$study_ancestry <- paste(genestar$study,genestar$ancestry, sep = "_")
 genestar$JWsource = "dbGaP_Ex"
 
 genestar <- genestar[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
-                      'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                      'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+                        'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
+                        'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 
 #n=3207 1113 missing t2d ??
 
@@ -873,8 +873,35 @@ goldn$study_ancestry <- paste(goldn$study,goldn$ancestry, sep = "_")
 goldn$JWsource = "dbGaP_Ex"
 
 goldn <- goldn[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
-                        'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                        'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+                  'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
+                  'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+
+# remove rows that are absolute duplicates
+goldn.dups <- goldn$unique_id[duplicated(goldn$unique_id)]
+goldn.final <- goldn[!(goldn$unique_id %in% goldn.dups),]
+for (id in unique(goldn.dups)){
+  my.rows <- goldn[goldn$unique_id == id,]
+  is_equal = T
+  for (col.id in seq(1,NCOL(my.rows))){
+    this.col <- my.rows[,col.id]
+    # change nas to some string
+    this.col[is.na(this.col)] <- "This is na"
+    
+    # see how many unique elements we ahve
+    nu <- length(unique(this.col)) > 1
+    
+    if (nu){
+      is_equal = F
+      break
+    }
+  }
+  if(is_equal){
+    goldn.final <- rbind(goldn.final,my.rows[1,])
+  } else {
+    goldn.final <- rbind(goldn.final,my.rows)
+  }
+}
+
 #n=1100
 
 ####################### goldn ##############################################
@@ -1037,8 +1064,8 @@ mesa$study_ancestry <- paste(mesa$study,mesa$ancestry, sep = "_")
 mesa$JWsource = "dbGaP_Ex"
 
 mesa <- mesa[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
-                      'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                      'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+                'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
+                'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 
 #n=6429 9 missing t2d
 
@@ -1357,7 +1384,7 @@ safs.map <- map[!is.na(map$submitted_subject_id),]
 
 # 1: Subset deidentified subject ids from SAFS by those deidentified subject ids that are in the map file (DCC)
 safs.ids <- safs.ids[safs.ids$Deidentified.Subject %in% safs.map$submitted_subject_id,] # 1531 rows
-  
+
 # 2: Merge id file with ped file by deidentified subject id, keeping only those deidentified subject ids that are in the map file
 safs <- merge(safs.ids, safs, by.x = "NWD.ID", by.y = "Individual_ID", all.x=T) #1531 rows
 
@@ -1416,8 +1443,8 @@ safs$individual_id <- safs$Deidentified.Subject
 safs$study_ancestry <- paste(safs$study,safs$ancestry, sep = "_")
 
 safs <- safs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
-                      'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                      'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+                'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
+                'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 
 # n=2459 591 missing t2d ??? #n=1868
 
@@ -1571,7 +1598,7 @@ table(map$study,useNA='always')
 #         WHI   NA
 #       10047   76
 #map <- subset(map, study %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR','GENOA','GenSalt','GOLDN','HVH','HyperGEN',
- #                                'JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WHI'))
+#                                'JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WHI'))
 
 ## Create variables for final pooled file
 map$topmedid = map$sample.id
