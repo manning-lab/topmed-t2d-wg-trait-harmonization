@@ -19,7 +19,7 @@ out.pref <- args[2]
 # # ########################
 
 # load all of the phenotype info through the source file
-source("Harmonization.19JAN2017.GitHub.SourceFiles.R")
+source("Freeze5b.T2D.inputfiles.R")
 dat <- get_pheno_data(f.dir)
 
 map <- dat$map
