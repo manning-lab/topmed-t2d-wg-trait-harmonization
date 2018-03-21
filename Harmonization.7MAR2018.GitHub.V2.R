@@ -8,9 +8,9 @@
 # BMI = 703·weight(lb)/height2(in2)
 ##
 
-# args <- commandArgs(trailingOnly=T)
-# f.dir <- args[1]
-# out.pref <- args[2]
+args <- commandArgs(trailingOnly=T)
+f.dir <- args[1]
+out.pref <- args[2]
 
 # ### testing inputs ####
 #  f.dir <- "/N/dc2/scratch/wesselj/OriginalFiles"
