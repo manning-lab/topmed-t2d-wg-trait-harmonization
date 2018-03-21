@@ -35,7 +35,7 @@ echo "\n"
 
 echo "harmonization:\n" > $1/harm.stdout
 # make the pooled trait file
-(R --vanilla --args $1 $2.$user.$curdate < Harmonization.7MAR2018.GitHub.R >> $1/harm.stdout 2>&1) &
+(R --vanilla --args $1 $2.$user.$curdate < Harmonization.7MAR2018.GitHub.V2.R >> $1/harm.stdout 2>&1) &
 echo "Running harmonization" 
 spinner $! 
 echo "Done!"
