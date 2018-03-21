@@ -39,8 +39,9 @@ get_pheno_data <- function(f.dir){
   
   
  
-  safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170807_T2D.ped.csv',sep="/")
-  safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
+  safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170519_T2D.txt',sep="/")
+
+  #safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
   sas.file <- paste(f.dir, "SAS_LIULIN_20170212_T2D.ped", sep="/")
   
   mesa.AF.file <- paste(f.dir, "MESA_AA_ABIGAILBALDRIDGE_04JAN17_T2D_sidno.csv", sep="/")
@@ -55,7 +56,7 @@ get_pheno_data <- function(f.dir){
   
   
   map <- read.table(sample.file,
-                    header=TRUE, as.is=T, sep="\t") #n=54499 & 16 variables:
+                    header=TRUE, as.is=T, sep="\t", na.strings = 'NA') #n=54499 & 16 variables:
   
   dhs = read.table(dhs.file, header=T,sep='\t',as.is=T) #n=405
   dhsPed =read.table(dhs.pedigree,
@@ -151,9 +152,10 @@ get_pheno_data <- function(f.dir){
   
   genoa = read.table(genoa.file, header=T,sep='\t',as.is=T) #n=1854
   
-
-  safs = read.csv(safs.file, header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
-  safs.ids <- read.csv(safs.ids.file, header=T,sep=',',as.is=TRUE)
+  safs = read.table(safs.file, header=T,sep='\t',as.is=T,na.strings="") 
+  #safs = read.csv(safs.file, header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
+  #safs.ids <- read.csv(safs.ids.file, header=T,sep=',',as.is=TRUE)
+  
   hypergen <- data.frame(read_excel(hypergen.file, skip = 1, col_names=TRUE))
   goldn <- data.frame(read_excel(goldn.file, col_names=TRUE))
   
