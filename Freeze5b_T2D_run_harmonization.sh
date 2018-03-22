@@ -48,6 +48,11 @@ echo "Running duplicates script"
 spinner $! 
 echo "Done!"
 
+(R --vanilla --args $1 $2.$user.$curdate topmedid $2.$user.$curdate.removed.IDs.csv $3 < Freeze5b.T2D.PostProcessing.GitHub.R >> $1/harm.stdout 2>&1) &
+echo "Running duplicates script" 
+spinner $! 
+echo "Done!"
+
 echo "git commit tag of current code : $git_tag" > $1/$2.$user.$curdate.log
 echo "harmonized phenotypes with duplicates : $1/$2.$user.$curdate.csv" >> $1/$2.$user.$curdate.log
 echo "harmonized phenotypes without duplicates : $1/$2.$user.$curdate.no.duplicates.csv" >> $1/$2.$user.$curdate.log
