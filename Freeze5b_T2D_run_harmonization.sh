@@ -48,7 +48,7 @@ echo "Running duplicates script"
 spinner $! 
 echo "Done!"
 
-(R --vanilla --args $1 $2.$user.$curdate topmedid $2.$user.$curdate.removed.IDs.csv $3 < Freeze5b.T2D.PostProcessing.GitHub.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
+(R --vanilla --args $1 $2.$user.$curdate topmedid $2.$user.$curdate.no.duplicates.csv $3 < Freeze5b.T2D.PostProcessing.GitHub.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
 echo "Running postprocessing script" 
 spinner $! 
 echo "Done!"

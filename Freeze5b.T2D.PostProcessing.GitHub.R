@@ -9,6 +9,7 @@ trait <- args[5]
 
 fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",")
 print(dim(fulldata))
+head(fulldata)
 
 ## Restrict to people with age < 25
 print("Before removing people with age<25")
