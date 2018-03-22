@@ -18,7 +18,7 @@ out.pref <- args[2]
 # ########################
 
 # load all of the phenotype info through the source file
-source("Harmonization.19JAN2017.GitHub.SourceFiles.R")
+source("Freeze5b.T2D.inputfiles.R")
 dat <- get_pheno_data(f.dir)
 
 map <- dat$map
@@ -1658,33 +1658,6 @@ fulldata <- fulldata[,c('unique_subject_key',"sample.id","submitted_subject_id",
                         'individual_id','FamilyID','MaternalID','PaternalID','t2d', 'sequenced',
                         'last_exam_age','last_exam_bmi','last_exam_fg','last_exam_hba1c',
                         'last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
-
-
-##  !!  NEED TO CREATE THESE VARIABLES !!  ##
-## t2d_ctrl t2d_superctrl
-# create another t2d status classification for pre-DM 
-
-table(fulldata$t2d,useNA='always')
-fulldata$t2d_ctrl[fulldata$t2d == 2] = 1
-fulldata$t2d_ctrl[fulldata$t2d == 1] = 0
-fulldata$t2d_ctrl[fulldata$t2d == 0] = 0
-fulldata$t2d_ctrl[is.na(fulldata$t2d)] = NA
-with(fulldata,table(t2d,t2d_ctrl,useNA='always'))
-
-table(fulldata$t2d,useNA='always')
-fulldata$t2d_nopre.ctrl[fulldata$t2d == 2] = 1
-fulldata$t2d_nopre.ctrl[fulldata$t2d == 1] = NA
-fulldata$t2d_nopre.ctrl[fulldata$t2d == 0] = 0
-fulldata$t2d_nopre.ctrl[is.na(fulldata$t2d)] = NA
-with(fulldata,table(t2d,t2d_nopre.ctrl,useNA='always'))
-
-table(fulldata$t2d,useNA='always')
-fulldata$t2dpre_ctrl[fulldata$t2d == 2] = 1
-fulldata$t2dpre_ctrl[fulldata$t2d == 1] = 1
-fulldata$t2dpre_ctrl[fulldata$t2d == 0] = 0
-fulldata$t2dpre_ctrl[is.na(fulldata$t2d)] = NA
-with(fulldata,table(t2d,t2dpre_ctrl,useNA='always'))
-table(fulldata$t2dpre_ctrl,useNA='always')
 
 #collapse AFib studies
 table(fulldata$study_ancestry,useNA='always')
