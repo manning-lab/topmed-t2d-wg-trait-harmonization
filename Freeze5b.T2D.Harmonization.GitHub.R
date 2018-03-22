@@ -1,3 +1,4 @@
+
 ## T2D Harmonization  
 ## GENESIS needs sex as M,F
 # FamilyID = SUBJECT_ID or individual_id depending on dataset
@@ -12,10 +13,10 @@ f.dir <- args[1]
 out.pref <- args[2]
 
 # ### testing inputs ####
-# f.dir <- "/Users/tmajaria/Documents/projects/topmed/data/freeze5b_phenotypes/"
-# source.file <- "/Users/tmajaria/Documents/projects/topmed/code/topmed-traitHarmonization/Harmonization.19JAN2017.GitHub.SourceFiles.R"
-# out.pref <- "test"
-# ########################
+#  f.dir <- "/N/dc2/scratch/wesselj/OriginalFiles"
+# # source.file <- "/Users/tmajaria/Documents/projects/topmed/code/topmed-traitHarmonization/Harmonization.19JAN2017.GitHub.SourceFiles.R"
+#  out.pref <- "/N/dc2/scratch/wesselj/OriginalFiles"
+# # ########################
 
 # load all of the phenotype info through the source file
 source("Freeze5b.T2D.inputfiles.R")
@@ -48,9 +49,8 @@ raw.MGHPed <- dat$raw.MGHPed
 raw.VUdaw <- dat$raw.VUdaw
 raw.VUdawPed <- dat$raw.VUdawPed
 safs <- dat$safs
-safs.ids <- dat$safs.ids
+#safs.ids <- dat$safs.ids
 sas <- dat$sas
-sas.id <- dat$sas.id
 whi <- dat$whi
 
 rm(dat)
@@ -114,6 +114,8 @@ afccaf <- afccaf[,c('unique_id','individual_id','FamilyID','MaternalID','Paterna
                     'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=363
 # 20 missing T2D
+
+table(duplicated(afccaf$unique_id)) #0
 ####################### AFib CCAF ##############################################
 ####################### AFib CCAF ##############################################
 
@@ -137,13 +139,18 @@ table(afp$t2d,useNA='always') # no missing t2d
 
 # recode ancestry
 table(afp$race,useNA='always')
+# asian    black hispanic    other    white     <NA> 
+#   1        4        1        1      120        1 
 table(afp$ethnicity,useNA='always')
+# no  yes <NA> 
+#   120    1    7 
 afp$ancestry[afp$race == 'black' & afp$ethnicity == 'no'] = "AF"
 afp$ancestry[afp$race == 'white' & afp$ethnicity == 'no'] = "EU"
 afp$ancestry[afp$race == 'white'] = "EU"
 afp$ancestry[afp$race == 'asian' & afp$ethnicity == 'no'] = "AS"
 afp$ancestry[afp$race == 'hispanic' & afp$ethnicity == 'yes'] = "HS"
 afp$ancestry[afp$race == 'other' & afp$ethnicity == 'no'] = "OTHER"
+afp$ancestry[is.na(afp$race) & is.na(afp$ethnicity)] = "UNKNOWN"
 table(afp$ancestry,useNA='always')
 with(afp,table(ancestry,ethnicity,race,useNA='always')) # 1  missing race & ancestry data
 
@@ -187,7 +194,7 @@ afp <- afp[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
               'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
               'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=127
-
+table(duplicated(afp$unique_id)) #0
 ####################### AFib Partners ##############################################
 ####################### AFib Partners ##############################################
 
@@ -249,7 +256,7 @@ afvub <- afvub[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalI
                   'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                   'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=171
-
+table(duplicated(afvub$unique_id)) #0
 ####################### VU_Ben ##############################################
 ####################### VU_Ben ##############################################
 
@@ -310,7 +317,7 @@ amish <- amish[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalI
                   'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                   'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=1013
-
+table(duplicated(amish$unique_id)) #0
 ####################### Amish ##############################################
 ####################### Amish ##############################################
 
@@ -360,7 +367,7 @@ aric <- aric[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID'
                 'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                 'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=4230 49 missing T2D
-
+table(duplicated(aric$unique_id)) #0
 
 
 ####################### ARIC ##############################################
@@ -377,6 +384,8 @@ aric <- aric[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID'
 
 #T2D n=880 NA
 names(cfs)
+#add a check at each study to check that ID is in map file 
+table(cfs$Sequenced, cfs$IID %in% map$unique_subject_key)
 
 # recode & check variable names & distributions
 table(cfs$Sequenced,useNA='always')
@@ -392,7 +401,9 @@ table(cfs$t2d,useNA='always')
 table(cfs$Population,useNA='always')
 cfs$ancestry[cfs$Population == 'CFS-blacks'] = "AF"
 cfs$ancestry[cfs$Population == 'CFS-whites'] = "EU"
+cfs$ancestry[is.na(cfs$Population)] = "UNKNOWN"
 with(cfs,table(Population,ancestry,useNA='always'))
+table(cfs$ancestry,useNA = 'always')
 table(cfs$sex,useNA='always')
 cfs$origsex = cfs$sex
 cfs$sex[cfs$sex == 1] = 'M'
@@ -416,7 +427,7 @@ cfs$FamilyID = cfs$FamID
 cfs$PaternalID = cfs$FID
 cfs$MaternalID = cfs$MID
 cfs$study = "CFS"
-cfs$unique_id <-  paste(cfs$study,cfs$IID, sep = "_")
+cfs$unique_id <-  paste(cfs$study,cfs$IID, sep = "_") 
 cfs$individual_id <- cfs$IID
 cfs$study_ancestry <- paste(cfs$study,cfs$ancestry, sep = "_")
 cfs$JWsource = "dbGaP_Ex"
@@ -426,6 +437,39 @@ cfs <- cfs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
               'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
               'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=2531 880 missing T2D 
+table(duplicated(cfs$unique_id)) #5 probably not sequenced??? make sure we get rid of them at merge
+table(cfs$sequenced, cfs$unique_id %in% map$unique_subject_key)
+
+# remove rows that are absolute duplicates
+cfs.dups <- cfs$unique_id[duplicated(cfs$unique_id)]
+cfs.final <- cfs[!(cfs$unique_id %in% cfs.dups),]
+for (id in unique(cfs.dups)){
+  my.rows <- cfs[cfs$unique_id == id,]
+  is_equal = T
+  for (col.id in seq(1,NCOL(my.rows))){
+    this.col <- my.rows[,col.id]
+    # change nas to some string
+    this.col[is.na(this.col)] <- "This is na"
+    
+    # see how many unique elements we ahve
+    nu <- length(unique(this.col)) > 1
+    
+    if (nu){
+      is_equal = F
+      break
+    }
+  }
+  if(is_equal){
+    cfs.final <- rbind(cfs.final,my.rows[1,])
+  } else {
+    cfs.final <- rbind(cfs.final,my.rows)
+  }
+}
+
+#n=2531 still; individuals are not eliminated!!
+table(duplicated(cfs.final$unique_id)) #5
+
+cfs.final.dup <- cfs.final[duplicated(cfs.final$unique_id),]
 
 ####################### CFS ##############################################
 ####################### CFS ##############################################
@@ -448,10 +492,16 @@ table(chs$t2d,useNA='always')
 #chs = subset(chs, subset = t2d %in% c(0,1,2))
 
 table(chs$race01,useNA='always')
+# 1    2    3    4    5 <NA> 
+#   3123  785    5    3   13    0 
+# Per email from J Floyd (27AUG2017) 3 is American Indian/Alaskan and 4 is Asian/Pacific Islander
 chs$ancestry[chs$race01 == 2] = 'AF'
 chs$ancestry[chs$race01 == 1] = 'EU'
 chs$ancestry[chs$race01 == 5] = 'OTHER'
+chs$ancestry[chs$race01 == 3] = 'AMR'
+chs$ancestry[chs$race01 == 4] = 'AS'
 with(chs,table(race01,ancestry,useNA='always'))
+table(chs$ancestry,useNA='always')
 table(chs$sex,useNA='always')
 chs$sex[chs$sex == 1] = 'M'
 chs$sex[chs$sex == 2] = 'F'
@@ -478,7 +528,7 @@ chs <- chs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
               'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
               'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=3929
-
+table(duplicated(chs$unique_id)) #0
 ####################### CHS ##############################################
 ####################### CHS ##############################################
 
@@ -533,7 +583,7 @@ copd <- copd[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID'
                 'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=10371 
 #n=102 with missing phenotype data
-
+table(duplicated(copd$unique_id)) #0
 ####################### COPD Gene Sample & C1 & C2 ##############################################
 ####################### COPD Gene Sample & C1 & C2 ##############################################
 
@@ -588,8 +638,8 @@ dhs$study_ancestry <- paste(dhs$study,dhs$ancestry, sep = "_")
 dhs <- dhs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
               'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
               'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
-#n=337
-
+#n=405
+table(duplicated(dhs$unique_id)) #0
 ####################### DHS ##############################################
 ####################### DHS ##############################################
 
@@ -657,6 +707,7 @@ fhs <- fhs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
               'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 
 #n=14329
+table(duplicated(fhs$unique_id)) #0
 ####################### FHS ##############################################
 ####################### FHS ##############################################
 
@@ -715,7 +766,7 @@ gensalt <- gensalt[,c('unique_id','individual_id','FamilyID','MaternalID','Pater
                       'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                       'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=1906 93 missing T2D
-
+table(duplicated(gensalt$unique_id)) #0
 
 ####################### GenSalt Phase 2 ##############################################
 ####################### GenSalt Phase 2 ##############################################
@@ -768,7 +819,7 @@ genestar <- genestar[,c('unique_id','individual_id','FamilyID','MaternalID','Pat
                         'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 
 #n=3207 1113 missing t2d ??
-
+table(duplicated(genestar$unique_id)) #0
 ####################### GeneSTAR ##############################################
 ####################### GeneSTAR ##############################################
 
@@ -823,7 +874,7 @@ genoa <- genoa[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalI
                   'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                   'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=1854 58 missing t2d
-
+table(duplicated(genoa$unique_id)) #0
 
 ####################### GENOA ##############################################
 ####################### GENOA ##############################################
@@ -874,10 +925,13 @@ goldn$JWsource = "dbGaP_Ex"
 
 goldn <- goldn[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
                   'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
-                  'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
+                  'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')] 
+#n=1100
+table(duplicated(goldn$unique_id)) #31
 
 # remove rows that are absolute duplicates
 goldn.dups <- goldn$unique_id[duplicated(goldn$unique_id)]
+#unique(goldn.dups)
 goldn.final <- goldn[!(goldn$unique_id %in% goldn.dups),]
 for (id in unique(goldn.dups)){
   my.rows <- goldn[goldn$unique_id == id,]
@@ -902,7 +956,8 @@ for (id in unique(goldn.dups)){
   }
 }
 
-#n=1100
+#n=1069
+table(duplicated(goldn.final$unique_id)) #0
 
 ####################### goldn ##############################################
 ####################### goldn ##############################################
@@ -953,7 +1008,7 @@ hypergen <- hypergen[,c('unique_id','individual_id','FamilyID','MaternalID','Pat
                         'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                         'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=1898
-
+table(duplicated(hypergen$unique_id)) #0
 ####################### hypergen ##############################################
 ####################### hypergen ##############################################
 
@@ -1016,6 +1071,7 @@ jhs <- jhs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
               'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
               'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=3406 10 missng t2d
+table(duplicated(jhs$unique_id)) #0
 ####################### JHS ##############################################
 ####################### JHS ##############################################
 
@@ -1068,7 +1124,7 @@ mesa <- mesa[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID'
                 'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 
 #n=6429 9 missing t2d
-
+table(duplicated(mesa$unique_id)) #0
 ####################### MESA ##############################################
 ####################### MESA ##############################################
 
@@ -1119,7 +1175,8 @@ mesafam <- mesafam[,c('unique_id','individual_id','FamilyID','MaternalID','Pater
                       'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                       'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=1134 14 missing t2d 
-
+table(duplicated(mesafam$unique_id)) #0
+mesafam <- mesafam[!(mesafam$unique_id %in% mesa$unique_id),]
 ####################### MESA Family  ##############################################
 ####################### MESA Family  ##############################################
 
@@ -1154,22 +1211,31 @@ table(raw.MGH$t2d,useNA='always')
 #  934   59    0
 
 table(raw.MGH$race,useNA='always')
-#        american_indian american_indian_black                 white                  <NA> 
-#             9                     1                   983                     0 
+# african_american       american_indian american_indian_black                 asian                 other     pacific_islanders                 white 
+# 3                     9                     1                     3                     2                     1                  1006 
+# <NA> 
+#   0 
 table(raw.MGH$ethnicity,useNA='always')
 #  no  yes <NA>
-# 978   15   0
+# 984   15   26
 
 # recode ancestry
 ## AMR = american indian
 raw.MGH$ancestry[raw.MGH$race == 'american_indian' & raw.MGH$ethnicity == 'no'] = "AMR"
 raw.MGH$ancestry[raw.MGH$race == 'american_indian_black' & raw.MGH$ethnicity == 'no'] = "MIXED"
 raw.MGH$ancestry[raw.MGH$race == 'white' & raw.MGH$ethnicity == 'no'] = "EU"
+raw.MGH$ancestry[raw.MGH$race == 'white' & is.na(raw.MGH$ethnicity)] = "EU"
 raw.MGH$ancestry[raw.MGH$race == 'white' & raw.MGH$ethnicity == 'yes'] = "HS"
+raw.MGH$ancestry[raw.MGH$race == 'african_american' & raw.MGH$ethnicity == 'no'] = "AF"
+raw.MGH$ancestry[raw.MGH$race == 'african_american' & is.na(raw.MGH$ethnicity)] = "AF"
+raw.MGH$ancestry[raw.MGH$race == 'asian' & is.na(raw.MGH$ethnicity)] = "AS"
+raw.MGH$ancestry[raw.MGH$race == 'pacific_islanders' & is.na(raw.MGH$ethnicity)] = "AS"
+raw.MGH$ancestry[raw.MGH$race == 'pacific_islanders' & raw.MGH$ethnicity == 'yes'] = "MIXED"
+raw.MGH$ancestry[raw.MGH$race == 'other' & is.na(raw.MGH$ethnicity)] = "OTHER"
 
 table(raw.MGH$ancestry,useNA='always')
-# AMR    EU    HS MIXED  <NA>
-#   9   968    15     1     0
+# AF AMR  AS  EU    HS MIXED  OTHER  <NA>
+# 3   9   4   991    15     1   2   0
 
 table(raw.MGH$sex,useNA='always')
 # female   male   <NA>
@@ -1222,7 +1288,7 @@ raw.MGH <- raw.MGH[,c('unique_id','individual_id','FamilyID','MaternalID','Pater
 
 
 #n=1025 32 missing t2d 
-
+table(duplicated(raw.MGH$unique_id)) #0
 ####################### AFib MGH ##############################################
 ####################### AFib MGH ##############################################
 
@@ -1286,7 +1352,7 @@ raw.VUdaw <- raw.VUdaw[,c('unique_id','individual_id','FamilyID','MaternalID','P
                           'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                           'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=1134
-
+table(duplicated(raw.VUdaw$unique_id)) #0
 ####################### AFib VU ##############################################
 ####################### AFib VU ##############################################
 ####################### HVH part of AFib and VTE projects ##############################################
@@ -1338,7 +1404,7 @@ raw.HVH <- raw.HVH[,c('unique_id','individual_id','FamilyID','MaternalID','Pater
                       'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                       'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=708 3 missing t2d 
-
+table(duplicated(raw.HVH$unique_id)) #0
 ####################### HVH part of AFib and VTE projects ##############################################
 ####################### HVH part of AFib and VTE projects ##############################################
 
@@ -1380,32 +1446,32 @@ raw.HVH <- raw.HVH[,c('unique_id','individual_id','FamilyID','MaternalID','Pater
 # safs.ids = 2713 rows
 
 # -1: Subset map to remove any rows that do not have a submitted subject ID (these have most likely been NA'ed out by DCC during their QC and should not be included in analysis)
-safs.map <- map[!is.na(map$submitted_subject_id),]
+# safs.map <- map[!is.na(map$submitted_subject_id),]
+# 
+# # 1: Subset deidentified subject ids from SAFS by those deidentified subject ids that are in the map file (DCC)
+# safs.ids <- safs.ids[safs.ids$Deidentified.Subject %in% safs.map$submitted_subject_id,] # 1531 rows
+# 
+# # 2: Merge id file with ped file by deidentified subject id, keeping only those deidentified subject ids that are in the map file
+# safs <- merge(safs.ids, safs, by.x = "NWD.ID", by.y = "Individual_ID", all.x=T) #1531 rows
+# 
+# # 2.1: Check that we that we do not have duplicated NWD ids (this would signal an NWD id mapping to multiple deidentified subject ids, which would be bad.)
+# safs[duplicated(safs$NWD.ID),]
+# 
+# # [1] NWD.ID                Sample.ID             Deidentified.Subject  Mexam.Freeze.Number   Mexam.Revision.Number Family_ID             Mother_ID             Father_ID            
+# # [9] T2D                   Sex                   last_exam_age         last_exam_BMI         last_exam_FG          last_exam_HbA1c       last_exam_treatment   last_exam_visit      
+# # [17] T2D_age               T2D_BMI               Sequenced            
+# # <0 rows> (or 0-length row.names)
+# ########
+# 
+# #head(safs.ped)
+# CHANGED safs.ped to safs starting here
 
-# 1: Subset deidentified subject ids from SAFS by those deidentified subject ids that are in the map file (DCC)
-safs.ids <- safs.ids[safs.ids$Deidentified.Subject %in% safs.map$submitted_subject_id,] # 1531 rows
-
-# 2: Merge id file with ped file by deidentified subject id, keeping only those deidentified subject ids that are in the map file
-safs <- merge(safs.ids, safs, by.x = "NWD.ID", by.y = "Individual_ID", all.x=T) #1531 rows
-
-# 2.1: Check that we that we do not have duplicated NWD ids (this would signal an NWD id mapping to multiple deidentified subject ids, which would be bad.)
-safs[duplicated(safs$NWD.ID),]
-
-# [1] NWD.ID                Sample.ID             Deidentified.Subject  Mexam.Freeze.Number   Mexam.Revision.Number Family_ID             Mother_ID             Father_ID            
-# [9] T2D                   Sex                   last_exam_age         last_exam_BMI         last_exam_FG          last_exam_HbA1c       last_exam_treatment   last_exam_visit      
-# [17] T2D_age               T2D_BMI               Sequenced            
-# <0 rows> (or 0-length row.names)
-########
-
-#head(safs.ped)
-
-#CHANGED safs.ped to safs starting here
 names(safs)
 names(safs)[names(safs) == "Sequenced"] <- "sequenced"
 safs$JWsource = "dbGaP_Ex"
 
 # # recode & check variable names & distributions
-table(safs$sequenced,useNA='always') #n=78 not sequenced
+table(safs$sequenced,useNA='always') 
 
 # rename column for diabetes
 names(safs)[names(safs) == "T2D"] <- "t2d"
@@ -1418,37 +1484,67 @@ table(safs$Sex,useNA='always')
 safs$sex[safs$Sex == 1] = 'M'
 safs$sex[safs$Sex == 2] = 'F'
 with(safs,table(Sex,sex,useNA='always'))
+safs$last_exam_age = as.numeric(safs$last_exam_age)
 summary(safs$last_exam_age,useNA='always')
-#safs = subset(safs, last_exam_age >= 25) # 1021
-summary(safs$last_exam_BMI) # ! low BMI
-safs$last_exam_bmi = safs$last_exam_BMI
-safs$last_exam_fg = safs$last_exam_FG
+#safs = subset(safs, last_exam_age >= 25) 
+safs$last_exam_bmi = as.numeric(safs$last_exam_BMI)
+summary(safs$last_exam_bmi) # ! low BMI
+safs$last_exam_fg = as.numeric(safs$last_exam_FG)
 summary(safs$last_exam_fg)
-summary(safs$last_exam_HbA1c)
-safs$last_exam_hba1c = NA
-# ## variables are missing contacted MM 26JUL2017
+safs$last_exam_hba1c = as.numeric(safs$last_exam_HbA1c)
+summary(safs$last_exam_hba1c)
 table(safs$last_exam_treatment,useNA = 'always')
 safs$last_exam_t2d_treatment = safs$last_exam_treatment
-safs$t2d_age = safs$T2D_age
+safs$t2d_age = as.numeric(safs$T2D_age)
 summary(safs$t2d_age)
-safs$t2d_bmi = safs$T2D_BMI
+safs$t2d_bmi = as.numeric(safs$T2D_BMI)
+summary(safs$t2d_bmi)
+table(safs$t2d_bmi,useNA = 'always')
 table(safs$last_exam_visit,useNA = 'always')
-safs$FamilyID = safs$Family_ID
+safs$FamilyID = safs$Family.ID
 safs$PaternalID = safs$Father_ID
 safs$MaternalID = safs$Mother_ID
 
 safs$study = "SAFS"
-safs$unique_id <-  paste(safs$study,safs$Deidentified.Subject, sep = "_")
-safs$individual_id <- safs$Deidentified.Subject
+safs$unique_id <-  paste(safs$study,safs$Subject.ID..deID., sep = "_")
+safs$individual_id <- safs$Subject.ID..deID.
 safs$study_ancestry <- paste(safs$study,safs$ancestry, sep = "_")
 
 safs <- safs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
                 'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                 'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 
-# n=2459 591 missing t2d ??? #n=1868
+# n=4734
+table(duplicated(safs$unique_id)) #5
 
+# remove rows that are absolute duplicates
+safs.dups <- safs$unique_id[duplicated(safs$unique_id)]
+safs.final <- safs[!(safs$unique_id %in% safs.dups),]
+for (id in unique(safs.dups)){
+  my.rows <- safs[safs$unique_id == id,]
+  is_equal = T
+  for (col.id in seq(1,NCOL(my.rows))){
+    this.col <- my.rows[,col.id]
+    # change nas to some string
+    this.col[is.na(this.col)] <- "This is na"
+    
+    # see how many unique elements we ahve
+    nu <- length(unique(this.col)) > 1
+    
+    if (nu){
+      is_equal = F
+      break
+    }
+  }
+  if(is_equal){
+    safs.final <- rbind(safs.final,my.rows[1,])
+  } else {
+    safs.final <- rbind(safs.final,my.rows)
+  }
+}
 
+#n=4730; 1 individual is not eliminated!!
+table(duplicated(safs.final$unique_id)) #1
 
 ####################### SAS ##############################################
 ####################### SAS ##############################################
@@ -1460,7 +1556,7 @@ safs <- safs[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID'
 #sas2 <- sas[is.na(sas$T2D),]
 
 #n=8 with WGS 7 no phenotype
-
+names(sas)
 # recode & check variable names & distributions
 table(sas$sequenced,useNA='always')
 #   0    1 <NA> 
@@ -1478,18 +1574,19 @@ sas$origsex = sas$sex
 sas$sex[sas$sex == 1] = 'M'
 sas$sex[sas$sex == 2] = 'F'
 with(sas,table(origsex,sex,useNA='always'))
+sas$last_exam_age = as.numeric(sas$last_exam_age)
 summary(sas$last_exam_age)
 summary(sas$last_exam_BMI)
 sas$last_exam_bmi = sas$last_exam_BMI
-summary(sas$last_exam_BMI)
 sas$last_exam_fg = sas$last_exam_FG
 summary(sas$last_exam_fg)
 sas$last_exam_hba1c = NA
 sas$last_exam_t2d_treatment = sas$last_exam_T2D_treatment
 sas$t2d_age = sas$T2D_age
 summary(sas$T2D_age)
+summary(sas$T2D_BMI)
 sas$t2d_bmi = as.numeric(sas$T2D_BMI)
-table(sas$t2d_bmi)
+summary(sas$t2d_bmi)
 table(sas$last_exam_visit,useNA = 'always')
 sas$FamilyID = sas$Family_ID
 sas$PaternalID = sas$Father_ID
@@ -1506,7 +1603,7 @@ sas <- sas[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
               'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 
 #n=3470
-
+table(duplicated(sas$unique_id)) #0
 ####################### SAS ##############################################
 ####################### SAS ##############################################
 
@@ -1538,30 +1635,78 @@ whi <- whi[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
               'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
               'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
 #n=10938 2245 missing t2d ??? 
-
+table(duplicated(whi$unique_id)) #0
 ####################### WHI ##############################################
 ####################### WHI ##############################################
 
-# ##END OF RECODE
+# ##END OF RECODE TO STANDARDIZE VARIABLES ACROSS STUDIES FOR POOLING
 
 ########### CREATE POOLED DATASET ###########################
 # 
 # studies to add in future thrv, , 
-pooled <- rbind(afccaf,afp,afvub,amish,aric,cfs,chs,copd,dhs,fhs,genestar,genoa,
-                gensalt,goldn,hypergen,jhs,mesa,mesafam,raw.HVH,raw.MGH,raw.VUdaw,safs,sas,whi)
-#n=77209
+pooled <- rbind(afccaf,afp,afvub,amish,aric,cfs.final,chs,copd,dhs,fhs,genestar,genoa,
+                gensalt,goldn.final,hypergen,jhs,mesa,mesafam,raw.HVH,raw.MGH,raw.VUdaw,safs.final,sas,whi)
+#n=80377
+
+# # remove rows that are absolute duplicates
+# pooled.dups <- pooled$unique_id[duplicated(pooled$unique_id)]
+# unique(pooled.dups)
+# pooled.final <- pooled[!(pooled$unique_id %in% pooled.dups),]
+# for (id in unique(pooled.dups)){
+#   my.rows <- pooled[pooled$unique_id == id,]
+#   is_equal = T
+#   for (col.id in seq(1,NCOL(my.rows))){
+#     this.col <- my.rows[,col.id]
+#     # change nas to some string
+#     this.col[is.na(this.col)] <- "This is na"
+#     
+#     # see how many unique elements we ahve
+#     nu <- length(unique(this.col)) > 1
+#     
+#     if (nu){
+#       is_equal = F
+#       break
+#     }
+#   }
+#   if(is_equal){
+#     pooled.final <- rbind(pooled.final,my.rows[1,])
+#   } else {
+#     pooled.final <- rbind(pooled.final,my.rows)
+#   }
+# }
+# #n=80377 none removed
 
 table(pooled$t2d,useNA='always') 
 pooled$t2d[pooled$t2d == -9] = NA
 pooled$t2d[pooled$t2d == 9] = NA
 pooled$t2d[pooled$t2d == 'NA'] = NA
-table(pooled$t2d,useNA='always') #n=5758 missing t2d
-table(pooled$sex,useNA='always') #n=78 missing sex, probably SAFS??
-table(pooled$ancestry,useNA='always') #n=43 NA
-table(pooled$sequenced,useNA='always') #n=16672 NA
+table(pooled$t2d,useNA='always') #n=7423 missing t2d
+table(pooled$sex,useNA='always') #n=0 missing sex
+table(pooled$ancestry,useNA='always') #n=0 NA
+table(pooled$sequenced,useNA='always') #n=16563 NA
+pooled$unique_id2 = pooled$unique_id
 
-## CREATE NEW MERGE HERE JW 2MAR2018
+### JW added this bit to check for duplicates at the phenotype level 20MAR2018
+table(duplicated(pooled$unique_id))
+# FALSE  TRUE 
+# 80200   177
+table(is.na(pooled$unique_id)) #0
+table(duplicated(pooled$individual_id))
+# FALSE  TRUE 
+# 70601  9776
+table(is.na(pooled$individual_id)) #0
 
+pooled.dup <- pooled[duplicated(pooled$unique_id),]
+table(duplicated(pooled.dup$unique_id))
+table(duplicated(pooled.dup$individual_id))
+table(pooled.dup$study_ancestry, useNA = 'always')
+# CFS_AF  CFS_EU MESA_AF SAFS_HS    <NA> 
+#   2       3     171       1       0 
+# TOTAL N=177
+
+########################################
+
+## SET-UP MAP FILE FOR MERGING WITH POOLED PHENOTYPE DATA
 
 names(map) #n=54499
 #  [1] "sample.id"            "unique_subject_key"   "submitted_subject_id"
@@ -1571,18 +1716,9 @@ names(map) #n=54499
 # [13] "MZtwinID"             "keep"                 "unique.geno"
 # [16] "unique.subj"
 
-# n=289 have study unique identifier=NA but have a NWD id assigned, dropping these for now
-#map<-subset(map, (!is.na(map$unique_subject_key))) 
 
 # per Josee Dupuis, keep trios DEC 2017 !! 
 
-# n=54210
-# Variables to filter on
-#table(map$keep,useNA='always')
-#FALSE  TRUE  <NA> 
-#  375    54124 0 
-#map <- map[map$keep == "TRUE",]
-#n=54124 exclude n=375
 
 table(map$study,useNA='always')
 #       Amish        ARIC        BAGS        CCAF         CFS         CHS
@@ -1597,54 +1733,109 @@ table(map$study,useNA='always')
 #         452         608        1208         157        1024          99
 #         WHI   NA
 #       10047   76
-#map <- subset(map, study %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR','GENOA','GenSalt','GOLDN','HVH','HyperGEN',
-#                                'JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WHI'))
+#
+
+## checked freeze5b_duplicates_2018-01-10 for studies that overlap with the studies we use for T2D & traits; 
+## excluding the studies not used and dont have overlapping studies
+map <- subset(map, study %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR','GENOA','GenSalt','GOLDN','HVH','HyperGEN',
+                                'Mayo_VTE','JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WGHS','WHI')) #n=50372, drop 4127
 
 ## Create variables for final pooled file
 map$topmedid = map$sample.id
 
+# CHECK ####
+table(is.na(map$unique_subject_key)) 
+# FALSE  TRUE 
+# 50100   272
+table(is.na(map$sample.id)) #0
+table(is.na(map$submitted_subject_id)) 
+# FALSE  TRUE 
+# 50100   272
 
-# remove some columns
-# map <- subset(map,
-#               select=c("topmedid",
-#                        "sample.id",
-#                        "unique_subject_key",
-#                        "submitted_subject_id",
-#                        "consent", "sexchr.kary",
-#                        "topmed_phs", "study",
-#                        "topmed_project",
-#                        "CENTER",
-#                        "geno.cntl",
-#                        "TRIO.dups",
-#                        "MZtwinID",
-#                        "keep",
-#                        "unique.geno",
-#                        "unique.subj" )
-# )
-
-head(map)
-dim(map)
-# ask Alisa how we got to this??
-map <- map[which(!is.na(map$unique_subject_key) & !is.na(map$sample.id)),] #n=54210 drop 107
+map <- map[which(!is.na(map$unique_subject_key) & !is.na(map$sample.id)),] #n=50100 drop 272
 
 table(is.na(map$unique_subject_key))
 table(is.na(map$sample.id))
-#pooled2 = subset(pooled, sex == 'XXY')
 
+table(duplicated(map$unique_subject_key))
+# FALSE  TRUE 
+# 50035   65
+table(duplicated(map$submitted_subject_id))
+# FALSE  TRUE 
+# 46063  4037 
+table(duplicated(map$sample.id))
+# FALSE 
+# 50100 
+
+map.dup <- map[duplicated(map$unique_subject_key),]
+table(is.na(map.dup$unique_subject_key)) #0
+table(duplicated(map.dup$submitted_subject_id))
+# FALSE  TRUE 
+# 61       4
+table(map.dup$study,useNA = 'always')
+# COPDGene      FHS  GenSalt      HVH     SAFS      SAS     <NA> 
+#   10       10        4        2       29       10        0 
+table(map.dup$study,map.dup$unique_subject_key,useNA = 'always')
+map.dup2 <- map[duplicated(map$submitted_subject_id),]
+table(duplicated(map.dup2$unique_subject_key))
+# FALSE  TRUE 
+# 4031   6
+
+
+#########################################################
 # merge this map data with Pooled data
-fulldata <- merge(map,pooled,by.x=c('unique_subject_key'),by.y=c('unique_id'),all.x=TRUE) #n=54460
+fulldata <- merge(map,pooled,by.x=c('unique_subject_key'),by.y=c('unique_id'),all.x=TRUE) #n=50245; add 145 >!>!>
+
+table(is.na(fulldata$unique_subject_key)) #0
+table(is.na(fulldata$sample.id)) #0
+table(is.na(fulldata$unique_id2))
+# FALSE  TRUE 
+# 48552  1693 # delete these individuals??
+table(is.na(fulldata$individual_id))
+# FALSE  TRUE 
+# 48552  1693 
+
+## DELETE INDIVIDUALS WITH ABSOLUTELY NO PHENOTYPE DATA??
+#fulldata <- fulldata[!is.na(fulldata$unique_id2),] #n=48552
+# fulldata.na <- fulldata[is.na(fulldata$unique_id2),]
+# table(fulldata.na$study,useNA = 'always')
+# table(fulldata.na$t2d,useNA = 'always')
+#table(fulldata.na$JWsource,useNA = 'always')
+#summary(fulldata.na,useNA = 'always')
+
+### JW added this bit to check for duplicates at the merge level 20MAR2018
+table(duplicated(fulldata$unique_subject_key))
+# FALSE  TRUE 
+# 50035   210
+table(duplicated(fulldata$sample.id))
+# FALSE  TRUE 
+# 50100   145 ## we are creating duplicated NWD ids...
+table(duplicated(fulldata$individual_id))
+# FALSE  TRUE 
+# 44407  5838
+fulldata.dup <- fulldata[duplicated(fulldata$unique_subject_key),]
+table(duplicated(fulldata.dup$sample.id))
+# FALSE  
+# 210     
+table(duplicated(fulldata.dup$individual_id))
+# FALSE  TRUE 
+# 206     4 
+table(fulldata.dup$study, useNA = 'always')
+
+# COPDGene      FHS  GenSalt      HVH     MESA     SAFS      SAS     <NA> 
+#   10       10        4        2      145       29       10        0 
+# WTF?
+########################################
+
 
 # check for sex discordance
-print(table(fulldata$sex.x,fulldata$sex.y,useNA='always')) #n=18 discordant for sex
-
+print(table(fulldata$sex.x,fulldata$sex.y,useNA='always')) #n=1 discordant for sex
+wtfsex <- fulldata[which(fulldata$sex.x == 'F' & fulldata$sex.y == 'M'),]
+table(wtfsex$study) #SAFS
 # remove discordant sex here
-fulldata <- subset(fulldata, sex.x == sex.y | is.na(sex.x) | is.na(sex.y)) #n=54442
-
+fulldata <- subset(fulldata, sex.x == sex.y | is.na(sex.x) | is.na(sex.y)) #n=50244
 table(fulldata$t2d) # no missing
-table(fulldata$ancestry,useNA = 'always') #n=5796
-fulldatana = fulldata[which(is.na(fulldata$ancestry)),]
-table(fulldatana$study)
-head(fulldatana)
+table(fulldata$ancestry,useNA = 'always') #n=1693
 
 #table(MAP=fulldata$sex.x,POOLED=fulldata$sex.y,T2D=fulldata$t2d,useNA = "always")
 
@@ -1690,7 +1881,7 @@ fulldata$study_ancestry_AFib[fulldata$study_ancestry == "FHS_EU"] = "FHS_EU"
 fulldata$study_ancestry_AFib[fulldata$study_ancestry == "JHS_AF"] = "JHS_AF"
 fulldata$study_ancestry_AFib[fulldata$study_ancestry == "SAS_AS"] = "SAS_AS"
 with(fulldata,table(study_ancestry,study_ancestry_AFib,useNA='always'))
-table(fulldata$ancestry,useNA = 'always') 
+table(fulldata$t2d,useNA = 'always') #n=4754
 
 # write.csv(fulldata,row.names=F,quote=F,file=paste(out.pref,"/",'FULLDATA_Test_T2D_15MAR2018.csv',sep=""))
 write.csv(fulldata,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.csv',sep=""))
