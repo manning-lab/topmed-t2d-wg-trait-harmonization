@@ -13,11 +13,18 @@ head(fulldata)
 
 ## Restrict to people with age < 25
 print("Before removing people with age<25")
-table(fulldata$t2d,AGE_less_than_25=fulldata$last_exam_age < 25,useNA='always')
-fulldata$t2d_noagerestriction <- fulldata$t2d
-fulldata$t2d[which(fulldata$last_exam_age < 25)] <- NA
+table(fulldata$t2d,AGE_test=fulldata$t2d_age >= 25 | is.na(fulldata$t2d_age),useNA='always')
+
+
+## APPLY EXCLUSIONS
+summary(fulldata$t2d_age)
+fulldata = fulldata[(fulldata$t2d_age >= 25 | is.na(fulldata$t2d_age)),]
+
+summary(fulldata$last_exam_age)
+fulldata = subset(fulldata, last_exam_age >= 25) 
+
 print("After removing people with age<25")
-table(fulldata$t2d,AGE_less_than_25=fulldata$last_exam_age < 25,useNA='always')
+table(fulldata$t2d,AGE_test=fulldata$t2d_age >= 25 | is.na(fulldata$t2d_age),useNA='always')
 
 ##  !!  NEED TO CREATE THESE VARIABLES !!  ##
 ## t2d_ctrl t2d_superctrl
