@@ -49,7 +49,7 @@ spinner $!
 echo "Done!"
 
 (R --vanilla --args $1 $2.$user.$curdate topmedid $2.$user.$curdate.removed.IDs.csv $3 < Freeze5b.T2D.PostProcessing.GitHub.R >> $1/harm.stdout 2>&1) &
-echo "Running duplicates script" 
+echo "Running postprocessing script" 
 spinner $! 
 echo "Done!"
 
