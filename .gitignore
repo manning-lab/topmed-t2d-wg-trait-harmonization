@@ -25,3 +25,5 @@
 *.PED*
 
 
+.Rproj.user
+*Rproj
