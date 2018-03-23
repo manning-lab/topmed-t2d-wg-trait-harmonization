@@ -15,6 +15,7 @@ head(fulldata)
 print("Before removing people with age<25")
 table(fulldata$t2d,AGE_test=fulldata$t2d_age >= 25 | is.na(fulldata$t2d_age),useNA='always')
 
+# March 22
 
 ## APPLY EXCLUSIONS
 summary(fulldata$t2d_age)
