@@ -23,6 +23,6 @@
 *.Rdata*
 *.RDa*
 *.PED*
-
+*.Rhistory
 *Rproj
 .Rproj.user
