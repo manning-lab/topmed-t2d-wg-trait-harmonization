@@ -29,6 +29,8 @@ source("gly_traits_harmonization_021318_filepaths.R")
 # source(source.file)
 dat <- get_pheno_data(f.dir)
 
+# Check for duplicate subject IDs
+
 # get data to the right variable names to match script
 linker <- dat$linker 
 fhs <- dat$fhs
