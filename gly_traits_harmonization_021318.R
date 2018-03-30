@@ -171,7 +171,7 @@ fhs<-fhs[,c("TOPMEDID" ,              "Individual_ID",          "Family_ID" ,
 "TRIO.dups"            , "STUDY_TOPMEDID"        ,
 "STUDY_ANCESTRY", "sex.linker")]
 
-
+table(duplicated(fhs$Individual_ID))###10
 ped.final <- rbind(ped.final,fhs)
 ############################## FHS ##############################
 ############################## FHS ##############################
@@ -220,7 +220,7 @@ jhs$FastingGlucose<-ifelse(jhs$FastingGlucose>=7&jhs$T2D_FG==1,NA,jhs$FastingGlu
 ####set A1C>7 to NA
 jhs$HbA1c<-ifelse(jhs$HbA1c>=6.5&jhs$T2D_HbA1c==1,NA,jhs$HbA1c)
 
-
+table(duplicated(jhs$Individual_ID))###0
 ped.final <- rbind(ped.final,jhs)
 ############################## JHS ##############################
 ############################## JHS ##############################
@@ -276,7 +276,7 @@ for (j in 1:nrow(sas)){
 	sas$FastingInsulin[j]<-ifelse(sas$T2D_FI[j]==2,NA,sas$FastingInsulin[j])
 	}	
 
-
+table(duplicated(sas$Individual_ID))###10
 ped.final <- rbind(ped.final,sas)
 ############################## SAS ##############################
 ############################## SAS ##############################
@@ -345,7 +345,7 @@ for (j in 1:nrow(cfs)){
 cfs$FastingGlucose<-ifelse(cfs$FastingGlucose>=7&cfs$T2D_FG==1,NA,cfs$FastingGlucose)
 ####set A1C>7 to NA
 cfs$HbA1c<-ifelse(cfs$HbA1c>=6.5&cfs$T2D_HbA1c==1,NA,cfs$HbA1c)
-
+table(duplicated(cfs$Individual_ID))###0
 ped.final <- rbind(ped.final,cfs)
 ############################## CFS ##############################
 ############################## CFS ##############################
@@ -439,6 +439,7 @@ amish$FastingGlucose<-ifelse(amish$FastingGlucose>=7&amish$T2D_FG==1,NA,amish$Fa
 amish$HbA1c<-ifelse(amish$HbA1c>=6.5&amish$T2D_HbA1c==1,NA,amish$HbA1c)
 
 # amish$sex.y <- ifelse(amish$sex.y == 1, "M", "F")
+table(duplicated(amish$Individual_ID))###0
 ped.final <- rbind(ped.final,amish)
 ############################## Amish ##############################
 ############################## Amish ##############################
@@ -517,6 +518,7 @@ gensalt$HbA1c<-ifelse(gensalt$HbA1c>=6.5&gensalt$T2D_HbA1c==1,NA,gensalt$HbA1c)
 # gensalt$sex.y <- ifelse(gensalt$sex.y== 1, "M", "F")
 table(gensalt$sex,useNA="always")
 
+table(duplicated(gensalt$Individual_ID))###4
 ped.final <- rbind(ped.final,gensalt)
 ############################## Gensalt ##############################
 ############################## Gensalt ##############################
@@ -628,6 +630,7 @@ aric_aa$HbA1c<-ifelse(aric_aa$HbA1c>=6.5&aric_aa$T2D_HbA1c==1,NA,aric_aa$HbA1c)
 
 aric<-rbind(aric_ea,aric_aa)
 table(aric$sex)
+table(duplicated(aric$Individual_ID))###0
 ped.final <- rbind(ped.final,aric)
 ############################## ARIC ##############################
 ############################## ARIC ##############################
@@ -842,6 +845,7 @@ whi_aa$HbA1c<-ifelse(whi_aa$HbA1c>=6.5&whi_aa$T2D_HbA1c==1,NA,whi_aa$HbA1c)
 
 whi<-rbind(whi_ha,whi_aa,whi_ea,whi_as)
 table(whi$sex)
+table(duplicated(whi$Individual_ID))###0
 ped.final <- rbind(ped.final,whi)
 ############################## WHI ##############################
 ############################## WHI ##############################
@@ -975,6 +979,7 @@ gs_ea$HbA1c<-ifelse(gs_ea$HbA1c>=6.5&gs_ea$T2D_HbA1c==1,NA,gs_ea$HbA1c)
 
 gs<-rbind(gs_ea,gs_aa)
 table(gs$sex)
+table(duplicated(gs$Individual_ID))###0
 ped.final <- rbind(ped.final,gs)
 ############################## Genestar ##############################
 ############################## Genestar ##############################
@@ -1048,6 +1053,7 @@ chs$FastingGlucose<-ifelse(chs$FastingGlucose>=7&chs$T2D_FG==1,NA,chs$FastingGlu
 ####set A1C>7 to NA
 chs$HbA1c<-ifelse(chs$HbA1c>=6.5&chs$T2D_HbA1c==1,NA,chs$HbA1c)
 table(chs$sex)
+table(duplicated(chs$Individual_ID))####0
 ped.final <- rbind(ped.final,chs)
 ############################## CHS ##############################
 ############################## CHS ##############################
@@ -1272,6 +1278,7 @@ mesa_aa$HbA1c<-ifelse(mesa_aa$HbA1c>=6.5&mesa_aa$T2D_HbA1c==1,NA,mesa_aa$HbA1c)
 
 mesa<-rbind(mesa_ha,mesa_aa,mesa_ea,mesa_sa)
 table(mesa$sex,useNA="always")
+table(duplicated(mesa$Individual_ID))###0
 ped.final <- rbind(ped.final,mesa)
 ############################## MESA ##############################
 ############################## MESA ##############################
@@ -1338,6 +1345,7 @@ genoa$FastingGlucose<-ifelse(genoa$FastingGlucose>=7&genoa$T2D_FG==1,NA,genoa$Fa
 genoa$HbA1c<-ifelse(genoa$HbA1c>=6.5&genoa$T2D_HbA1c==1,NA,genoa$HbA1c)
 
 table(genoa$sex)
+table(duplicated(genoa$Individual_ID))###0
 ped.final <- rbind(ped.final,genoa)
 ############################## Genoa ##############################
 ############################## Genoa ##############################
