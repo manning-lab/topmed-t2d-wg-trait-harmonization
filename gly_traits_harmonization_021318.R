@@ -13,8 +13,8 @@
 # mesa
 # genoa
 # safs
-#goldn
-
+# goldn
+# hypergen
 
 
 args <- commandArgs(trailingOnly=T)
