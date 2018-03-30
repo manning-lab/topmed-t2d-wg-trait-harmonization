@@ -350,7 +350,7 @@ if(length(args) == 5) {
     
     removed_TRAIT <- rbind(removed1_TRAIT, removed2_TRAIT)
     
-    write.table(removed_TRAIT, paste(f.dir,"/",out.pref,".removed.IDs.txt",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+    write.table(removed_TRAIT, paste(f.dir,"/",out.pref,".removed.IDs.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
     }
 }
 

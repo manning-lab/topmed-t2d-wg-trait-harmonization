@@ -33,18 +33,23 @@ echo "output file prefix : $2.$user.$curdate"
 echo "Desired trait to removed duplicates : $3"
 echo "\n"
 
-echo "harmonization:\n" > $1/harm.stdout
+echo "harmonization:\n" > $1/$2.$user.$curdate.harm.stdout.txt
 # make the pooled trait file
-(R --vanilla --args $1 $2.$user.$curdate < Harmonization.7MAR2018.GitHub.V2.R >> $1/harm.stdout 2>&1) &
+(R --vanilla --args $1 $2.$user.$curdate < Freeze5b.T2D.Harmonization.GitHub.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
 echo "Running harmonization" 
 spinner $! 
 echo "Done!"
 echo "\n"
 
-echo "\nduplicates:\n" >> $1/harm.stdout
+echo "\nduplicates:\n" >> $1/$2.$user.$curdate.harm.stdout.txt
 
-(R --vanilla --args $1 $2.$user.$curdate topmedid $2.$user.$curdate.csv $3 < duplicates_v2_TM_022218.R >> $1/harm.stdout 2>&1) &
+(R --vanilla --args $1 $2.$user.$curdate topmedid $2.$user.$curdate.csv $3 < duplicates_v2_TM_022218.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
 echo "Running duplicates script" 
+spinner $! 
+echo "Done!"
+
+(R --vanilla --args $1 $2.$user.$curdate topmedid $2.$user.$curdate.no.duplicates.csv $3 < Freeze5b.T2D.PostProcessing.GitHub.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
+echo "Running postprocessing script" 
 spinner $! 
 echo "Done!"
 

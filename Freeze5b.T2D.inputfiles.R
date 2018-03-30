@@ -38,9 +38,9 @@ get_pheno_data <- function(f.dir){
   VU.pedigree <- paste(f.dir, "phs001032.v3.pht007135.v1.p2.TOPMed_WGS_VUH_AF_Pedigree.MULTI.txt", sep="/")
   
   
- 
+  
   safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170519_T2D.txt',sep="/")
-
+  
   #safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
   sas.file <- paste(f.dir, "SAS_LIULIN_20170212_T2D.ped", sep="/")
   
