@@ -28,7 +28,9 @@ get_pheno_data <- function(f.dir){
 	#Add SAFS file
   #	safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170721_glycemic_traits.ped.csv',sep="/")
   #	safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
-  
+	goldn.file<- paste(f.dir,"GOLDN_Glycemic_20180312_SA.xlsx",sep="/")
+	hg.file<- paste(f.dir,"HyperGEN_Topmed_Phenotype_Harmonization_Glycemic_Traits.xlsx",sep="/")
+	
 
 	# load all the data
 	linker <- read.table(linker.file, header=T)
@@ -56,5 +58,7 @@ get_pheno_data <- function(f.dir){
 	genoa<-read.table(genoa.file,header=T,fill=T,sep='\t',na.strings=" ")
 #	safs = read.csv(safs.file, header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
 #  	safs.ids <- read.csv(safs.ids.file, header=T,sep=',',as.is=TRUE)
+	goldn<-read.xlsx(goldn.file,1)	
+	hg<-read.xlsx(hg.file,1)	
 	sapply(ls(),function(x)get(x),simplify=F,USE.NAMES=T)
 }
