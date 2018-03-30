@@ -59,6 +59,12 @@ mesa_aa <- dat$mesa_aa
 genoa <- dat$genoa
 #safs <- dat$safs
 #safs.ids <- dat$safs.ids
+goldn<-dat$goldn
+hg<-dat$hg
+
+
+
+
 
 table(dat$fhs$sex)
 table(dat$jhs$sex)
@@ -104,7 +110,8 @@ table(dat$mesa_ea$Sex)
 table(dat$mesa_sa$Sex)
 table(dat$mesa_aa$Sex)
 table(dat$genoa$sex)
-
+table(dat$goldn$Sex)
+table(dat$hg$Sex)
 rm(dat)
 
 # make final dataframe
@@ -1461,6 +1468,87 @@ ped.final <- rbind(ped.final,safs.ped)
 
 ############################## SAFS ##############################
 ############################## SAFS ##############################
+
+############################## GOLDN ##############################
+############################## GOLDN ##############################
+goldn<-merge(goldn,linker[which(linker$study=='GOLDN'),],by.x='subject_id',by.y="submitted_subject_id")
+
+colnames(goldn)[which(colnames(goldn)=="sample.id")]<-"TOPMEDID"
+###remove other columns
+goldn<-goldn[,-c(2,3,4,5,6)]
+colnames(goldn)[which(colnames(goldn)=="Sex")]<-"sex"
+colnames(goldn)[which(colnames(goldn)=="subject_id")]<-"Individual_ID"
+colnames(goldn)[which(colnames(goldn)=="FastingGlucose.mg.dL.")]<-"FastingGlucose"
+colnames(goldn)[which(colnames(goldn)=="Fasting_Insulin.mUL.")]<-"FastingInsulin"
+colnames(goldn)[which(colnames(goldn)=="DIAB_Status_Final")]<-"T2D"
+###change the unit of FG
+goldn$FastingGlucose<-as.character(goldn$FastingGlucose)
+goldn$FastingGlucose<-as.numeric(goldn$FastingGlucose)
+goldn$FastingGlucose<-goldn$FastingGlucose/18
+
+goldn$STUDY_TOPMEDID<-paste("GOLDN",goldn$TOPMEDID,sep="_")
+goldn$STUDY_ANCESTRY<-"GOLDN_SA"
+
+
+a<-names(fhs)[!names(fhs)%in%names(goldn)]
+for(j in 1:length(a))
+  
+{
+  goldn[,a[j]]<-NA
+}
+goldn<-goldn[,names(fhs)]
+###change class of ID column
+goldn$Individual_ID<-as.character(goldn$Individual_ID)
+goldn$Individual_ID<-as.factor(goldn$Individual_ID)
+####set NA to be -9 in T2D column
+goldn[371,'T2D']<-(-9)
+table(goldn$sex)
+table(duplicated(goldn$Individual_ID))###0
+ped.final <- rbind(ped.final,goldn)
+
+############################## GOLDN ##############################
+############################## GOLDN ##############################
+
+############################## HYPERGEN ##############################
+############################## HYPERGEN ##############################
+hg<-hg[-c(1),]
+hg<-merge(hg,linker[which(linker$study=='HyperGEN'),],by.x='SampleID..Subject_ID.',by.y="submitted_subject_id")
+
+colnames(hg)[which(colnames(hg)=="sample.id")]<-"TOPMEDID"
+hg<-hg[,-c(2,8,9)]
+colnames(hg)[which(colnames(hg)=="Sex")]<-"sex"
+colnames(hg)[which(colnames(hg)=="SampleID..Subject_ID.")]<-"Individual_ID"
+colnames(hg)[which(colnames(hg)=="T2D.Status")]<-"T2D"
+colnames(hg)[which(colnames(hg)=="age_FG.age_FI")]<-"age_FG"
+colnames(hg)[which(colnames(hg)=="BMI_FG.BMI_FI")]<-"BMI_FG"
+colnames(hg)[which(colnames(hg)=="WGS.Sequenced")]<-"sequenced"
+hg$age_FI<-hg$age_FG
+hg$BMI_FI<-hg$BMI_FG
+
+hg$FastingGlucose<-as.character(hg$FastingGlucose)
+hg$FastingGlucose<-as.numeric(hg$FastingGlucose)
+hg$FastingGlucose<-hg$FastingGlucose/18
+hg$STUDY_TOPMEDID<-paste("HyperGEN",hg$TOPMEDID,sep="_")
+hg$STUDY_ANCESTRY<-"HyperGEN_NA"
+
+b<-names(fhs)[!names(fhs)%in%names(hg)]
+for(j in 1:length(b))
+  
+{
+  hg[,b[j]]<-NA
+}
+
+hg<-hg[,names(fhs)]
+
+
+table(hg$sex)
+table(duplicated(hg$Individual_ID))###0
+ped.final <- rbind(ped.final,hg)
+
+
+
+############################## HYPERGEN ##############################
+############################## HYPERGEN ##############################
 
 
 
