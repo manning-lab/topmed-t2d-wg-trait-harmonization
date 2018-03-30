@@ -1558,6 +1558,64 @@ ped.final <- rbind(ped.final,hg)
 ############################## HYPERGEN ##############################
 ############################## HYPERGEN ##############################
 
+############################## SAFS ##############################
+############################## SAFS ##############################
+#safs<-read.csv("/restricted/projectnb/glycemic/peitao/phenotype_harmonization/all_ped/SAFSCVD_HA_MAHANEY_20170519_glycemic_traits.csv",header=T,as.is=T)
+
+#linker<-read.table("/restricted/projectnb/sequencing/topMed/data/freeze_5b/all_topmed/sample_annotation/sample_sets_2017-12-01/freeze5b_sample_annot_2017-12-01.txt",header=T)
+#linker<-linker[which(linker$study=='SAFS'),]
+
+safs<-merge(safs,linker[which(linker$study=='SAFS'),],by.x='Individual_ID',by.y="submitted_subject_id")
+colnames(safs)[which(colnames(safs)=="sample.id")]<-"TOPMEDID"
+#colnames(safs)[which(colnames(safs)=="sex")]<-"sex.y"
+colnames(safs)[which(colnames(safs)=="Sex")]<-"sex"
+colnames(safs)[which(colnames(safs)=="Family.ID")]<-"Family_ID"
+colnames(safs)[which(colnames(safs)=="Family.ID")]<-"Family_ID"
+colnames(safs)[which(colnames(safs)=="Age_FG")]<-"age_FG"
+colnames(safs)[which(colnames(safs)=="Age.FI")]<-"age_FI"
+colnames(safs)[which(colnames(safs)=="Sequenced")]<-"sequenced"
+#p0<-read.table("/restricted/projectnb/glycemic/peitao/phenotype_harmonization/pooled_analysis/Pooled_Glycemic_Traits_freeze5_duplicate_ID_20180321.ped",header=T,as.is=T)
+c<-names(fhs)[!names(fhs)%in%names(safs)]
+for(j in 1:length(c))
+  
+{
+  safs[,c[j]]<-NA
+}
+
+safs<-safs[,names(fhs)]
+
+table(safs$T2D,useNA="always")
+table(safs$T2D_FG,useNA="always")
+table(safs$T2D_FI,useNA="always")
+table(safs$T2D_HbA1c,useNA="always")
+
+
+for (j in 1:nrow(safs)){
+  safs$FastingGlucose[j]<-ifelse(safs$T2D_FG[j]==2,NA,safs$FastingGlucose[j])
+}
+for (j in 1:nrow(safs)){
+  safs$FastingInsulin[j]<-ifelse(safs$T2D_FI[j]==2,NA,safs$FastingInsulin[j])
+}	
+
+### set FG to NA if FastingGlucose>=7&T2D_FG==1
+safs$FastingGlucose<-ifelse(safs$FastingGlucose>=7&safs$T2D_FG==1,NA,safs$FastingGlucose)
+####set A1C>7 to NA
+safs$HbA1c<-ifelse(safs$HbA1c>=6.5&safs$T2D_HbA1c==1,NA,safs$HbA1c)
+
+table(safs$sex)
+table(duplicated(safs$Individual_ID))###29
+ped.final <- rbind(ped.final,safs)
+
+
+
+############################## SAFS ##############################
+############################## SAFS ##############################
+
+
+
+
+
+
 
 
 
