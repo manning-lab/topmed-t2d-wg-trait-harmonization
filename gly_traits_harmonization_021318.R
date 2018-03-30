@@ -61,7 +61,7 @@ genoa <- dat$genoa
 #safs.ids <- dat$safs.ids
 goldn<-dat$goldn
 hg<-dat$hg
-
+safs<-dat$safs
 
 
 
@@ -112,6 +112,7 @@ table(dat$mesa_aa$Sex)
 table(dat$genoa$sex)
 table(dat$goldn$Sex)
 table(dat$hg$Sex)
+table(dat$safs$Sex)
 rm(dat)
 
 # make final dataframe
