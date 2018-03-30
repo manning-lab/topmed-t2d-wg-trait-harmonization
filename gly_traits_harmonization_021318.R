@@ -13,6 +13,9 @@
 # mesa
 # genoa
 # safs
+#goldn
+
+
 
 args <- commandArgs(trailingOnly=T)
 f.dir <- args[1]
