@@ -1472,7 +1472,7 @@ ped.final <- rbind(ped.final,genoa)
 # safs.ped$HbA1c<-ifelse(safs.ped$HbA1c>=6.5&safs.ped$T2D_HbA1c==1,NA,safs.ped$HbA1c)
 
 # table(safs.ped)
-ped.final <- rbind(ped.final,safs.ped)
+#ped.final <- rbind(ped.final,safs.ped)
 
 
 ############################## SAFS ##############################
