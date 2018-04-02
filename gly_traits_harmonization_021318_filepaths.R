@@ -1,7 +1,7 @@
 # LOADING SOURCE FILES FOR GLY PHENO HARMONIZATION
 # NOTE : you need to organize all of these files into a single directory. The input is then the absolutely path (ex: /User/username/Documents/.../gly_phenotype_files/) to that folder
 get_pheno_data <- function(f.dir){
-	
+	library(openxlsx)
 	# define file paths
 	linker.file <- paste(f.dir, "freeze5b_sample_annot_2017-12-01.txt", sep="/")
 	fhs.file <- paste(f.dir, "FHS_glycemicTraits_20170214_CS.ped", sep="/")
