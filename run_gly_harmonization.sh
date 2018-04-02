@@ -33,17 +33,17 @@ echo "output file prefix : $2.$user.$curdate"
 echo "Desired trait to removed duplicates : $3"
 echo "\n"
 
-echo "harmonization:\n" > $1/harm.stdout
+echo "harmonization:\n" > $1/$2.$user.$curdate.harm.stdout.txt
 # make the pooled trait file
-(R --vanilla --args $1 $2.$user.$curdate < gly_traits_harmonization_021318.R >> $1/harm.stdout 2>&1) &
+(R --vanilla --args $1 $2.$user.$curdate < gly_traits_harmonization_021318.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
 echo "Running harmonization" 
 spinner $! 
 echo "Done!"
 echo "\n"
 
-echo "\nduplicates:\n" >> $1/harm.stdout
+echo "\nduplicates:\n" >> $1/$2.$user.$curdate.harm.stdout.txt
 
-(R --vanilla --args $1 $2.$user.$curdate TOPMEDID $2.$user.$curdate.csv $3 < duplicates_v2_TM_022218.R >> $1/harm.stdout 2>&1) &
+(R --vanilla --args $1 $2.$user.$curdate TOPMEDID $2.$user.$curdate.csv $3 < duplicates_v2_TM_022218.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
 echo "Running duplicates script" 
 spinner $! 
 echo "Done!"
@@ -53,4 +53,4 @@ echo "harmonized phenotypes with duplicates : $1/$2.$user.$curdate.csv" >> $1/$2
 echo "harmonized phenotypes without duplicates : $1/$2.$user.$curdate.no.duplicates.csv" >> $1/$2.$user.$curdate.log
 echo "list of NWD ids that were removed : $1/$2.$user.$curdate.removed.IDs.txt" >> $1/$2.$user.$curdate.log
 echo "duplicates info table : $1/$2.$user.$curdate.duplicates.txt" >> $1/$2.$user.$curdate.log
-echo "stdout and stderr file : $1/harm.stdout" >> $1/$2.$user.$curdate.log
+echo "stdout and stderr file : $1/$2.$user.$curdate.harm.stdout.txt" >> $1/$2.$user.$curdate.log
