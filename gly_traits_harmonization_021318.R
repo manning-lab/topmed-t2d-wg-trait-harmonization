@@ -1575,6 +1575,8 @@ colnames(safs)[which(colnames(safs)=="Family.ID")]<-"Family_ID"
 colnames(safs)[which(colnames(safs)=="Age_FG")]<-"age_FG"
 colnames(safs)[which(colnames(safs)=="Age.FI")]<-"age_FI"
 colnames(safs)[which(colnames(safs)=="Sequenced")]<-"sequenced"
+safs$STUDY_TOPMEDID<-paste("SAFS",safs$TOPMEDID,sep="_")
+safs$STUDY_ANCESTRY<-"SAFS_HA"
 #p0<-read.table("/restricted/projectnb/glycemic/peitao/phenotype_harmonization/pooled_analysis/Pooled_Glycemic_Traits_freeze5_duplicate_ID_20180321.ped",header=T,as.is=T)
 c<-names(fhs)[!names(fhs)%in%names(safs)]
 for(j in 1:length(c))
