@@ -1520,17 +1520,17 @@ ped.final <- rbind(ped.final,goldn)
 
 ############################## HYPERGEN ##############################
 ############################## HYPERGEN ##############################
-hg<-hg[-c(1),]
-hg<-merge(hg,linker[which(linker$study=='HyperGEN'),],by.x='SampleID..Subject_ID.',by.y="submitted_subject_id")
+#hg<-hg[-c(1),]
+hg<-merge(hg,linker[which(linker$study=='HyperGEN'),],by.x='SampleID (Subject_ID)',by.y="submitted_subject_id")
 
 colnames(hg)[which(colnames(hg)=="sample.id")]<-"TOPMEDID"
 hg<-hg[,-c(2,8,9)]
 colnames(hg)[which(colnames(hg)=="Sex")]<-"sex"
-colnames(hg)[which(colnames(hg)=="SampleID..Subject_ID.")]<-"Individual_ID"
-colnames(hg)[which(colnames(hg)=="T2D.Status")]<-"T2D"
-colnames(hg)[which(colnames(hg)=="age_FG.age_FI")]<-"age_FG"
-colnames(hg)[which(colnames(hg)=="BMI_FG.BMI_FI")]<-"BMI_FG"
-colnames(hg)[which(colnames(hg)=="WGS.Sequenced")]<-"sequenced"
+colnames(hg)[which(colnames(hg)=="SampleID (Subject_ID)")]<-"Individual_ID"
+colnames(hg)[which(colnames(hg)=="T2D Status")]<-"T2D"
+colnames(hg)[which(colnames(hg)=="age_FG/age_FI")]<-"age_FG"
+colnames(hg)[which(colnames(hg)=="BMI_FG/BMI_FI")]<-"BMI_FG"
+colnames(hg)[which(colnames(hg)=="WGS Sequenced")]<-"sequenced"
 hg$age_FI<-hg$age_FG
 hg$BMI_FI<-hg$BMI_FG
 
@@ -1538,7 +1538,7 @@ hg$FastingGlucose<-as.character(hg$FastingGlucose)
 hg$FastingGlucose<-as.numeric(hg$FastingGlucose)
 hg$FastingGlucose<-hg$FastingGlucose/18
 hg$STUDY_TOPMEDID<-paste("HyperGEN",hg$TOPMEDID,sep="_")
-hg$STUDY_ANCESTRY<-"HyperGEN_NA"
+hg$STUDY_ANCESTRY<-"HyperGEN_AF"
 
 b<-names(fhs)[!names(fhs)%in%names(hg)]
 for(j in 1:length(b))

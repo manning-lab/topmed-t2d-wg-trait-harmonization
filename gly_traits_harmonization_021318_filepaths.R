@@ -29,7 +29,7 @@ get_pheno_data <- function(f.dir){
   #	safs.file <- paste(f.dir,'SAFSCVD_HA_MAHANEY_20170721_glycemic_traits.ped.csv',sep="/")
   #	safs.ids.file <- paste(f.dir,"SAFSCVD_PERALTA_09262017_nwd_mappingtable.csv",sep="/")
 	goldn.file<- paste(f.dir,"GOLDN_Glycemic_20180312_SA.xlsx",sep="/")
-	hg.file<- paste(f.dir,"HyperGEN_Topmed_Phenotype_Harmonization_Glycemic_Traits.xlsx",sep="/")
+	hg.file<- paste(f.dir,"HyperGEN_Topmed_Phenotype_Harmonization_Glycemic_Traits.csv",sep="/")
 	safs.file<-paste(f.dir,"SAFSCVD_HA_MAHANEY_20170519_glycemic_traits.csv",sep="/")
 
 	# load all the data
@@ -59,7 +59,8 @@ get_pheno_data <- function(f.dir){
 #	safs = read.csv(safs.file, header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
 #  	safs.ids <- read.csv(safs.ids.file, header=T,sep=',',as.is=TRUE)
 	goldn<-read.xlsx(goldn.file,1)	
-	hg<-read.xlsx(hg.file,1)	
+	hg<-read.csv(hg.file,skip=1,header=T)
+	colnames(hg) <- scan(hg.file,what="character",nlines=1,sep=",")
 	safs<-read.csv(safs.file,header=T,as.is=T)
 	sapply(ls(),function(x)get(x),simplify=F,USE.NAMES=T)
 }
