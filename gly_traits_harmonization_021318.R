@@ -13,6 +13,9 @@
 # mesa
 # genoa
 # safs
+# goldn
+# hypergen
+
 
 args <- commandArgs(trailingOnly=T)
 f.dir <- args[1]
@@ -28,6 +31,8 @@ out.pref <- args[2]
 source("gly_traits_harmonization_021318_filepaths.R")
 # source(source.file)
 dat <- get_pheno_data(f.dir)
+
+# Check for duplicate subject IDs
 
 # get data to the right variable names to match script
 linker <- dat$linker 
@@ -52,8 +57,14 @@ mesa_ea <- dat$mesa_ea
 mesa_sa <- dat$mesa_sa
 mesa_aa <- dat$mesa_aa
 genoa <- dat$genoa
-safs <- dat$safs
-safs.ids <- dat$safs.ids
+#safs <- dat$safs
+#safs.ids <- dat$safs.ids
+goldn<-dat$goldn
+hg<-dat$hg
+safs<-dat$safs
+
+
+
 
 table(dat$fhs$sex)
 table(dat$jhs$sex)
@@ -99,7 +110,9 @@ table(dat$mesa_ea$Sex)
 table(dat$mesa_sa$Sex)
 table(dat$mesa_aa$Sex)
 table(dat$genoa$sex)
-
+table(dat$goldn$Sex)
+table(dat$hg$Sex)
+table(dat$safs$Sex)
 rm(dat)
 
 # make final dataframe
@@ -159,7 +172,7 @@ fhs<-fhs[,c("TOPMEDID" ,              "Individual_ID",          "Family_ID" ,
 "TRIO.dups"            , "STUDY_TOPMEDID"        ,
 "STUDY_ANCESTRY", "sex.linker")]
 
-
+table(duplicated(fhs$Individual_ID))###10
 ped.final <- rbind(ped.final,fhs)
 ############################## FHS ##############################
 ############################## FHS ##############################
@@ -208,7 +221,7 @@ jhs$FastingGlucose<-ifelse(jhs$FastingGlucose>=7&jhs$T2D_FG==1,NA,jhs$FastingGlu
 ####set A1C>7 to NA
 jhs$HbA1c<-ifelse(jhs$HbA1c>=6.5&jhs$T2D_HbA1c==1,NA,jhs$HbA1c)
 
-
+table(duplicated(jhs$Individual_ID))###0
 ped.final <- rbind(ped.final,jhs)
 ############################## JHS ##############################
 ############################## JHS ##############################
@@ -264,7 +277,7 @@ for (j in 1:nrow(sas)){
 	sas$FastingInsulin[j]<-ifelse(sas$T2D_FI[j]==2,NA,sas$FastingInsulin[j])
 	}	
 
-
+table(duplicated(sas$Individual_ID))###10
 ped.final <- rbind(ped.final,sas)
 ############################## SAS ##############################
 ############################## SAS ##############################
@@ -333,7 +346,7 @@ for (j in 1:nrow(cfs)){
 cfs$FastingGlucose<-ifelse(cfs$FastingGlucose>=7&cfs$T2D_FG==1,NA,cfs$FastingGlucose)
 ####set A1C>7 to NA
 cfs$HbA1c<-ifelse(cfs$HbA1c>=6.5&cfs$T2D_HbA1c==1,NA,cfs$HbA1c)
-
+table(duplicated(cfs$Individual_ID))###0
 ped.final <- rbind(ped.final,cfs)
 ############################## CFS ##############################
 ############################## CFS ##############################
@@ -427,6 +440,7 @@ amish$FastingGlucose<-ifelse(amish$FastingGlucose>=7&amish$T2D_FG==1,NA,amish$Fa
 amish$HbA1c<-ifelse(amish$HbA1c>=6.5&amish$T2D_HbA1c==1,NA,amish$HbA1c)
 
 # amish$sex.y <- ifelse(amish$sex.y == 1, "M", "F")
+table(duplicated(amish$Individual_ID))###0
 ped.final <- rbind(ped.final,amish)
 ############################## Amish ##############################
 ############################## Amish ##############################
@@ -505,6 +519,7 @@ gensalt$HbA1c<-ifelse(gensalt$HbA1c>=6.5&gensalt$T2D_HbA1c==1,NA,gensalt$HbA1c)
 # gensalt$sex.y <- ifelse(gensalt$sex.y== 1, "M", "F")
 table(gensalt$sex,useNA="always")
 
+table(duplicated(gensalt$Individual_ID))###4
 ped.final <- rbind(ped.final,gensalt)
 ############################## Gensalt ##############################
 ############################## Gensalt ##############################
@@ -616,6 +631,7 @@ aric_aa$HbA1c<-ifelse(aric_aa$HbA1c>=6.5&aric_aa$T2D_HbA1c==1,NA,aric_aa$HbA1c)
 
 aric<-rbind(aric_ea,aric_aa)
 table(aric$sex)
+table(duplicated(aric$Individual_ID))###0
 ped.final <- rbind(ped.final,aric)
 ############################## ARIC ##############################
 ############################## ARIC ##############################
@@ -830,6 +846,7 @@ whi_aa$HbA1c<-ifelse(whi_aa$HbA1c>=6.5&whi_aa$T2D_HbA1c==1,NA,whi_aa$HbA1c)
 
 whi<-rbind(whi_ha,whi_aa,whi_ea,whi_as)
 table(whi$sex)
+table(duplicated(whi$Individual_ID))###0
 ped.final <- rbind(ped.final,whi)
 ############################## WHI ##############################
 ############################## WHI ##############################
@@ -963,6 +980,7 @@ gs_ea$HbA1c<-ifelse(gs_ea$HbA1c>=6.5&gs_ea$T2D_HbA1c==1,NA,gs_ea$HbA1c)
 
 gs<-rbind(gs_ea,gs_aa)
 table(gs$sex)
+table(duplicated(gs$Individual_ID))###0
 ped.final <- rbind(ped.final,gs)
 ############################## Genestar ##############################
 ############################## Genestar ##############################
@@ -1036,6 +1054,7 @@ chs$FastingGlucose<-ifelse(chs$FastingGlucose>=7&chs$T2D_FG==1,NA,chs$FastingGlu
 ####set A1C>7 to NA
 chs$HbA1c<-ifelse(chs$HbA1c>=6.5&chs$T2D_HbA1c==1,NA,chs$HbA1c)
 table(chs$sex)
+table(duplicated(chs$Individual_ID))####0
 ped.final <- rbind(ped.final,chs)
 ############################## CHS ##############################
 ############################## CHS ##############################
@@ -1260,6 +1279,7 @@ mesa_aa$HbA1c<-ifelse(mesa_aa$HbA1c>=6.5&mesa_aa$T2D_HbA1c==1,NA,mesa_aa$HbA1c)
 
 mesa<-rbind(mesa_ha,mesa_aa,mesa_ea,mesa_sa)
 table(mesa$sex,useNA="always")
+table(duplicated(mesa$Individual_ID))###0
 ped.final <- rbind(ped.final,mesa)
 ############################## MESA ##############################
 ############################## MESA ##############################
@@ -1326,136 +1346,154 @@ genoa$FastingGlucose<-ifelse(genoa$FastingGlucose>=7&genoa$T2D_FG==1,NA,genoa$Fa
 genoa$HbA1c<-ifelse(genoa$HbA1c>=6.5&genoa$T2D_HbA1c==1,NA,genoa$HbA1c)
 
 table(genoa$sex)
+table(duplicated(genoa$Individual_ID))###0
 ped.final <- rbind(ped.final,genoa)
 ############################## Genoa ##############################
 ############################## Genoa ##############################
 
-############################## SAFS ##############################
-############################## SAFS ##############################
-# ###### ADDED THIS RECODE OF STUDIES  13FEB2018
-# ## BEGIN
+############################## GOLDN ##############################
+############################## GOLDN ##############################
+goldn<-merge(goldn,linker[which(linker$study=='GOLDN'),],by.x='subject_id',by.y="submitted_subject_id")
 
-# # AWAITING PHENOTYPE DATA
-# #
-# # SAFS CVD
-# ## 9 SEP 2017 DOWNLOADED new dataset
-# # 7DEC2017 checked for new files - none
-# safs = read.csv(paste(f.dir,'SAFSCVD_HA_MAHANEY_20170807_T2D.ped.csv',sep="/"), header=T,sep=',',as.is=TRUE) #n=2457 (n=2 Sequenced=0)
+colnames(goldn)[which(colnames(goldn)=="sample.id")]<-"TOPMEDID"
+###remove other columns
+goldn<-goldn[,-c(2,3,4,5,6)]
+colnames(goldn)[which(colnames(goldn)=="Sex")]<-"sex"
+colnames(goldn)[which(colnames(goldn)=="subject_id")]<-"Individual_ID"
+colnames(goldn)[which(colnames(goldn)=="FastingGlucose.mg.dL.")]<-"FastingGlucose"
+colnames(goldn)[which(colnames(goldn)=="Fasting_Insulin.mUL.")]<-"FastingInsulin"
+colnames(goldn)[which(colnames(goldn)=="DIAB_Status_Final")]<-"T2D"
+###change the unit of FG
+goldn$FastingGlucose<-as.character(goldn$FastingGlucose)
+goldn$FastingGlucose<-as.numeric(goldn$FastingGlucose)
+goldn$FastingGlucose<-goldn$FastingGlucose/18
 
-# 1: Get rows of map file that correspond to NWD ids from the id file
-safs.map <- linker[linker$sample.id %in% safs.ids$NWD.ID,] # 1509
-
-# 2: Get the unique deidentified subject IDs from the id file
-uniq.deident <- unique(safs.ids$Deidentified.Subject) # 2624
-
-# 3: Check that we have the only deidentified subject ids in the map file
-length(unique(safs.map$submitted_subject_id)) # 1474, so we have 35 duplicated NWD ids
-
-# 4: Get the NWD ids for our unique deidentified subject ids that are in the map file
-safs.nwd <- safs.map[safs.map$submitted_subject_id %in% uniq.deident,] # 1502
-
-# 5: Subset the phenotype file by these nwd ids
-safs.ped <- safs[safs$Individual_ID %in% safs.nwd$sample.id,] # 1438
-
-head(safs.ped)
-safs.ped <- merge(safs.ped, linker[colnames(linker)[colnames(linker) != "sex"]], by.x="Individual_ID", by.y="sample.id", all.x=T) # 1438
-safs.ped$topmedid <- safs.ped$Individual_ID
-safs.ped$individual_id <- safs.ped$unique_subject_key
-# safs$Individual_ID_pheno = safs$Individual_ID
-safs.ped$JWsource = "dbGaP_Ex"
-
-safs.ped$HbA1c<-NA
-safs.ped$T2D_HbA1c<-1
-safs.ped$age_HbA1c<-NA
-safs.ped$BMI_HbA1c<-NA
-safs.ped$FastingGlucose_HbA1c<-NA
-safs.ped$TwoHourGlucose_HbA1c<-NA
-safs.ped$Hb_HbA1c<-NA
-safs.ped$MCV_HbA1c<-NA
-safs.ped$MCH_HbA1c<-NA
-safs.ped$MCHC_HbA1c<-NA
-safs.ped$Fe_HbA1c<-NA
-safs.ped$Ferritin_HbA1c<-NA
-safs.ped$TSAT_HbA1c<-NA
-
-safs.ped$STUDY_TOPMEDID<-paste("SAFS",genoa$TOPMEDID,sep="_")
-safs.ped$STUDY_ANCESTRY<-"SAFS_HS"
+goldn$STUDY_TOPMEDID<-paste("GOLDN",goldn$TOPMEDID,sep="_")
+goldn$STUDY_ANCESTRY<-"GOLDN_SA"
 
 
-
-# # recode & check variable names & distributions
-table(safs.ped$Sequenced,useNA='always')
-table(safs.ped$T2D,useNA='always')
-# safs.ped$t2d = ifelse(is.na(safs.ped$T2D),-9,safs.ped$T2D)
-safs.ped$t2d = ifelse(safs.ped$T2D==-9,NA,safs.ped$T2D)
-with(safs.ped,table(T2D,t2d,useNA='always'))
-safs.ped$ancestry = 'HS'
-table(safs.ped$ancestry,useNA='always')
-table(safs.ped$Sex,useNA='always')
-safs.ped$sex[safs.ped$Sex == 1] = 'M'
-safs.ped$sex[safs.ped$Sex == 2] = 'F'
-with(safs.ped,table(Sex,sex,useNA='always'))
-# summary(safs.ped$last_exam_age,useNA='always')
-
-# remove those with NA sex
-safs.ped <- safs.ped[!is.na(safs.ped$sex),] # 1438
-
-# summary(safs.ped$last_exam_age,useNA='always')
-# safs = subset(safs, Last_Exam_Age >= 25) #n=1903, drop 552 individuals
-# safs.ped = subset(safs.ped, last_exam_age >= 25) # 1021
-summary(safs.ped$last_exam_BMI) # ! low BMI
-# summary(safs$last_exam_BMI) # ! low BMI
-# # safs$last_exam_age = safs$Last_Exam_Age
-# safs$last_exam_age = safs$last_exam_age
-# # safs$last_exam_bmi = safs$Last_Exam_BMI
-safs.ped$last_exam_bmi = safs.ped$last_exam_BMI
-safs.ped$last_exam_fg = safs.ped$last_exam_FG
-safs.ped$last_exam_hba1c = NA
-# ## variables are missing contacted MM 26JUL2017
-# safs$last_exam_t2d_treatment = safs$last_exam_T2D_treatment
-safs.ped$last_exam_t2d_treatment = NA
-safs.ped$t2d_age = safs.ped$T2D_age
-safs.ped$t2d_bmi = safs.ped$T2D_BMI
-table(safs.ped$last_exam_visit,useNA = 'always')
-safs.ped$FamilyID = safs.ped$Family_ID
-safs.ped$PaternalID = safs.ped$Father_ID
-safs.ped$MaternalID = safs.ped$Mother_ID
-safs.ped$study_ancestry <- paste(safs.ped$study,safs.ped$ancestry, sep = "_")
-safs.ped$study_topmedid <- paste(safs.ped$study,safs.ped$Individual_ID, sep="_")
-names(safs.ped)[1] <- "Individual_ID"
-names(safs.ped)[names(safs.ped) == "Age_FG"] <- "age_FG"
-names(safs.ped)[names(safs.ped) == "Age_FI"] <- "age_FI"
-names(safs.ped)[names(safs.ped) == "Fasting_Insulin"] <- "FastingInsulin"
-names(safs.ped)[names(safs.ped) == "Sequenced"] <- "sequenced"
-safs.ped$ascertainment_criteria <- NA
-names(safs.ped)[names(safs.ped) == "study_topmedid"] <- "STUDY_TOPMEDID"
-names(safs.ped)[names(safs.ped) == "topmedid"] <- "TOPMEDID"
-
-
-
-safs.ped<-safs.ped[,names(jhs)]
-
-safs.ped$T2D_FG<-ifelse(safs.ped$T2D_FG==2,safs.ped$T2D_FG,1)
-safs.ped$T2D_FI<-ifelse(safs.ped$T2D_FI==2,safs.ped$T2D_FI,1)
-
-for (j in 1:nrow(safs.ped)){
-  safs.ped$FastingGlucose[j]<-ifelse(safs.ped$T2D_FG[j]==2,NA,safs.ped$FastingGlucose[j])
+a<-names(fhs)[!names(fhs)%in%names(goldn)]
+for(j in 1:length(a))
+  
+{
+  goldn[,a[j]]<-NA
 }
-for (j in 1:nrow(safs.ped)){
-  safs.ped$FastingInsulin[j]<-ifelse(safs.ped$T2D_FI[j]==2,NA,safs.ped$FastingInsulin[j])
+goldn<-goldn[,names(fhs)]
+###change class of ID column
+goldn$Individual_ID<-as.character(goldn$Individual_ID)
+goldn$Individual_ID<-as.factor(goldn$Individual_ID)
+####set NA to be -9 in T2D column
+goldn[371,'T2D']<-(-9)
+table(goldn$sex)
+table(duplicated(goldn$Individual_ID))###0
+ped.final <- rbind(ped.final,goldn)
+
+############################## GOLDN ##############################
+############################## GOLDN ##############################
+
+############################## HYPERGEN ##############################
+############################## HYPERGEN ##############################
+#hg<-hg[-c(1),]
+hg<-merge(hg,linker[which(linker$study=='HyperGEN'),],by.x='SampleID (Subject_ID)',by.y="submitted_subject_id")
+
+colnames(hg)[which(colnames(hg)=="sample.id")]<-"TOPMEDID"
+table(naFG=is.na(hg$FastingGlucose),last_exam_T2D_treatment=hg[,"last_exam_T2D_treatment (Diab)"],useNA="always")
+table(naFI=is.na(hg$FastingInsulin),last_exam_T2D_treatment=hg[,"last_exam_T2D_treatment (Diab)"],useNA="always")
+
+hg<-hg[,-c(2,8,9)]
+colnames(hg)[which(colnames(hg)=="Sex")]<-"sex"
+colnames(hg)[which(colnames(hg)=="SampleID (Subject_ID)")]<-"Individual_ID"
+colnames(hg)[which(colnames(hg)=="T2D Status")]<-"T2D"
+colnames(hg)[which(colnames(hg)=="age_FG/age_FI")]<-"age_FG"
+colnames(hg)[which(colnames(hg)=="BMI_FG/BMI_FI")]<-"BMI_FG"
+colnames(hg)[which(colnames(hg)=="WGS Sequenced")]<-"sequenced"
+hg$age_FI<-hg$age_FG
+hg$BMI_FI<-hg$BMI_FG
+
+hg$FastingGlucose<-as.character(hg$FastingGlucose)
+hg$FastingGlucose<-as.numeric(hg$FastingGlucose)
+hg$FastingGlucose<-hg$FastingGlucose/18
+hg$STUDY_TOPMEDID<-paste("HyperGEN",hg$TOPMEDID,sep="_")
+hg$STUDY_ANCESTRY<-"HyperGEN_AF"
+
+b<-names(fhs)[!names(fhs)%in%names(hg)]
+for(j in 1:length(b))
+  
+{
+  hg[,b[j]]<-NA
+}
+
+hg<-hg[,names(fhs)]
+
+
+table(hg$sex)
+table(duplicated(hg$Individual_ID))###0
+ped.final <- rbind(ped.final,hg)
+
+
+
+############################## HYPERGEN ##############################
+############################## HYPERGEN ##############################
+
+############################## SAFS ##############################
+############################## SAFS ##############################
+#safs<-read.csv("/restricted/projectnb/glycemic/peitao/phenotype_harmonization/all_ped/SAFSCVD_HA_MAHANEY_20170519_glycemic_traits.csv",header=T,as.is=T)
+
+#linker<-read.table("/restricted/projectnb/sequencing/topMed/data/freeze_5b/all_topmed/sample_annotation/sample_sets_2017-12-01/freeze5b_sample_annot_2017-12-01.txt",header=T)
+#linker<-linker[which(linker$study=='SAFS'),]
+
+safs<-merge(safs,linker[which(linker$study=='SAFS'),],by.x='Individual_ID',by.y="submitted_subject_id")
+colnames(safs)[which(colnames(safs)=="sample.id")]<-"TOPMEDID"
+#colnames(safs)[which(colnames(safs)=="sex")]<-"sex.y"
+colnames(safs)[which(colnames(safs)=="Sex")]<-"sex"
+colnames(safs)[which(colnames(safs)=="Family.ID")]<-"Family_ID"
+colnames(safs)[which(colnames(safs)=="Family.ID")]<-"Family_ID"
+colnames(safs)[which(colnames(safs)=="Age_FG")]<-"age_FG"
+colnames(safs)[which(colnames(safs)=="Age.FI")]<-"age_FI"
+colnames(safs)[which(colnames(safs)=="Sequenced")]<-"sequenced"
+safs$STUDY_TOPMEDID<-paste("SAFS",safs$TOPMEDID,sep="_")
+safs$STUDY_ANCESTRY<-"SAFS_HA"
+#p0<-read.table("/restricted/projectnb/glycemic/peitao/phenotype_harmonization/pooled_analysis/Pooled_Glycemic_Traits_freeze5_duplicate_ID_20180321.ped",header=T,as.is=T)
+c<-names(fhs)[!names(fhs)%in%names(safs)]
+for(j in 1:length(c))
+  
+{
+  safs[,c[j]]<-NA
+}
+
+safs<-safs[,names(fhs)]
+
+table(safs$T2D,useNA="always")
+table(safs$T2D_FG,useNA="always")
+table(safs$T2D_FI,useNA="always")
+table(safs$T2D_HbA1c,useNA="always")
+
+
+for (j in 1:nrow(safs)){
+  safs$FastingGlucose[j]<-ifelse(safs$T2D_FG[j]==2,NA,safs$FastingGlucose[j])
+}
+for (j in 1:nrow(safs)){
+  safs$FastingInsulin[j]<-ifelse(safs$T2D_FI[j]==2,NA,safs$FastingInsulin[j])
 }	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
-safs.ped$FastingGlucose<-ifelse(safs.ped$FastingGlucose>=7&safs.ped$T2D_FG==1,NA,safs.ped$FastingGlucose)
+safs$FastingGlucose<-ifelse(safs$FastingGlucose>=7&safs$T2D_FG==1,NA,safs$FastingGlucose)
 ####set A1C>7 to NA
-safs.ped$HbA1c<-ifelse(safs.ped$HbA1c>=6.5&safs.ped$T2D_HbA1c==1,NA,safs.ped$HbA1c)
+safs$HbA1c<-ifelse(safs$HbA1c>=6.5&safs$T2D_HbA1c==1,NA,safs$HbA1c)
 
-# table(safs.ped)
-ped.final <- rbind(ped.final,safs.ped)
+table(safs$sex)
+table(duplicated(safs$Individual_ID))###29
+ped.final <- rbind(ped.final,safs)
+
 
 
 ############################## SAFS ##############################
 ############################## SAFS ##############################
+
+
+
+
+
 
 
 

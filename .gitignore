@@ -23,6 +23,13 @@
 *.Rdata*
 *.RDa*
 *.PED*
+<<<<<<< HEAD
+
+
+.Rproj.user
+*Rproj
+=======
 *.Rhistory
 *Rproj
 .Rproj.user
+>>>>>>> master
