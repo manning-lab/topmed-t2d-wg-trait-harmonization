@@ -66,14 +66,14 @@ safs<-dat$safs
 
 
 
-table(dat$fhs$sex)
-table(dat$jhs$sex)
-table(dat$sas$sex)
-table(dat$cfs$sex)
-table(dat$amish$sex)
-table(dat$gensalt$SEX)
-table(dat$aric_ea$sex)
-table(dat$aric_aa$sex)
+table(dat$fhs$sex,useNA="always")
+table(dat$jhs$sex,useNA="always")
+table(dat$sas$sex,useNA="always")
+table(dat$cfs$sex,useNA="always")
+table(dat$amish$sex,useNA="always")
+table(dat$gensalt$SEX,useNA="always")
+table(dat$aric_ea$sex,useNA="always")
+table(dat$aric_aa$sex,useNA="always")
 names(dat$whi_ha)<-c("Family_ID","Individual_ID","Father_ID","Mother_ID","sex","T2D","FastingGlucose","T2D_FG","age_FG","BMI_FG"         ,        "FastingInsulin",        
                  "T2D_FI"       ,          "age_FI"           ,      "BMI_FI","HbA1c"        ,          "T2D_HbA1c"        ,      "age_HbA1c"       ,      
                  "BMI_HbA1c"      ,        "FastingGlucose_HbA1c",   "TwoHourGlucose_HbA1c",  
@@ -98,21 +98,21 @@ names(dat$whi_aa)<-c("Family_ID","Individual_ID","Father_ID","Mother_ID","sex","
                  "Hb_HbA1c"        ,       "MCV_HbA1c"            ,  "MCH_HbA1c"            , 
                  "MCHC_HbA1c"       ,      "Fe_HbA1c"              , "Ferritin_HbA1c"        ,
                  "TSAT_HbA1c",'sequenced',             'ascertainment_criteria')
-table(dat$whi_ha$sex)
-table(dat$whi_ea$sex)
-table(dat$whi_as$sex)
-table(dat$whi_aa$sex)
-table(dat$gs_aa$sex)
-table(dat$gs_ea$sex)
-table(dat$chs$sex)
-table(dat$mesa_ha$Sex)
-table(dat$mesa_ea$Sex)
-table(dat$mesa_sa$Sex)
-table(dat$mesa_aa$Sex)
-table(dat$genoa$sex)
-table(dat$goldn$Sex)
-table(dat$hg$Sex)
-table(dat$safs$Sex)
+table(dat$whi_ha$sex,useNA="always")
+table(dat$whi_ea$sex,useNA="always")
+table(dat$whi_as$sex,useNA="always")
+table(dat$whi_aa$sex,useNA="always")
+table(dat$gs_aa$sex,useNA="always")
+table(dat$gs_ea$sex,useNA="always")
+table(dat$chs$sex,useNA="always")
+table(dat$mesa_ha$Sex,useNA="always")
+table(dat$mesa_ea$Sex,useNA="always")
+table(dat$mesa_sa$Sex,useNA="always")
+table(dat$mesa_aa$Sex,useNA="always")
+table(dat$genoa$sex,useNA="always")
+table(dat$goldn$Sex,useNA="always")
+table(dat$hg$Sex,useNA="always")
+table(dat$safs$Sex,useNA="always")
 rm(dat)
 
 # make final dataframe
@@ -136,6 +136,7 @@ fhs<-merge(fhs,fhs.ped,by="Individual_ID",all.x=T)
 
 fhs$STUDY_TOPMEDID<-paste("FHS",fhs$TOPMEDID,sep="_")
 fhs$STUDY_ANCESTRY<-ifelse(fhs$idtype==0,'FHS_1_EU',ifelse(fhs$idtype==1,'FHS_2_EU','FHS_3_EU'))
+fhs$ancestry<-"EU"
 
 
 ####check T2D coding
@@ -170,9 +171,10 @@ fhs<-fhs[,c("TOPMEDID" ,              "Individual_ID",          "Family_ID" ,
 "consent"            ,    "topmed_phs"             ,"study"                 ,
 "topmed_project"      ,   "CENTER"                 ,"geno.cntl"             ,
 "TRIO.dups"            , "STUDY_TOPMEDID"        ,
-"STUDY_ANCESTRY", "sex.linker")]
+"STUDY_ANCESTRY","ancestry", "sex.linker")]
 
 table(duplicated(fhs$Individual_ID))###10
+summary(fhs)
 ped.final <- rbind(ped.final,fhs)
 ############################## FHS ##############################
 ############################## FHS ##############################
@@ -197,7 +199,9 @@ colnames(jhs)[which(colnames(jhs)=="Individual_ID")]<-"Individual_ID"
 colnames(jhs)[which(colnames(jhs)=="sample.id")]<-"TOPMEDID"
 
 jhs$STUDY_TOPMEDID<-paste("JHS",jhs$TOPMEDID,sep="_")
-jhs$STUDY_ANCESTRY<-"JHS_AA"
+jhs$STUDY_ANCESTRY<-"JHS_AF"
+jhs$ancestry<-"AF"
+
 jhs<-jhs[,names(fhs)]
 
 
@@ -222,6 +226,7 @@ jhs$FastingGlucose<-ifelse(jhs$FastingGlucose>=7&jhs$T2D_FG==1,NA,jhs$FastingGlu
 jhs$HbA1c<-ifelse(jhs$HbA1c>=6.5&jhs$T2D_HbA1c==1,NA,jhs$HbA1c)
 
 table(duplicated(jhs$Individual_ID))###0
+summary(jhs)
 ped.final <- rbind(ped.final,jhs)
 ############################## JHS ##############################
 ############################## JHS ##############################
@@ -245,7 +250,8 @@ colnames(sas)[which(colnames(sas)=="sample.id")]<-"TOPMEDID"
 
 
 sas$STUDY_TOPMEDID<-paste("SAS",sas$TOPMEDID,sep="_")
-sas$STUDY_ANCESTRY<-"SAS_SA"
+sas$STUDY_ANCESTRY<-"SAS"
+sas$ancestry<-"SAS"
 
 ########### why is this being done?
 # sas<-sas[,-c(30)]
@@ -315,10 +321,11 @@ cfs$ascertainment_criteria<-NA
 #cfs$FHS_cohorts<-NA
 #cfs$topmed_project<-"CFS"
 #cfs$study<-"CFS"
-cfs$STUDY_ANCESTRY<-ifelse(cfs$Population=="CFS-whites",paste("CFS","EU",sep="_"),paste("CFS","AA",sep="_"))
+cfs$STUDY_ANCESTRY<-ifelse(cfs$Population=="CFS-whites",paste("CFS","EU",sep="_"),paste("CFS","AF",sep="_"))
 cfs$STUDY_TOPMEDID<-paste("CFS",cfs$TOPMEDID,sep="_")
+cfs$ancestry <- ifelse(cfs$Population=="CFS-whites","EU","AF")
 cfs<-cfs[,!(names(cfs)%in%c("Population"))]
-
+table(cfs$Population,cfs$ancestry)
 cfs<-cfs[,names(jhs)]
 
 ####check T2D coding
@@ -347,6 +354,7 @@ cfs$FastingGlucose<-ifelse(cfs$FastingGlucose>=7&cfs$T2D_FG==1,NA,cfs$FastingGlu
 ####set A1C>7 to NA
 cfs$HbA1c<-ifelse(cfs$HbA1c>=6.5&cfs$T2D_HbA1c==1,NA,cfs$HbA1c)
 table(duplicated(cfs$Individual_ID))###0
+head(cfs)
 ped.final <- rbind(ped.final,cfs)
 ############################## CFS ##############################
 ############################## CFS ##############################
@@ -400,6 +408,8 @@ amish$TSAT_HbA1c<-NA
 
 amish$STUDY_TOPMEDID<-paste("Amish",amish$TOPMEDID,sep="_")
 amish$STUDY_ANCESTRY<-"Amish_EU"
+amish$ancestry<-"EU"
+
 amish$ascertainment_criteria<-NA
 
 amish<-amish[,names(jhs)]
@@ -467,6 +477,8 @@ gensalt<-gensalt[,!(names(gensalt)%in%c('Baseline_SBP', 'Baseline_DBP' ,'Proband
 
 gensalt$STUDY_TOPMEDID<-paste("GenSalt",gensalt$TOPMEDID,sep="_")
 gensalt$STUDY_ANCESTRY<-"GenSalt_AS"
+gensalt$ancestry<-"AS"
+
 gensalt$ascertainment_criteria<-NA
 
 
@@ -502,7 +514,7 @@ gensalt0$FastingGlucose<-NA
 gensalt<-rbind(gensalt1,gensalt0)
 
 
-
+gensalt$FG <- as.numeric(as.character(gensalt$BMI_FG))
 
 
 for (j in 1:nrow(gensalt)){
@@ -550,6 +562,8 @@ aric_ea$sequenced<-NA
 aric_ea$ascertainment_criteria<-NA
 aric_ea$STUDY_TOPMEDID<-paste("ARIC",aric_ea$TOPMEDID,sep="_")
 aric_ea$STUDY_ANCESTRY<-"ARIC_EU"
+aric_ea$ancestry <- "EU"
+
 
 aric_ea$no.post <- NA
 aric_ea<-aric_ea[,names(jhs)]
@@ -581,7 +595,7 @@ aric_ea$HbA1c<-ifelse(aric_ea$HbA1c>=6.5&aric_ea$T2D_HbA1c==1,NA,aric_ea$HbA1c)
 
 table(aric_ea$sex,useNA="always")
 
-###ARIC_AA
+###ARIC_AF
 
 
 
@@ -599,7 +613,8 @@ aric_aa$TSAT_HbA1c<-NA
 aric_aa$sequenced<-NA
 aric_aa$ascertainment_criteria<-NA
 aric_aa$STUDY_TOPMEDID<-paste("ARIC",aric_aa$TOPMEDID,sep="_")
-aric_aa$STUDY_ANCESTRY<-"ARIC_AA"
+aric_aa$STUDY_ANCESTRY<-"ARIC_AF"
+aric_aa$ancestry<-"AF"
 
 
 aric_aa<-aric_aa[,names(jhs)]
@@ -668,7 +683,8 @@ colnames(whi_ha)[which(colnames(whi_ha)=="sample.id")]<-"TOPMEDID"
 
 
 whi_ha$STUDY_TOPMEDID<-paste("WHI",whi_ha$TOPMEDID,sep="_")
-whi_ha$STUDY_ANCESTRY<-"WHI_HA"
+whi_ha$STUDY_ANCESTRY<-"WHI_HS"
+whi_ha$ancestry<-"HS"
 
 whi_ha<-whi_ha[,names(jhs)]
 
@@ -718,6 +734,7 @@ colnames(whi_ea)[which(colnames(whi_ea)=="sample.id")]<-"TOPMEDID"
 
 whi_ea$STUDY_TOPMEDID<-paste("WHI",whi_ea$TOPMEDID,sep="_")
 whi_ea$STUDY_ANCESTRY<-"WHI_EU"
+whi_ea$ancestry<-"EU"
 
 whi_ea<-whi_ea[,names(jhs)]
 
@@ -767,6 +784,7 @@ colnames(whi_as)[which(colnames(whi_as)=="sample.id")]<-"TOPMEDID"
 
 whi_as$STUDY_TOPMEDID<-paste("WHI",whi_as$TOPMEDID,sep="_")
 whi_as$STUDY_ANCESTRY<-"WHI_AS"
+whi_as$ancestry<-"AS"
 
 whi_as<-whi_as[,names(jhs)]
 
@@ -796,7 +814,7 @@ whi_as$FastingGlucose<-ifelse(whi_as$FastingGlucose>=7&whi_as$T2D_FG==1,NA,whi_a
 ####set A1C>7 to NA
 whi_as$HbA1c<-ifelse(whi_as$HbA1c>=6.5&whi_as$T2D_HbA1c==1,NA,whi_as$HbA1c)
 
-###AA
+###AF
 
 names(whi_aa)<-c("Family_ID","Individual_ID","Father_ID","Mother_ID","sex","T2D","FastingGlucose","T2D_FG","age_FG","BMI_FG"         ,        "FastingInsulin",        
 "T2D_FI"       ,          "age_FI"           ,      "BMI_FI","HbA1c"        ,          "T2D_HbA1c"        ,      "age_HbA1c"       ,      
@@ -814,10 +832,17 @@ colnames(whi_aa)[which(colnames(whi_aa)=="sample.id")]<-"TOPMEDID"
 
 
 whi_aa$STUDY_TOPMEDID<-paste("WHI",whi_aa$TOPMEDID,sep="_")
-whi_aa$STUDY_ANCESTRY<-"WHI_AA"
+whi_aa$STUDY_ANCESTRY<-"WHI_AF"
+whi_aa$ancestry <-"AF"
+
+for (f in names(jhs)){
+  if (!(f %in% names(whi_aa))){
+    print(f)
+  }
+}
+
 
 whi_aa<-whi_aa[,names(jhs)]
-
 
 
 table(whi_aa$T2D,useNA="always")
@@ -857,7 +882,7 @@ ped.final <- rbind(ped.final,whi)
 
 
 ####Genestar
-##AA
+##AF
 # names(gs_aa)[1:4]<-c("Family_ID","Individual_ID","Father_ID","Mother_ID")
 names(gs_aa)[which(names(gs_aa) == "FAMILY_ID")] <- "Family_ID"
 names(gs_aa)[which(names(gs_aa) == "SUBJECT_ID")] <- "Individual_ID"
@@ -887,7 +912,8 @@ gs_aa$ascertainment_criteria<-NA
 
 
 gs_aa$STUDY_TOPMEDID<-paste("GeneSTAR",gs_aa$TOPMEDID,sep="_")
-gs_aa$STUDY_ANCESTRY<-"GeneSTAR_AA"
+gs_aa$STUDY_ANCESTRY<-"GeneSTAR_AF"
+gs_aa$ancestry<-"AF"
 
 
 gs_aa<-gs_aa[,names(jhs)]
@@ -949,6 +975,7 @@ gs_ea$ascertainment_criteria<-NA
 
 gs_ea$STUDY_TOPMEDID<-paste("GeneSTAR",gs_ea$TOPMEDID,sep="_")
 gs_ea$STUDY_ANCESTRY<-"GeneSTAR_EU"
+gs_ea$ancestry<-"EU"
 
 
 gs_ea<-gs_ea[,names(jhs)]
@@ -1000,8 +1027,9 @@ names(chs)[which(names(chs) == "MaternalID")] <- "Mother_ID"
 chs<-merge(chs,linker[which(linker$study=='CHS'),],by.x='Individual_ID',by.y="submitted_subject_id")
 
 
-chs$STUDY_ANCESTRY<-ifelse(chs$race01==1,paste("CHS","EU",sep="_"),ifelse(chs$race01==5,paste("CHS","Other",sep="_"),paste("CHS","AA",sep="_")))
-
+chs$STUDY_ANCESTRY<-ifelse(chs$race01==1,paste("CHS","EU",sep="_"),ifelse(chs$race01==5,paste("CHS","Other",sep="_"),paste("CHS","AF",sep="_")))
+chs$ancestry<-ifelse(chs$race01==1,"EU",ifelse(chs$race01==5,"Other","AF"))
+table(chs$ancestry,chs$race01)
 
 chs<-chs[,!(names(chs)%in%c("race01","clinic"))]
 
@@ -1026,6 +1054,11 @@ chs$ascertainment_criteria<-NA
 
 chs$STUDY_TOPMEDID<-paste("CHS",chs$TOPMEDID,sep="_")
 
+for (f in names(jhs)){
+  if (!(f %in% names(chs))){
+    print(f)
+  }
+}
 
 chs<-chs[,names(jhs)]
 
@@ -1086,7 +1119,8 @@ mesa_ha$TSAT_HbA1c<-NA
 
 
 mesa_ha$STUDY_TOPMEDID<-paste("MESA",mesa_ha$TOPMEDID,sep="_")
-mesa_ha$STUDY_ANCESTRY<-"MESA_HA"
+mesa_ha$STUDY_ANCESTRY<-"MESA_HS"
+mesa_ha$ancestry<-"HS"
 
 
 mesa_ha<-mesa_ha[,names(jhs)]
@@ -1139,6 +1173,7 @@ mesa_ea$TSAT_HbA1c<-NA
 
 mesa_ea$STUDY_TOPMEDID<-paste("MESA",mesa_ea$TOPMEDID,sep="_")
 mesa_ea$STUDY_ANCESTRY<-"MESA_EU"
+mesa_ea$ancestry<-"EU"
 
 
 mesa_ea<-mesa_ea[,names(jhs)]
@@ -1196,6 +1231,7 @@ mesa_sa$TSAT_HbA1c<-NA
 
 mesa_sa$STUDY_TOPMEDID<-paste("MESA",mesa_sa$TOPMEDID,sep="_")
 mesa_sa$STUDY_ANCESTRY<-"MESA_AS"
+mesa_sa$ancestry<-"AS"
 
 
 mesa_sa<-mesa_sa[,names(jhs)]
@@ -1226,7 +1262,7 @@ mesa_sa$FastingGlucose<-ifelse(mesa_sa$FastingGlucose>=7&mesa_sa$T2D_FG==1,NA,me
 ####set A1C>7 to NA
 mesa_sa$HbA1c<-ifelse(mesa_sa$HbA1c>=6.5&mesa_sa$T2D_HbA1c==1,NA,mesa_sa$HbA1c)
 
-####AA
+####AF
 names(mesa_aa)[1]<-"Family_ID" 
 
 mesa_aa<-merge(mesa_aa,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
@@ -1245,7 +1281,8 @@ mesa_aa$TSAT_HbA1c<-NA
 
 
 mesa_aa$STUDY_TOPMEDID<-paste("MESA",mesa_aa$TOPMEDID,sep="_")
-mesa_aa$STUDY_ANCESTRY<-"MESA_AA"
+mesa_aa$STUDY_ANCESTRY<-"MESA_AF"
+mesa_aa$ancestry<-"AF"
 
 
 mesa_aa<-mesa_aa[,names(jhs)]
@@ -1321,7 +1358,8 @@ genoa$Ferritin_HbA1c<-NA
 genoa$TSAT_HbA1c<-NA
 
 genoa$STUDY_TOPMEDID<-paste("GENOA",genoa$TOPMEDID,sep="_")
-genoa$STUDY_ANCESTRY<-"GENOA_AA"
+genoa$STUDY_ANCESTRY<-"GENOA_AF"
+genoa$ancestry<-"AF"
 
 genoa<-genoa[,names(jhs)]
 
@@ -1369,7 +1407,8 @@ goldn$FastingGlucose<-as.numeric(goldn$FastingGlucose)
 goldn$FastingGlucose<-goldn$FastingGlucose/18
 
 goldn$STUDY_TOPMEDID<-paste("GOLDN",goldn$TOPMEDID,sep="_")
-goldn$STUDY_ANCESTRY<-"GOLDN_SA"
+goldn$STUDY_ANCESTRY<-"GOLDN_EU"
+goldn$ancestry<-"EU"
 
 
 a<-names(fhs)[!names(fhs)%in%names(goldn)]
@@ -1415,6 +1454,7 @@ hg$FastingGlucose<-as.numeric(hg$FastingGlucose)
 hg$FastingGlucose<-hg$FastingGlucose/18
 hg$STUDY_TOPMEDID<-paste("HyperGEN",hg$TOPMEDID,sep="_")
 hg$STUDY_ANCESTRY<-"HyperGEN_AF"
+hg$ancestry<-"AF"
 
 b<-names(fhs)[!names(fhs)%in%names(hg)]
 for(j in 1:length(b))
@@ -1452,7 +1492,9 @@ colnames(safs)[which(colnames(safs)=="Age_FG")]<-"age_FG"
 colnames(safs)[which(colnames(safs)=="Age.FI")]<-"age_FI"
 colnames(safs)[which(colnames(safs)=="Sequenced")]<-"sequenced"
 safs$STUDY_TOPMEDID<-paste("SAFS",safs$TOPMEDID,sep="_")
-safs$STUDY_ANCESTRY<-"SAFS_HA"
+safs$STUDY_ANCESTRY<-"SAFS_HS"
+safs$ancestry<-"HS"
+
 #p0<-read.table("/restricted/projectnb/glycemic/peitao/phenotype_harmonization/pooled_analysis/Pooled_Glycemic_Traits_freeze5_duplicate_ID_20180321.ped",header=T,as.is=T)
 c<-names(fhs)[!names(fhs)%in%names(safs)]
 for(j in 1:length(c))
