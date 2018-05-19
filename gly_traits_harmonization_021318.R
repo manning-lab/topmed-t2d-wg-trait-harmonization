@@ -515,7 +515,7 @@ gensalt0$FastingGlucose<-NA
 gensalt<-rbind(gensalt1,gensalt0)
 
 
-gensalt$FG <- as.numeric(as.character(gensalt$BMI_FG))
+gensalt$BMI_FG <- as.numeric(as.character(gensalt$BMI_FG))
 
 
 for (j in 1:nrow(gensalt)){
