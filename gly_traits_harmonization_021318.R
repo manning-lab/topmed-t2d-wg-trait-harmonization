@@ -324,8 +324,9 @@ cfs$ascertainment_criteria<-NA
 cfs$STUDY_ANCESTRY<-ifelse(cfs$Population=="CFS-whites",paste("CFS","EU",sep="_"),paste("CFS","AF",sep="_"))
 cfs$STUDY_TOPMEDID<-paste("CFS",cfs$TOPMEDID,sep="_")
 cfs$ancestry <- ifelse(cfs$Population=="CFS-whites","EU","AF")
-cfs<-cfs[,!(names(cfs)%in%c("Population"))]
 table(cfs$Population,cfs$ancestry)
+
+cfs<-cfs[,!(names(cfs)%in%c("Population"))]
 cfs<-cfs[,names(jhs)]
 
 ####check T2D coding
