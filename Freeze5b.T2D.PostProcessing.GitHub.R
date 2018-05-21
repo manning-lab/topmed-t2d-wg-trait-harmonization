@@ -66,8 +66,9 @@ clusters$clustered.ancestry[which(clusters$cluster == 4)] <- "cAS"
 clusters$clustered.ancestry[which(clusters$cluster == 5)] <- "cHS" 
 clusters$clustered.ancestry[which(clusters$cluster == 6)] <- "cSAS" 
 clusters$clustered.ancestry[which(clusters$cluster %in% c(9, 10))] <- "cAmish"
+head(clusters)
 
-fulldata <- merge(fulldata,clusters,by="sample.id",by.x=T)
+fulldata <- merge(fulldata,clusters,by="sample.id",all.x=TRUE)
 table(fulldata$ancestry, fulldata$clustered.ancestry,useNA = "always")
 
 write.table(fulldata, paste(f.dir,"/",out.pref,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
