@@ -6,6 +6,7 @@ out.pref <- args[2]
 id.col <- args[3]
 ped.file <- args[4]
 trait <- args[5]
+clusterfile <- args[6]
 
 fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",")
 print(dim(fulldata))
@@ -53,5 +54,20 @@ fulldata$t2dpre_ctrl[is.na(fulldata$t2d)] = NA
 with(fulldata,table(t2d,t2dpre_ctrl,useNA='always'))
 table(fulldata$t2dpre_ctrl,useNA='always')
 
+## add clusters
 
-write.table(fulldata, paste(f.dir,"/",out.pref,".removed.IDs.post-processed.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+clusters <- read.table(paste(f.dir,"/",clusterfile,sep=""),sep=",",as.is=T,header=T)
+
+clusters$clustered.ancestry <- NA
+
+clusters$clustered.ancestry[which(clusters$cluster == 1)] <- "cAF" 
+clusters$clustered.ancestry[which(clusters$cluster %in% c(2,3,7,8))] <- "cEU"
+clusters$clustered.ancestry[which(clusters$cluster == 4)] <- "cAS"
+clusters$clustered.ancestry[which(clusters$cluster == 5)] <- "cHS" 
+clusters$clustered.ancestry[which(clusters$cluster == 6)] <- "cSAS" 
+clusters$clustered.ancestry[which(clusters$cluster %in% c(9, 10))] <- "cAmish"
+
+fulldata <- merge(fulldata,clusters,by="sample.id",by.x=T)
+table(fulldata$ancestry, fulldata$clustered.ancestry,useNA = "always")
+
+write.table(fulldata, paste(f.dir,"/",out.pref,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
