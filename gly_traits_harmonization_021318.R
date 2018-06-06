@@ -1394,6 +1394,13 @@ ped.final <- rbind(ped.final,genoa)
 ############################## GOLDN ##############################
 goldn<-merge(goldn,linker[which(linker$study=='GOLDN'),],by.x='subject_id',by.y="submitted_subject_id")
 
+table(duplicated(goldn$subject_id)) # this is not 0, verified that repeated rows have same data
+
+goldn[which(goldn$subject_id %in% goldn$subject_id[which(duplicated(goldn$subject_id))]),]      
+
+goldn <- goldn[which(!duplicated(goldn$subject_id)),]
+print(dim(goldn))
+
 colnames(goldn)[which(colnames(goldn)=="sample.id")]<-"TOPMEDID"
 ###remove other columns
 goldn<-goldn[,-c(2,3,4,5,6)]
@@ -1423,9 +1430,13 @@ goldn<-goldn[,names(fhs)]
 goldn$Individual_ID<-as.character(goldn$Individual_ID)
 goldn$Individual_ID<-as.factor(goldn$Individual_ID)
 ####set NA to be -9 in T2D column
-goldn[371,'T2D']<-(-9)
+table(goldn$T2D,useNA = "always")
+goldn[which(is.na(goldn$T2D)),'T2D']<-(-9)
+table(goldn$T2D,useNA = "always")
+
 table(goldn$sex)
-table(duplicated(goldn$Individual_ID))###0
+table(duplicated(goldn$Individual_ID))
+
 ped.final <- rbind(ped.final,goldn)
 
 ############################## GOLDN ##############################
@@ -1533,14 +1544,6 @@ ped.final <- rbind(ped.final,safs)
 ############################## SAFS ##############################
 ############################## SAFS ##############################
 
-
-
-
-
-
-
-
-
 # p0<-rbind(p0,genoa)
 # names(p0)[names(p0) == "sex.y"] <- "sex"
 table(ped.final$sex,ped.final$sex.linker)
@@ -1548,3 +1551,4 @@ table(ped.final$sex,ped.final$sex.linker)
 # ped.final$sex[ped.final$sex == 2] <- "F"
 # write.table(p0,"Pooled_Glycemic_Traits_freeze5_duplicate_ID_20180116.ped",sep="\t",col=T,row=F,quote=FALSE)
 write.csv(ped.final,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.csv',sep=""))
+

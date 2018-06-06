@@ -49,7 +49,7 @@ spinner $!
 echo "Done!"
 
 
-(R --vanilla --args $1 $2.$user.$curdate TOPMEDID $2.$user.$curdate.csv $3 freeze5b_sample_annot_2017-12-01.T2D_cohorts.clusters_v2.csv < Freeze5b.FI_FG.PostProcessing.GitHub.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
+(R --vanilla --args $1 $2.$user.$curdate TOPMEDID $2.$user.$curdate.no.duplicates.csv $3 freeze5b_sample_annot_2017-12-01.T2D_cohorts.clusters_v2.csv < Freeze5b.FI_FG.PostProcessing.GitHub.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
 echo "Running Post-Processing script" 
 spinner $! 
 echo "Done!"
