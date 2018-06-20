@@ -226,6 +226,7 @@ for(anc in c("AF","EU","AS","HS")) {
 ## PC-clustered ancestries
 for(anc in c("c.AF","c.EU","c.AS","c.HS","c.SAS")) {
   write.table(fulldata_sub_ancestry.sqrt[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt==anc),], paste(f.dir,"/",out.pref,".",anc,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+
   
 }
 
