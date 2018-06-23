@@ -53,6 +53,11 @@ echo "Running postprocessing script"
 spinner $! 
 echo "Done!"
 
+(R --vanilla --args $2.$user.$curdate.for_analysis.csv $3 last_exam_age sex $2.$user.$curdate.for_analysis topmed_project ancestry $1 < PhenotypeSummary.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
+echo "Running Trait Summary script" 
+spinner $! 
+echo "Done!"
+
 echo "git commit tag of current code : $git_tag" > $1/$2.$user.$curdate.log
 echo "harmonized phenotypes with duplicates : $1/$2.$user.$curdate.csv" >> $1/$2.$user.$curdate.log
 echo "harmonized phenotypes without duplicates : $1/$2.$user.$curdate.no.duplicates.csv" >> $1/$2.$user.$curdate.log

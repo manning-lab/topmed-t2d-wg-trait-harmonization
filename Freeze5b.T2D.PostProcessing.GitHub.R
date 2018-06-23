@@ -233,5 +233,5 @@ for(anc in c("c.AF","c.EU","c.AS","c.HS","c.SAS")) {
 }
 
 ## Full analysis set
-write.table(fulldata, paste(f.dir,"/",out.pref,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+write.table(fulldata_sub_ancestry.sqrt, paste(f.dir,"/",out.pref,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
 
