@@ -377,7 +377,15 @@ for (i in covars.continuous){
   # Plot samples devided by sex
   plot <- ggplot(ped.data, aes_string(cohort_column, i)) + theme(text = element_text(size=10), axis.text.x = element_text(angle=90, hjust=1)) + facet_grid(. ~ ancestry_column) 
   print(plot + geom_boxplot(aes(fill=factor(sex))) + labs(title = "All samples by sex",x="Cohort",y=i,fill="sex"))
-}
+
+  if (!(is.continuous)){
+    # Plot samples devided by sex
+    plot <- ggplot(ped.data, aes_string(cohort_column, i)) + theme(text = element_text(size=10), axis.text.x = element_text(angle=90, hjust=1)) + facet_grid(as.formula(paste(outcome,"~ ancestry_column")))
+    print(plot + geom_boxplot(aes(fill=factor(sex))) + labs(title = "All samples by sex and outcome",x="Cohort",y=i,fill="sex"))
+    
+  }
+  
+  }
 
 
 dev.off()
