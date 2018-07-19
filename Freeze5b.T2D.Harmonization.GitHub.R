@@ -1809,7 +1809,7 @@ table(fulldata$ancestry,useNA = 'always') #na = 1710
 names(fulldata)[names(fulldata) == "sex.x"] <- "sex"
 names(fulldata)
 
-fulldata <- fulldata[,c('unique_subject_key',"sample.id","submitted_subject_id","consent",
+fulldata <- fulldata[,c('unique_subject_key',"sample.id","subject_id","consent",
                         "sex","sexchr.kary","topmed_phs","study","topmed_project","CENTER","geno.cntl",
                         "TRIO.dups","MZtwinID","keep","unique.geno","unique.subj","topmedid",
                         'individual_id','FamilyID','MaternalID','PaternalID','t2d', 'sequenced',
