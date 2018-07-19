@@ -6,7 +6,7 @@ get_pheno_data <- function(f.dir){
   
   ## T2D Harmonization  Source Files
   # list of files:
-  sample.file <- paste(f.dir, "freeze5b_sample_annot_2017-12-01.txt", sep="/")
+  sample.file <- paste(f.dir, "freeze5b_sample_annot_2018-07-13.txt", sep="/")
   
   afp.file <- paste(f.dir, "phs001024.v2.pht005693.v1.p1.c1.TOPMed_WGS_Partners_AFGen_Subject_Phenotypes.HMB.txt", sep="/")
   afvub.file <- paste(f.dir, "VUH_Ablation_dbGaP_SubjectPhenotypesDS_v2.txt", sep="/")
