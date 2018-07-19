@@ -63,11 +63,12 @@ fulldata$population[fulldata$ancestry == c("AMR")] = 'AMR'
 fulldata$population[fulldata$ancestry == c("MIXED")] = 'MIXED'
 fulldata$population[fulldata$ancestry == c("OTHER")] = 'OTHER'
 #fulldata$population[fulldata$study == c("Amish")] = 'AMISH'
-fulldata$population[fulldata$study == c("SAS")] = 'SAS'
+fulldata$population[fulldata$ancestry == c("SAS")] = 'SAS'
 table(fulldata$population, useNA = 'always')
+table(fulldata$population,fulldata$ancestry, useNA = 'always')
 
 #subset populations
-#subset to 4 major ancestry groups represented
+#subset to 5 major ancestry groups represented
 fulldata_sub = subset(fulldata, subset = population %in% c("AF","EU",
                                                            "HS", "AS", "SAS")) #N=44732
 
@@ -221,7 +222,7 @@ table(fulldata_sub_ancestry.sqrt$t2dnew_excl,fulldata_sub_ancestry.sqrt$topmed_p
 ### Write out files for analysis
 
 ## self-report ancestries
-for(anc in c("AF","EU","AS","HS")) {
+for(anc in c("AF","EU","AS","HS","SAS")) {
   write.table(fulldata_sub_ancestry.sqrt[which(fulldata_sub_ancestry.sqrt$ancestry==anc),], paste(f.dir,"/",out.pref,".",anc,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
 
 }

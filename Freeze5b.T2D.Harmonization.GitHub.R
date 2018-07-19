@@ -1573,7 +1573,7 @@ names(sas)[names(sas) == "T2D"] <- "t2d"
 table(sas$t2d,useNA='always')
 #sas = subset(sas, subset = t2d %in% c(0,1,2))
 
-sas$ancestry = 'AS'
+sas$ancestry = 'SAS'
 table(sas$ancestry,useNA='always')
 table(sas$sex,useNA='always')
 sas$origsex = sas$sex
