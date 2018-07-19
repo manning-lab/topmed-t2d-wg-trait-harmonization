@@ -15,7 +15,8 @@ task getScript {
 task summary {
 	File ped_file
 	String outcome 
-	String covars 
+	String covars.continuous
+	String covars.categorical
 	String label 
 	String cohort_column 
 
@@ -24,7 +25,7 @@ task summary {
 	Int disk
 
 	command {
-		R --vanilla --args ${ped_file} ${outcome} ${covars} ${label} ${cohort_column} < ${script}
+		R --vanilla --args ${ped_file} ${outcome} ${covars.continuous} ${covars.categorical} ${label} ${cohort_column} < ${script}
 	}
 
 	runtime {
