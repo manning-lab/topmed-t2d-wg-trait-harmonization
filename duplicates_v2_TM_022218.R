@@ -22,7 +22,7 @@ if(length(args) < 1) {
   # d<-read.table("freeze5b_duplicates.txt",header=T)
   
   ## load map file
-  map <- read.table(paste(f.dir,"freeze5b_sample_annot_2017-12-01.txt",sep="/"),header=T)
+  map <- read.table(paste(f.dir,"freeze5b_sample_annot_2018-07-13.txt",sep="/"),header=T)
   
   # linker <- read.table("freeze5b_sample_annot_2017-12-01.txt",header=T)
   
