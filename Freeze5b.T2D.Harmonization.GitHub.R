@@ -470,8 +470,9 @@ for (id in unique(cfs.dups)){
 table(duplicated(cfs.final$unique_id)) #5
 
 # remove IDs (as per communication with BC at CFS)
-cfs.final <- cfs.final[which(!cfs.final$unique_id %in% c("CFS_NoPT_4382", "CFS_NoPT_4383", "CFS_NoPT_4389", "CFS_NoPT_4390", "CFS_NoPT_4391")),]
-table(duplicated(cfs.final$unique_id)) 
+cfs.final <- cfs.final[which(!cfs.final$individual_id %in% c("CFS_NoPT_4382", "CFS_NoPT_4383", "CFS_NoPT_4389", "CFS_NoPT_4390", "CFS_NoPT_4391")),]
+table(duplicated(cfs.final$unique_id)) #0
+#n= 2521 
 
 ####################### CFS ##############################################
 ####################### CFS ##############################################
@@ -1654,13 +1655,13 @@ table(duplicated(whi$unique_id)) #0
 # studies to add in future thrv, , 
 pooled <- rbind(afccaf,afp,afvub,amish,aric,cfs.final,chs,copd,dhs,fhs,genestar,genoa,
                 gensalt,goldn.final,hypergen,jhs,mesa,mesafam,raw.HVH,raw.MGH,raw.VUdaw,safs.final,sas,whi)
-#n=80206 
+#n=80196 
 
 table(pooled$t2d,useNA='always') 
 pooled$t2d[pooled$t2d == -9] = NA
 pooled$t2d[pooled$t2d == 9] = NA
 pooled$t2d[pooled$t2d == 'NA'] = NA
-table(pooled$t2d,useNA='always') #n=7423 missing t2d
+table(pooled$t2d,useNA='always') #n=7418 missing t2d
 table(pooled$sex,useNA='always') #n=0 missing sex
 table(pooled$ancestry,useNA='always') #n=0 NA
 table(pooled$sequenced,useNA='always') #n=16563 NA
@@ -1668,22 +1669,18 @@ table(pooled$sequenced,useNA='always') #n=16563 NA
 ### JW added this bit to check for duplicates at the phenotype level 20MAR2018
 table(duplicated(pooled$unique_id))
 # FALSE  TRUE 
-# 80200     6
+# 80195     1
 table(is.na(pooled$unique_id)) #0
-table(duplicated(pooled$individual_id))
-# FALSE  TRUE 
-# 70601  9605
-table(is.na(pooled$individual_id)) #0
 
 pooled.dup.all <- pooled[which(pooled$unique_id %in% pooled$unique_id[which(duplicated(pooled$unique_id))]),] 
 table(duplicated(pooled.dup.all$unique_id))
 table(duplicated(pooled.dup.all$individual_id))
 table(pooled.dup.all$study_ancestry, useNA = 'always')
-#CFS_AF  CFS_EU SAFS_HS    <NA> 
-#     4       6       2       0 
-# TOTAL N=6; n=171 from MESA are now resolved/eliminated
+#SAFS_HS    <NA> 
+#      2       0 
+# TOTAL N=2; n=171 from MESA are now resolved/eliminated and n=10 CFS were resolved
 
-# remove problematic IDs; working with cohorts to resolve
+# remove problematic IDs; working with cohorts to resolve (but remaining SAFS have NA for T2D)
 pooled <- pooled[which(! pooled$unique_id %in% pooled$unique_id[which(duplicated(pooled$unique_id))]),] # n= 80194
 
 ########################################
@@ -1820,6 +1817,6 @@ fulldata <- fulldata[,c('unique_subject_key',"sample.id","subject_id","consent",
 
 
 write.csv(fulldata,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.csv',sep=""))
-write.csv(sex.discordant,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'SEX.DISCORDANT.csv',sep=""))
-write.csv(fulldata.dup.all,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'FULLDATA.DUP.csv',sep=""))
-write.csv(pooled.dup.all,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'POOLED.DUP.csv',sep=""))
+write.csv(sex.discordant,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.SEX.DISCORDANT.csv',sep=""))
+write.csv(fulldata.dup.all,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.FULLDATA.DUP.csv',sep=""))
+write.csv(pooled.dup.all,row.names=F,quote=F,file=paste(f.dir,"/",out.pref,'.POOLED.DUP.csv',sep=""))
