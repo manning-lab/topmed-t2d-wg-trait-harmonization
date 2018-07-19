@@ -469,8 +469,10 @@ for (id in unique(cfs.dups)){
 #n=2531 still; individuals are not eliminated!!
 table(duplicated(cfs.final$unique_id)) #5
 
-cfs.final.dup <- cfs.final[duplicated(cfs.final$unique_id),]
-cfs.final.dup.all <- cfs.final[which(cfs.final$unique_id %in% cfs.final$unique_id[which(duplicated(cfs.final$unique_id))]),]
+# remove IDs (as per communication with BC at CFS)
+cfs.final <- cfs.final[which(!cfs.final$unique_id %in% c("CFS_NoPT_4382", "CFS_NoPT_4383", "CFS_NoPT_4389", "CFS_NoPT_4390", "CFS_NoPT_4391")),]
+table(duplicated(cfs.final$unique_id)) 
+
 ####################### CFS ##############################################
 ####################### CFS ##############################################
 
