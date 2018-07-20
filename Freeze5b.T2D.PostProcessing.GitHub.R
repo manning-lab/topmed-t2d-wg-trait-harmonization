@@ -8,7 +8,7 @@ ped.file <- args[4]
 trait <- args[5]
 clusterfile <- args[6]
 
-fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",",as.is=T)
+fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",",as.is=T) #44783
 print(dim(fulldata))
 head(fulldata)
 
@@ -70,7 +70,7 @@ table(fulldata$population,fulldata$ancestry, useNA = 'always')
 #subset populations
 #subset to 5 major ancestry groups represented
 fulldata_sub = subset(fulldata, subset = population %in% c("AF","EU",
-                                                           "HS", "AS", "SAS")) #N=44732
+                                                           "HS", "AS", "SAS")) #N=44769
 
 table(fulldata_sub$population, useNA = 'always')
 
