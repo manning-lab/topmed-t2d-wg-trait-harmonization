@@ -88,14 +88,15 @@ fulldata_sub_ancestry.sqrt <- cbind(fulldata_sub,
 
 table(fulldata_sub_ancestry.sqrt$population,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = "always")
 
-#gender vs ancestry & project or study
-table(fulldata_sub_ancestry.sqrt$study,fulldata_sub_ancestry.sqrt$t2d,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
+#gender vs ancestry & project 
 table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
 
 
 
 ###############################
 #exclude sparse cells - T2D all
+table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d_ctrl,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
+
 fulldata_sub_ancestry.sqrt$T2D.PCancestry <- fulldata_sub_ancestry.sqrt$t2d_ctrl
 
 ##
