@@ -361,6 +361,7 @@ aric$unique_id <-  paste(aric$study,aric$Individual_ID, sep = "_")
 aric$individual_id <- aric$Individual_ID
 aric$study_ancestry <- paste(aric$study,aric$ancestry, sep = "_")
 aric$JWsource = "dbGaP_Ex"
+aric$sequenced = NA
 
 
 aric <- aric[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
