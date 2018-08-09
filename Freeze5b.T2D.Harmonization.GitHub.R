@@ -330,7 +330,7 @@ names(aric)
 
 # recode & check variable names & distributions
 # rename column for diabetes
-names(aric)[names(aric) == "T2D"] <- "t2d"
+names(aric)[names(aric) == "Diabetes_Status"] <- "t2d"
 table(aric$t2d,useNA='always')
 #aric = subset(aric, subset = t2d %in% c(0,1,2))
 
