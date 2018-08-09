@@ -367,7 +367,7 @@ aric$sequenced = NA
 aric <- aric[,c('unique_id','individual_id','FamilyID','MaternalID','PaternalID',
                 'sex','t2d','last_exam_age','last_exam_bmi','last_exam_fg', 'sequenced',
                 'last_exam_hba1c','last_exam_t2d_treatment','t2d_age','t2d_bmi','JWsource','ancestry', 'study_ancestry')]
-#n=4230 49 missing T2D
+#n=15553 209 missing T2D
 table(duplicated(aric$unique_id)) #0
 
 
