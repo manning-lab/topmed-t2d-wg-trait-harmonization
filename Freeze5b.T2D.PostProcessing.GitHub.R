@@ -221,20 +221,50 @@ fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$t2d==2)] =
 
 # Reclassify controls as cases
 
-fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.0 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)) 
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.1 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)) 
                                   | (fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.0 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)) 
                                   & (fulldata_sub_ancestry.sqrt$t2d==0)] = 1
 
 # Reclassify prediabetes as cases
-fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.0 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)) 
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.1 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)) 
                                   | (fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.0 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)) 
                                   & (fulldata_sub_ancestry.sqrt$t2d==1)] = 1
 
 table(t2d.who.pret2d=fulldata_sub_ancestry.sqrt$t2d.who.pret2d,t2d=fulldata_sub_ancestry.sqrt$t2d,useNA="always")
 
 ###############################
-#exclude sparse cells - t2d.who.pret2d - cluster ancestry
+#######################
+## exclude sparse cell new t2d definition PC defined ancestry
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = 'always')
 
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry <- fulldata_sub_ancestry.sqrt$t2d.who.pret2d
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.sqrtAF" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("SAFS","SAS"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.sqrtAS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen","HyperGEN_GENOA","JHS"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.sqrtEU" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("HyperGEN_GENOA","SAFS"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.sqrtHS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen","CFS","COPD","FHS","GOLDN","GeneSTAR","JHS","SAS","VTE"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.sqrtSAS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("WHI"))] <- NA
+
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry,useNA = 'always')
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
+
+####################
+
+#######################
+## exclude sparse cell new t2d definition self report ancestry
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population,useNA = 'always')
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl <- fulldata_sub_ancestry.sqrt$t2d.who.pret2d
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl[which(fulldata_sub_ancestry.sqrt$population=="AF" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl[which(fulldata_sub_ancestry.sqrt$population=="AS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl[which(fulldata_sub_ancestry.sqrt$population=="HS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen"))] <- NA
+
+
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl,useNA = 'always')
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population)
+
+####################
 
 ### Write out files for analysis
 
