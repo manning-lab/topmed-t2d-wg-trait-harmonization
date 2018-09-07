@@ -123,7 +123,7 @@ names(linker)[names(linker) == "sex"] <- "sex.linker"
 
 ############################## FHS ##############################
 ############################## FHS ##############################
-fhs<-merge(fhs,linker[which(linker$study=='FHS'),],by.x='shareid',by.y="submitted_subject_id")
+fhs<-merge(fhs,linker[which(linker$study=='FHS'),],by.x='shareid',by.y="subject_id")
 
 colnames(fhs)[which(colnames(fhs)=="shareid")]<-"Individual_ID"
 
@@ -185,7 +185,7 @@ ped.final <- rbind(ped.final,fhs)
 
 #####JHS
 
-jhs<-merge(jhs,linker[which(linker$study=='JHS'),],by.x='Individual_ID',by.y="submitted_subject_id")
+jhs<-merge(jhs,linker[which(linker$study=='JHS'),],by.x='Individual_ID',by.y="subject_id")
 
 colnames(jhs)[which(colnames(jhs)=="Gluc2Hr_HbA1c")]<-"TwoHourGlucose_HbA1c"
 #colnames(jhs)[which(colnames(fhs)=="sample.id")]<-"NWDid"
@@ -237,7 +237,7 @@ ped.final <- rbind(ped.final,jhs)
 
 ###SAS
 
-sas<-merge(sas,linker[which(linker$study=='SAS'),],by.x='SUBJECT_ID',by.y="submitted_subject_id")
+sas<-merge(sas,linker[which(linker$study=='SAS'),],by.x='SUBJECT_ID',by.y="subject_id")
 
 ########### why is this being done?
 # sas<-sas[,-c(2)]
@@ -293,7 +293,7 @@ ped.final <- rbind(ped.final,sas)
 
 ####cfs
 
-cfs<-merge(cfs,linker[which(linker$study=='CFS'),],by.x='IID',by.y="submitted_subject_id")
+cfs<-merge(cfs,linker[which(linker$study=='CFS'),],by.x='IID',by.y="subject_id")
 
 
 colnames(cfs)[which(colnames(cfs)=="IID")]<-"Individual_ID"
@@ -367,7 +367,7 @@ ped.final <- rbind(ped.final,cfs)
 
 ####amish
 
-amish<-merge(amish,linker[which(linker$study=='Amish'),],by.x='dbgap_id',by.y="submitted_subject_id")
+amish<-merge(amish,linker[which(linker$study=='Amish'),],by.x='dbgap_id',by.y="subject_id")
 
 
 names(amish)[which(names(amish) == "famid")] <- "Family_ID"
@@ -463,7 +463,7 @@ ped.final <- rbind(ped.final,amish)
 
 ####Gensalt
 
-gensalt<-merge(gensalt,linker[which(linker$study=='GenSalt'),],by.x='Individual_ID',by.y="submitted_subject_id")
+gensalt<-merge(gensalt,linker[which(linker$study=='GenSalt'),],by.x='Individual_ID',by.y="subject_id")
 
 colnames(gensalt)[which(colnames(gensalt)=="SEX")]<-"sex"
 
@@ -548,7 +548,7 @@ ped.final <- rbind(ped.final,gensalt)
 
 
 
-aric_ea<-merge(aric_ea,linker[which(linker$study=='ARIC'),],by.x='Individual_ID',by.y="submitted_subject_id")
+aric_ea<-merge(aric_ea,linker[which(linker$study=='ARIC'),],by.x='Individual_ID',by.y="subject_id")
 colnames(aric_ea)[which(colnames(aric_ea)=="Diabetes_Status")]<-"T2D"
 
 colnames(aric_ea)[which(colnames(aric_ea)=="sample.id")]<-"TOPMEDID"
@@ -600,7 +600,7 @@ table(aric_ea$sex,useNA="always")
 
 
 
-aric_aa<-merge(aric_aa,linker[which(linker$study=='ARIC'),],by.x='Individual_ID',by.y="submitted_subject_id")
+aric_aa<-merge(aric_aa,linker[which(linker$study=='ARIC'),],by.x='Individual_ID',by.y="subject_id")
 colnames(aric_aa)[which(colnames(aric_aa)=="Diabetes_Status")]<-"T2D"
 
 colnames(aric_aa)[which(colnames(aric_aa)=="sample.id")]<-"TOPMEDID"
@@ -675,7 +675,7 @@ names(whi_ha)<-c("Family_ID","Individual_ID","Father_ID","Mother_ID","sex","T2D"
 
 
 
-whi_ha<-merge(whi_ha,linker[which(linker$study=='WHI'),],by.x='Individual_ID',by.y="submitted_subject_id")
+whi_ha<-merge(whi_ha,linker[which(linker$study=='WHI'),],by.x='Individual_ID',by.y="subject_id")
 
 
 colnames(whi_ha)[which(colnames(whi_ha)=="sample.id")]<-"TOPMEDID"
@@ -725,7 +725,7 @@ names(whi_ea)<-c("Family_ID","Individual_ID","Father_ID","Mother_ID","sex","T2D"
 "MCHC_HbA1c"       ,      "Fe_HbA1c"              , "Ferritin_HbA1c"        ,
 "TSAT_HbA1c",'sequenced',             'ascertainment_criteria')
 
-whi_ea<-merge(whi_ea,linker[which(linker$study=='WHI'),],by.x='Individual_ID',by.y="submitted_subject_id")
+whi_ea<-merge(whi_ea,linker[which(linker$study=='WHI'),],by.x='Individual_ID',by.y="subject_id")
 
 
 colnames(whi_ea)[which(colnames(whi_ea)=="sample.id")]<-"TOPMEDID"
@@ -775,7 +775,7 @@ names(whi_as)<-c("Family_ID","Individual_ID","Father_ID","Mother_ID","sex","T2D"
 "MCHC_HbA1c"       ,      "Fe_HbA1c"              , "Ferritin_HbA1c"        ,
 "TSAT_HbA1c",'sequenced',             'ascertainment_criteria')
 
-whi_as<-merge(whi_as,linker[which(linker$study=='WHI'),],by.x='Individual_ID',by.y="submitted_subject_id")
+whi_as<-merge(whi_as,linker[which(linker$study=='WHI'),],by.x='Individual_ID',by.y="subject_id")
 
 
 colnames(whi_as)[which(colnames(whi_as)=="sample.id")]<-"TOPMEDID"
@@ -824,7 +824,7 @@ names(whi_aa)<-c("Family_ID","Individual_ID","Father_ID","Mother_ID","sex","T2D"
 "MCHC_HbA1c"       ,      "Fe_HbA1c"              , "Ferritin_HbA1c"        ,
 "TSAT_HbA1c",'sequenced',             'ascertainment_criteria')
 
-whi_aa<-merge(whi_aa,linker[which(linker$study=='WHI'),],by.x='Individual_ID',by.y="submitted_subject_id")
+whi_aa<-merge(whi_aa,linker[which(linker$study=='WHI'),],by.x='Individual_ID',by.y="subject_id")
 
 
 colnames(whi_aa)[which(colnames(whi_aa)=="sample.id")]<-"TOPMEDID"
@@ -891,7 +891,7 @@ names(gs_aa)[which(names(gs_aa) == "FATHER")] <- "Father_ID"
 names(gs_aa)[which(names(gs_aa) == "MOTHER")] <- "Mother_ID"
 
 
-gs_aa<-merge(gs_aa,linker[which(linker$study=='GeneSTAR'),],by.x='Individual_ID',by.y="submitted_subject_id")
+gs_aa<-merge(gs_aa,linker[which(linker$study=='GeneSTAR'),],by.x='Individual_ID',by.y="subject_id")
 
 
 
@@ -952,7 +952,7 @@ names(gs_ea)[which(names(gs_ea) == "SUBJECT_ID")] <- "Individual_ID"
 names(gs_ea)[which(names(gs_ea) == "FATHER")] <- "Father_ID"
 names(gs_ea)[which(names(gs_ea) == "MOTHER")] <- "Mother_ID"
 
-gs_ea<-merge(gs_ea,linker[which(linker$study=='GeneSTAR'),],by.x='Individual_ID',by.y="submitted_subject_id")
+gs_ea<-merge(gs_ea,linker[which(linker$study=='GeneSTAR'),],by.x='Individual_ID',by.y="subject_id")
 
 
 
@@ -1025,7 +1025,7 @@ names(chs)[which(names(chs) == "SampleID")] <- "Individual_ID"
 names(chs)[which(names(chs) == "PaternalID")] <- "Father_ID"
 names(chs)[which(names(chs) == "MaternalID")] <- "Mother_ID"
 
-chs<-merge(chs,linker[which(linker$study=='CHS'),],by.x='Individual_ID',by.y="submitted_subject_id")
+chs<-merge(chs,linker[which(linker$study=='CHS'),],by.x='Individual_ID',by.y="subject_id")
 
 
 chs$STUDY_ANCESTRY<-ifelse(chs$race01==1,paste("CHS","EU",sep="_"),ifelse(chs$race01==5,paste("CHS","Other",sep="_"),paste("CHS","AF",sep="_")))
@@ -1104,7 +1104,7 @@ names(mesa_ha)[1]<-"Family_ID"
 
 
 
-mesa_ha<-merge(mesa_ha,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
+mesa_ha<-merge(mesa_ha,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="subject_id")
 
 colnames(mesa_ha)[which(colnames(mesa_ha)=="sample.id")]<-"TOPMEDID"
 colnames(mesa_ha)[which(colnames(mesa_ha)=="Sex")]<-"sex"
@@ -1156,7 +1156,7 @@ mesa_ha$HbA1c<-ifelse(mesa_ha$HbA1c>=6.5&mesa_ha$T2D_HbA1c==1,NA,mesa_ha$HbA1c)
 ###EA
 names(mesa_ea)[1]<-"Family_ID" 
 
-mesa_ea<-merge(mesa_ea,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
+mesa_ea<-merge(mesa_ea,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="subject_id")
 
 colnames(mesa_ea)[which(colnames(mesa_ea)=="sample.id")]<-"TOPMEDID"
 colnames(mesa_ea)[which(colnames(mesa_ea)=="Sex")]<-"sex"
@@ -1215,7 +1215,7 @@ names(mesa_sa)[1]<-"Family_ID"
 
 
 
-mesa_sa<-merge(mesa_sa,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
+mesa_sa<-merge(mesa_sa,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="subject_id")
 
 colnames(mesa_sa)[which(colnames(mesa_sa)=="sample.id")]<-"TOPMEDID"
 colnames(mesa_sa)[which(colnames(mesa_sa)=="Sex")]<-"sex"
@@ -1266,7 +1266,7 @@ mesa_sa$HbA1c<-ifelse(mesa_sa$HbA1c>=6.5&mesa_sa$T2D_HbA1c==1,NA,mesa_sa$HbA1c)
 ####AF
 names(mesa_aa)[1]<-"Family_ID" 
 
-mesa_aa<-merge(mesa_aa,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="submitted_subject_id")
+mesa_aa<-merge(mesa_aa,linker[which(linker$study=='MESA'),],by.x='Individual_ID',by.y="subject_id")
 
 colnames(mesa_aa)[which(colnames(mesa_aa)=="sample.id")]<-"TOPMEDID"
 colnames(mesa_aa)[which(colnames(mesa_aa)=="Sex")]<-"sex"
@@ -1339,7 +1339,7 @@ names(genoa)[which(names(genoa) == "SUBJECT_ID")] <- "Individual_ID"
 names(genoa)[which(names(genoa) == "FATHER")] <- "Father_ID"
 names(genoa)[which(names(genoa) == "MOTHER")] <- "Mother_ID"
 
-genoa<-merge(genoa,linker[which(linker$study=='GENOA'),],by.x='Individual_ID',by.y="submitted_subject_id")
+genoa<-merge(genoa,linker[which(linker$study=='GENOA'),],by.x='Individual_ID',by.y="subject_id")
 
 colnames(genoa)[which(colnames(genoa)=="sample.id")]<-"TOPMEDID"
 
@@ -1392,7 +1392,7 @@ ped.final <- rbind(ped.final,genoa)
 
 ############################## GOLDN ##############################
 ############################## GOLDN ##############################
-goldn<-merge(goldn,linker[which(linker$study=='GOLDN'),],by.x='subject_id',by.y="submitted_subject_id")
+goldn<-merge(goldn,linker[which(linker$study=='GOLDN'),],by.x='subject_id',by.y="subject_id")
 
 table(duplicated(goldn$subject_id)) # this is not 0, verified that repeated rows have same data
 
@@ -1445,7 +1445,7 @@ ped.final <- rbind(ped.final,goldn)
 ############################## HYPERGEN ##############################
 ############################## HYPERGEN ##############################
 #hg<-hg[-c(1),]
-hg<-merge(hg,linker[which(linker$study=='HyperGEN'),],by.x='SampleID (Subject_ID)',by.y="submitted_subject_id")
+hg<-merge(hg,linker[which(linker$study=='HyperGEN'),],by.x='SampleID (Subject_ID)',by.y="subject_id")
 
 colnames(hg)[which(colnames(hg)=="sample.id")]<-"TOPMEDID"
 table(naFG=is.na(hg$FastingGlucose),last_exam_T2D_treatment=hg[,"last_exam_T2D_treatment (Diab)"],useNA="always")
@@ -1494,7 +1494,7 @@ ped.final <- rbind(ped.final,hg)
 #linker<-read.table("/restricted/projectnb/sequencing/topMed/data/freeze_5b/all_topmed/sample_annotation/sample_sets_2017-12-01/freeze5b_sample_annot_2017-12-01.txt",header=T)
 #linker<-linker[which(linker$study=='SAFS'),]
 
-safs<-merge(safs,linker[which(linker$study=='SAFS'),],by.x='Individual_ID',by.y="submitted_subject_id")
+safs<-merge(safs,linker[which(linker$study=='SAFS'),],by.x='Individual_ID',by.y="subject_id")
 colnames(safs)[which(colnames(safs)=="sample.id")]<-"TOPMEDID"
 #colnames(safs)[which(colnames(safs)=="sex")]<-"sex.y"
 colnames(safs)[which(colnames(safs)=="Sex")]<-"sex"
