@@ -409,7 +409,7 @@ amish$TSAT_HbA1c<-NA
 
 amish$STUDY_TOPMEDID<-paste("Amish",amish$TOPMEDID,sep="_")
 amish$STUDY_ANCESTRY<-"Amish_EU"
-amish$ancestry<-"Amish"
+amish$ancestry<-"EU"
 
 amish$ascertainment_criteria<-NA
 
