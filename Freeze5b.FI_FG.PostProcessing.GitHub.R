@@ -8,7 +8,7 @@ ped.file <- args[4]
 trait <- args[5]
 clusterfile <- args[6]
 
-fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",")
+fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",",as.is=T)
 print(dim(fulldata))
 head(fulldata)
 
@@ -16,7 +16,7 @@ head(fulldata)
 load(paste(f.dir,"/",clusterfile,sep=""))
 i <- 7
 
-table(fulldata$population,clusters.list.sqrt[[i]]$clust.list.to.return[fulldata[,id.col]],useNA = "always")
+table(fulldata$ancestry,clusters.list.sqrt[[i]]$clust.list.to.return[fulldata[,id.col]],useNA = "always")
 
 ##Assign ancestry labels
 anc.labels.sqrt <- c("c.AF","c.EU","c.AF","c.AS","c.HS","c.SAS","c.EU")
