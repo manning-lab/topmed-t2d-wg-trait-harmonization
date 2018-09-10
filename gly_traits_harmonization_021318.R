@@ -1468,6 +1468,13 @@ hg$STUDY_TOPMEDID<-paste("HyperGEN",hg$TOPMEDID,sep="_")
 hg$STUDY_ANCESTRY<-"HyperGEN_AF"
 hg$ancestry<-"AF"
 
+summary(hg[which(hg$T2D==2),"FastingGlucose"])
+summary(hg[which(hg$T2D==2),"FastingInsulin"])
+
+#Only keep FastingGlucose and FastingInsulin values for T2D=0 and T2D=1
+hg$FastingGlucose[which(hg$T2D==2)] <- NA
+hg$FastingInsulin[which(hg$T2D==2)] <- NA
+
 b<-names(fhs)[!names(fhs)%in%names(hg)]
 for(j in 1:length(b))
   
