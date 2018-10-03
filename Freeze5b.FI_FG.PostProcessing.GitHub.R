@@ -29,10 +29,19 @@ table(fulldata.sqrt$ancestry,fulldata.sqrt$cluster.ancestry.sqrt,useNA = "always
 print(dim(fulldata))
 
 ###
-#Add AgeSq and log(FI)
+#Add AgeSq and log(FI) recode sex as M/F
 fulldata.sqrt$age_FG_sq = fulldata.sqrt$age_FG**2
 fulldata.sqrt$age_FI_sq = fulldata.sqrt$age_FI**2
 fulldata.sqrt$logFI = log10(fulldata.sqrt$FastingInsulin)
+for(i in 1:length(fulldata.sqrt$sex)){
+  if(fulldata.sqrt$sex[i]==1){
+    fulldata.sqrt$sex[i]='M'
+  }
+  if(fulldata.sqrt$sex[i]==2){
+    fulldata.sqrt$sex[i]='F'
+  }
+  
+}
 #######################
 ## exclude sparse cell new t2d definition PC defined ancestry
 table(fulldata.sqrt$STUDY_ANCESTRY, fulldata.sqrt$cluster.ancestry.sqrt)
