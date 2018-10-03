@@ -55,9 +55,9 @@ fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqr
 fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("CHS_AF","FHS_3_EU","MESA_AF","MESA_AS","SAS","WHI_AF","WHI_AS"))] <- NA
 fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("WHI_AS"))] <- NA
 
-fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata.sqrt$STUDY_ANCESTRY %in% c("ARIC_EU","MESA_EU","SAFS_HS","WHI_EU","SAS"))] <- NA
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata.sqrt$STUDY_ANCESTRY %in% c("CHS_AF", "WHI_HS", "ARIC_EU","MESA_EU","SAFS_HS","WHI_EU","SAS"))] <- NA
 fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("HyperGEN_AF","JHS_AF","MESA_HS"))] <- NA
-fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata.sqrt$STUDY_ANCESTRY %in% c("MESA_AF","WHI_AS", "SAFS_HS"))] <- NA
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata.sqrt$STUDY_ANCESTRY %in% c("MESA_HS", "WHI_HS", "MESA_AF","WHI_AS", "SAFS_HS"))] <- NA
 fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("CHS_AF","FHS_3_EU","MESA_AF","MESA_AS","SAS","WHI_AF","WHI_AS"))] <- NA
 fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("WHI_AS"))] <- NA
 
