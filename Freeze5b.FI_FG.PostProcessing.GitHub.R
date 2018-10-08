@@ -32,7 +32,15 @@ print(dim(fulldata))
 #Add AgeSq and log(FI) recode sex as M/F
 fulldata.sqrt$age_FG_sq = fulldata.sqrt$age_FG**2
 fulldata.sqrt$age_FI_sq = fulldata.sqrt$age_FI**2
-fulldata.sqrt$logFI = log10(fulldata.sqrt$FastingInsulin)
+
+#Add 1 to all raw FastingInsulin values for appropriate log transform
+fulldata.sqrt$FastingInsulinPlus1 = 0
+for(i in 1:length(fulldata.sqrt$FastingInsulin)){
+    fulldata.sqrt$FastingInsulinPlus1[i]=fulldata.sqrt$FastingInsulin[i]+1
+}
+fulldata.sqrt$logFI = log(fulldata.sqrt$FastingInsulinPlus1)
+
+
 for(i in 1:length(fulldata.sqrt$sex)){
   if(fulldata.sqrt$sex[i]==1){
     fulldata.sqrt$sex[i]='M'
@@ -42,22 +50,22 @@ for(i in 1:length(fulldata.sqrt$sex)){
   }
   
 }
-#######################
+######################
 ## exclude sparse cell new t2d definition PC defined ancestry
 table(fulldata.sqrt$STUDY_ANCESTRY, fulldata.sqrt$cluster.ancestry.sqrt)
 
 fulldata.sqrt$FastingGlucose.PCancestry <- fulldata.sqrt$FastingGlucose
 fulldata.sqrt$logFI.PCancestry <- fulldata.sqrt$logFI
 
-fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata.sqrt$STUDY_ANCESTRY %in% c("ARIC_EU","MESA_EU","SAFS_HS","WHI_EU","SAS"))] <- NA
+fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata.sqrt$STUDY_ANCESTRY %in% c("ARIC_EU","MESA_EU","SAFS_HS","SAS","WHI_EU"))] <- NA
 fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("HyperGEN_AF","JHS_AF","MESA_HS"))] <- NA
 fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata.sqrt$STUDY_ANCESTRY %in% c("MESA_AF","WHI_AS"))] <- NA
 fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("CHS_AF","FHS_3_EU","MESA_AF","MESA_AS","SAS","WHI_AF","WHI_AS"))] <- NA
 fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("WHI_AS"))] <- NA
 
-fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata.sqrt$STUDY_ANCESTRY %in% c("CHS_AF", "WHI_HS", "ARIC_EU","MESA_EU","SAFS_HS","WHI_EU","SAS"))] <- NA
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata.sqrt$STUDY_ANCESTRY %in% c("ARIC_EU","MESA_EU","SAFS_HS","SAS","WHI_EU"))] <- NA
 fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("HyperGEN_AF","JHS_AF","MESA_HS"))] <- NA
-fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata.sqrt$STUDY_ANCESTRY %in% c("MESA_HS", "WHI_HS", "MESA_AF","WHI_AS", "SAFS_HS","WHI_AF"))] <- NA
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata.sqrt$STUDY_ANCESTRY %in% c("MESA_AF","WHI_AS", "SAFS_HS"))] <- NA
 fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("CHS_AF","FHS_3_EU","MESA_AF","MESA_AS","SAS","WHI_AF","WHI_AS"))] <- NA
 fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("WHI_AS"))] <- NA
 
