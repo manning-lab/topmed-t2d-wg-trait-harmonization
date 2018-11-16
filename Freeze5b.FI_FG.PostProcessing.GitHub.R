@@ -33,12 +33,18 @@ print(dim(fulldata))
 fulldata.sqrt$age_FG_sq = fulldata.sqrt$age_FG**2
 fulldata.sqrt$age_FI_sq = fulldata.sqrt$age_FI**2
 
-#Add 1 to all raw FastingInsulin values for appropriate log transform
-fulldata.sqrt$FastingInsulinPlus1 = 0
+#Add set MESA & ARIC 0 FI to lowest observed to all raw FastingInsulin values for appropriate log transform
+
 for(i in 1:length(fulldata.sqrt$FastingInsulin)){
-    fulldata.sqrt$FastingInsulinPlus1[i]=fulldata.sqrt$FastingInsulin[i]+1
+  if(fulldata.sqrt$FastingInsulin[i]==0 & fulldata.sqrt$study[i]=="ARIC"){
+    fulldata.sqrt$FastingInsulin[i]=1.033114
+  }
+  if(fulldata.sqrt$FastingInsulin[i]==0 & fulldata.sqrt$study[i]=="MESA"){
+    fulldata.sqrt$FastingInsulin[i]=0.9
+  }
+    
 }
-fulldata.sqrt$logFI = log(fulldata.sqrt$FastingInsulinPlus1)
+fulldata.sqrt$logFI = log(fulldata.sqrt$FastingInsulin)
 
 
 for(i in 1:length(fulldata.sqrt$sex)){
