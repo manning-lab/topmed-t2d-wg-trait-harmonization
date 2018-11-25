@@ -154,6 +154,7 @@ for (j in 1:nrow(fhs)){
 
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+fhs$FastingInsulin<-ifelse(fhs$FastingGlucose>=7&fhs$T2D_FI==1,NA,fhs$FastingInsulin)
 fhs$FastingGlucose<-ifelse(fhs$FastingGlucose>=7&fhs$T2D_FG==1,NA,fhs$FastingGlucose)
 ####set A1C>7 to NA
 fhs$HbA1c<-ifelse(fhs$HbA1c>=6.5&fhs$T2D_HbA1c==1,NA,fhs$HbA1c)
@@ -175,6 +176,10 @@ fhs<-fhs[,c("TOPMEDID" ,              "Individual_ID",          "Family_ID" ,
 
 table(duplicated(fhs$Individual_ID))###10
 summary(fhs)
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,fhs)
 ############################## FHS ##############################
 ############################## FHS ##############################
@@ -221,12 +226,18 @@ for (j in 1:nrow(jhs)){
 
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+jhs$FastingInsulin<-ifelse(jhs$FastingGlucose>=7&jhs$T2D_FI==1,NA,jhs$FastingInsulin)
 jhs$FastingGlucose<-ifelse(jhs$FastingGlucose>=7&jhs$T2D_FG==1,NA,jhs$FastingGlucose)
 ####set A1C>7 to NA
 jhs$HbA1c<-ifelse(jhs$HbA1c>=6.5&jhs$T2D_HbA1c==1,NA,jhs$HbA1c)
 
 table(duplicated(jhs$Individual_ID))###0
 summary(jhs)
+
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,jhs)
 ############################## JHS ##############################
 ############################## JHS ##############################
@@ -272,6 +283,7 @@ for (j in 1:nrow(sas)){
 
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+sas$FastingInsulin<-ifelse(sas$FastingGlucose>=7&sas$T2D_FI==1,NA,sas$FastingInsulin)
 sas$FastingGlucose<-ifelse(sas$FastingGlucose>=7&sas$T2D_FG==1,NA,sas$FastingGlucose)
 ####set A1C>7 to NA
 sas$HbA1c<-ifelse(sas$HbA1c>=6.5&sas$T2D_HbA1c==1,NA,sas$HbA1c)
@@ -284,6 +296,10 @@ for (j in 1:nrow(sas)){
 	}	
 
 table(duplicated(sas$Individual_ID))###10
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,sas)
 ############################## SAS ##############################
 ############################## SAS ##############################
@@ -351,11 +367,16 @@ for (j in 1:nrow(cfs)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+cfs$FastingInsulin<-ifelse(cfs$FastingGlucose>=7&cfs$T2D_FI==1,NA,cfs$FastingInsulin)
 cfs$FastingGlucose<-ifelse(cfs$FastingGlucose>=7&cfs$T2D_FG==1,NA,cfs$FastingGlucose)
 ####set A1C>7 to NA
 cfs$HbA1c<-ifelse(cfs$HbA1c>=6.5&cfs$T2D_HbA1c==1,NA,cfs$HbA1c)
 table(duplicated(cfs$Individual_ID))###0
 head(cfs)
+
+#FG Units mmol/l, FG source unknown(assumed plasma), FG range <7, FG checked for diabetics
+#FI Units mU/l (documentary contradiction), FI checked for diabetcs
+
 ped.final <- rbind(ped.final,cfs)
 ############################## CFS ##############################
 ############################## CFS ##############################
@@ -446,12 +467,17 @@ for (j in 1:nrow(amish)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+amish$FastingInsulin<-ifelse(amish$FastingGlucose>=7&amish$T2D_FI==1,NA,amish$FastingInsulin)
 amish$FastingGlucose<-ifelse(amish$FastingGlucose>=7&amish$T2D_FG==1,NA,amish$FastingGlucose)
 ####set A1C>7 to NA
 amish$HbA1c<-ifelse(amish$HbA1c>=6.5&amish$T2D_HbA1c==1,NA,amish$HbA1c)
 
 # amish$sex.y <- ifelse(amish$sex.y == 1, "M", "F")
 table(duplicated(amish$Individual_ID))###0
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,amish)
 ############################## Amish ##############################
 ############################## Amish ##############################
@@ -533,6 +559,10 @@ gensalt$HbA1c<-ifelse(gensalt$HbA1c>=6.5&gensalt$T2D_HbA1c==1,NA,gensalt$HbA1c)
 table(gensalt$sex,useNA="always")
 
 table(duplicated(gensalt$Individual_ID))###4
+
+#FG Units mmol/l, FG source unknown (assumed plamsa), FG range <7, FG checked for diabetics
+#FI Not Measured
+
 ped.final <- rbind(ped.final,gensalt)
 ############################## Gensalt ##############################
 ############################## Gensalt ##############################
@@ -590,6 +620,7 @@ for (j in 1:nrow(aric_ea)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+aric_ea$FastingInsulin<-ifelse(aric_ea$FastingGlucose>=7&aric_ea$T2D_FI==1,NA,aric_ea$FastingInsulin)
 aric_ea$FastingGlucose<-ifelse(aric_ea$FastingGlucose>=7&aric_ea$T2D_FG==1,NA,aric_ea$FastingGlucose)
 ####set A1C>7 to NA
 aric_ea$HbA1c<-ifelse(aric_ea$HbA1c>=6.5&aric_ea$T2D_HbA1c==1,NA,aric_ea$HbA1c)
@@ -641,13 +672,19 @@ for (j in 1:nrow(aric_aa)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+aric_aa$FastingInsulin<-ifelse(aric_aa$FastingGlucose>=7&aric_aa$T2D_FI==1,NA,aric_aa$FastingInsulin)
 aric_aa$FastingGlucose<-ifelse(aric_aa$FastingGlucose>=7&aric_aa$T2D_FG==1,NA,aric_aa$FastingGlucose)
 ####set A1C>7 to NA
 aric_aa$HbA1c<-ifelse(aric_aa$HbA1c>=6.5&aric_aa$T2D_HbA1c==1,NA,aric_aa$HbA1c)
 
+
 aric<-rbind(aric_ea,aric_aa)
 table(aric$sex)
 table(duplicated(aric$Individual_ID))###0
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,aric)
 ############################## ARIC ##############################
 ############################## ARIC ##############################
@@ -712,6 +749,7 @@ for (j in 1:nrow(whi_ha)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+whi_ha$FastingInsulin<-ifelse(whi_ha$FastingGlucose>=7&whi_ha$T2D_FI==1,NA,whi_ha$FastingInsulin)
 whi_ha$FastingGlucose<-ifelse(whi_ha$FastingGlucose>=7&whi_ha$T2D_FG==1,NA,whi_ha$FastingGlucose)
 ####set A1C>7 to NA
 whi_ha$HbA1c<-ifelse(whi_ha$HbA1c>=6.5&whi_ha$T2D_HbA1c==1,NA,whi_ha$HbA1c)
@@ -761,6 +799,7 @@ for (j in 1:nrow(whi_ea)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+whi_ea$FastingInsulin<-ifelse(whi_ea$FastingGlucose>=7&whi_ea$T2D_FI==1,NA,whi_ea$FastingInsulin)
 whi_ea$FastingGlucose<-ifelse(whi_ea$FastingGlucose>=7&whi_ea$T2D_FG==1,NA,whi_ea$FastingGlucose)
 ####set A1C>7 to NA
 whi_ea$HbA1c<-ifelse(whi_ea$HbA1c>=6.5&whi_ea$T2D_HbA1c==1,NA,whi_ea$HbA1c)
@@ -811,6 +850,7 @@ for (j in 1:nrow(whi_as)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+whi_as$FastingInsulin<-ifelse(whi_as$FastingGlucose>=7&whi_as$T2D_FI==1,NA,whi_as$FastingInsulin)
 whi_as$FastingGlucose<-ifelse(whi_as$FastingGlucose>=7&whi_as$T2D_FG==1,NA,whi_as$FastingGlucose)
 ####set A1C>7 to NA
 whi_as$HbA1c<-ifelse(whi_as$HbA1c>=6.5&whi_as$T2D_HbA1c==1,NA,whi_as$HbA1c)
@@ -866,6 +906,7 @@ for (j in 1:nrow(whi_aa)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+whi_aa$FastingInsulin<-ifelse(whi_aa$FastingGlucose>=7&whi_aa$T2D_FI==1,NA,whi_aa$FastingInsulin)
 whi_aa$FastingGlucose<-ifelse(whi_aa$FastingGlucose>=7&whi_aa$T2D_FG==1,NA,whi_aa$FastingGlucose)
 ####set A1C>7 to NA
 whi_aa$HbA1c<-ifelse(whi_aa$HbA1c>=6.5&whi_aa$T2D_HbA1c==1,NA,whi_aa$HbA1c)
@@ -873,6 +914,13 @@ whi_aa$HbA1c<-ifelse(whi_aa$HbA1c>=6.5&whi_aa$T2D_HbA1c==1,NA,whi_aa$HbA1c)
 whi<-rbind(whi_ha,whi_aa,whi_ea,whi_as)
 table(whi$sex)
 table(duplicated(whi$Individual_ID))###0
+
+whi$FastingInsulin = whi$FastingInsulin /6
+whi$FastingGlucose = whi$FastingGlucose /1.13
+
+#FG Units mmol/l, FG source serum, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,whi)
 ############################## WHI ##############################
 ############################## WHI ##############################
@@ -940,6 +988,7 @@ for (j in 1:nrow(gs_aa)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+gs_aa$FastingInsulin<-ifelse(gs_aa$FastingGlucose>=7&gs_aa$T2D_FI==1,NA,gs_aa$FastingInsulin)
 gs_aa$FastingGlucose<-ifelse(gs_aa$FastingGlucose>=7&gs_aa$T2D_FG==1,NA,gs_aa$FastingGlucose)
 ####set A1C>7 to NA
 gs_aa$HbA1c<-ifelse(gs_aa$HbA1c>=6.5&gs_aa$T2D_HbA1c==1,NA,gs_aa$HbA1c)
@@ -1002,6 +1051,7 @@ for (j in 1:nrow(gs_ea)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+gs_ea$FastingInsulin<-ifelse(gs_ea$FastingGlucose>=7&gs_ea$T2D_FI==1,NA,gs_ea$FastingInsulin)
 gs_ea$FastingGlucose<-ifelse(gs_ea$FastingGlucose>=7&gs_ea$T2D_FG==1,NA,gs_ea$FastingGlucose)
 ####set A1C>7 to NA
 gs_ea$HbA1c<-ifelse(gs_ea$HbA1c>=6.5&gs_ea$T2D_HbA1c==1,NA,gs_ea$HbA1c)
@@ -1009,6 +1059,12 @@ gs_ea$HbA1c<-ifelse(gs_ea$HbA1c>=6.5&gs_ea$T2D_HbA1c==1,NA,gs_ea$HbA1c)
 gs<-rbind(gs_ea,gs_aa)
 table(gs$sex)
 table(duplicated(gs$Individual_ID))###0
+
+gs$FastingInsulin = gs$FastingInsulin / 6
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,gs)
 ############################## Genestar ##############################
 ############################## Genestar ##############################
@@ -1084,11 +1140,18 @@ for (j in 1:nrow(chs)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+chs$FastingInsulin<-ifelse(chs$FastingGlucose>=7&chs$T2D_FI==1,NA,chs$FastingInsulin)
 chs$FastingGlucose<-ifelse(chs$FastingGlucose>=7&chs$T2D_FG==1,NA,chs$FastingGlucose)
 ####set A1C>7 to NA
 chs$HbA1c<-ifelse(chs$HbA1c>=6.5&chs$T2D_HbA1c==1,NA,chs$HbA1c)
 table(chs$sex)
 table(duplicated(chs$Individual_ID))####0
+
+chs$FastingInsulin = chs$FastingInsulin / 6
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,chs)
 ############################## CHS ##############################
 ############################## CHS ##############################
@@ -1148,6 +1211,7 @@ for (j in 1:nrow(mesa_ha)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+mesa_ha$FastingInsulin<-ifelse(mesa_ha$FastingGlucose>=7&mesa_ha$T2D_FI==1,NA,mesa_ha$FastingInsulin)
 mesa_ha$FastingGlucose<-ifelse(mesa_ha$FastingGlucose>=7&mesa_ha$T2D_FG==1,NA,mesa_ha$FastingGlucose)
 ####set A1C>7 to NA
 mesa_ha$HbA1c<-ifelse(mesa_ha$HbA1c>=6.5&mesa_ha$T2D_HbA1c==1,NA,mesa_ha$HbA1c)
@@ -1201,6 +1265,7 @@ for (j in 1:nrow(mesa_ea)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+mesa_ea$FastingInsulin<-ifelse(mesa_ea$FastingGlucose>=7&mesa_ea$T2D_FI==1,NA,mesa_ea$FastingInsulin)
 mesa_ea$FastingGlucose<-ifelse(mesa_ea$FastingGlucose>=7&mesa_ea$T2D_FG==1,NA,mesa_ea$FastingGlucose)
 ####set A1C>7 to NA
 mesa_ea$HbA1c<-ifelse(mesa_ea$HbA1c>=6.5&mesa_ea$T2D_HbA1c==1,NA,mesa_ea$HbA1c)
@@ -1259,6 +1324,7 @@ for (j in 1:nrow(mesa_sa)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+mesa_sa$FastingInsulin<-ifelse(mesa_sa$FastingGlucose>=7&mesa_sa$T2D_FI==1,NA,mesa_sa$FastingInsulin)
 mesa_sa$FastingGlucose<-ifelse(mesa_sa$FastingGlucose>=7&mesa_sa$T2D_FG==1,NA,mesa_sa$FastingGlucose)
 ####set A1C>7 to NA
 mesa_sa$HbA1c<-ifelse(mesa_sa$HbA1c>=6.5&mesa_sa$T2D_HbA1c==1,NA,mesa_sa$HbA1c)
@@ -1310,6 +1376,7 @@ for (j in 1:nrow(mesa_aa)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+mesa_aa$FastingInsulin<-ifelse(mesa_aa$FastingGlucose>=7&mesa_aa$T2D_FI==1,NA,mesa_aa$FastingInsulin)
 mesa_aa$FastingGlucose<-ifelse(mesa_aa$FastingGlucose>=7&mesa_aa$T2D_FG==1,NA,mesa_aa$FastingGlucose)
 ####set A1C>7 to NA
 mesa_aa$HbA1c<-ifelse(mesa_aa$HbA1c>=6.5&mesa_aa$T2D_HbA1c==1,NA,mesa_aa$HbA1c)
@@ -1318,6 +1385,11 @@ mesa_aa$HbA1c<-ifelse(mesa_aa$HbA1c>=6.5&mesa_aa$T2D_HbA1c==1,NA,mesa_aa$HbA1c)
 mesa<-rbind(mesa_ha,mesa_aa,mesa_ea,mesa_sa)
 table(mesa$sex,useNA="always")
 table(duplicated(mesa$Individual_ID))###0
+
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,mesa)
 ############################## MESA ##############################
 ############################## MESA ##############################
@@ -1380,12 +1452,19 @@ for (j in 1:nrow(genoa)){
 	}	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+genoa$FastingInsulin<-ifelse(genoa$FastingGlucose>=7&genoa$T2D_FI==1,NA,genoa$FastingInsulin)
 genoa$FastingGlucose<-ifelse(genoa$FastingGlucose>=7&genoa$T2D_FG==1,NA,genoa$FastingGlucose)
 ####set A1C>7 to NA
 genoa$HbA1c<-ifelse(genoa$HbA1c>=6.5&genoa$T2D_HbA1c==1,NA,genoa$HbA1c)
 
 table(genoa$sex)
 table(duplicated(genoa$Individual_ID))###0
+
+genoa$FastingInsulin = genoa$FastingInsulin / 6
+
+#FG Units mmol/l, FG source plasma, FG range <7, FG checked for diabetics
+#FI Units mU/l, FI checked for diabetcs
+
 ped.final <- rbind(ped.final,genoa)
 ############################## Genoa ##############################
 ############################## Genoa ##############################
@@ -1396,19 +1475,27 @@ goldn<-merge(goldn,linker[which(linker$study=='GOLDN'),],by.x='subject_id',by.y=
 
 table(duplicated(goldn$subject_id)) # this is not 0, verified that repeated rows have same data
 
-goldn[which(goldn$subject_id %in% goldn$subject_id[which(duplicated(goldn$subject_id))]),]      
+#what is this?
+#goldn[which(goldn$subject_id %in% goldn$subject_id[which(duplicated(goldn$subject_id))]),]      
 
 goldn <- goldn[which(!duplicated(goldn$subject_id)),]
 print(dim(goldn))
 
 colnames(goldn)[which(colnames(goldn)=="sample.id")]<-"TOPMEDID"
 ###remove other columns
-goldn<-goldn[,-c(2,3,4,5,6)]
+goldn<-goldn[,-c(2,3,6)]
 colnames(goldn)[which(colnames(goldn)=="Sex")]<-"sex"
 colnames(goldn)[which(colnames(goldn)=="subject_id")]<-"Individual_ID"
-colnames(goldn)[which(colnames(goldn)=="FastingGlucose.mg.dL.")]<-"FastingGlucose"
-colnames(goldn)[which(colnames(goldn)=="Fasting_Insulin.mUL.")]<-"FastingInsulin"
+colnames(goldn)[which(colnames(goldn)=="FastingGlucose(mg.dL)")]<-"FastingGlucose"
+colnames(goldn)[which(colnames(goldn)=="Fasting_Insulin(mUL)")]<-"FastingInsulin"
 colnames(goldn)[which(colnames(goldn)=="DIAB_Status_Final")]<-"T2D"
+#Take cross sectional BMI / AGE / T2D and make other variables
+colnames(goldn)[3] = "BMI_FG"
+colnames(goldn)[2] = "age_FG"
+goldn$BMI_FI = goldn$BMI_FG
+goldn$age_FI = goldn$age_FG
+goldn$T2D_FG = goldn$T2D
+goldn$T2D_FI = goldn$T2D
 ###change the unit of FG
 goldn$FastingGlucose<-as.character(goldn$FastingGlucose)
 goldn$FastingGlucose<-as.numeric(goldn$FastingGlucose)
@@ -1437,6 +1524,28 @@ table(goldn$T2D,useNA = "always")
 table(goldn$sex)
 table(duplicated(goldn$Individual_ID))
 
+table(goldn$T2D,useNA="always")
+table(goldn$T2D_FG,useNA="always")
+table(goldn$T2D_FI,useNA="always")
+table(goldn$T2D_HbA1c,useNA="always")
+
+goldn$T2D_FG<-ifelse(goldn$T2D_FG==2,goldn$T2D_FG,1)
+goldn$T2D_FI<-ifelse(goldn$T2D_FI==2,goldn$T2D_FI,1)
+goldn$T2D_FG<-ifelse(is.na(goldn$T2D_FG),1,goldn$T2D_FG)
+goldn$T2D_FI<-ifelse(is.na(goldn$T2D_FI),1,goldn$T2D_FI)
+
+for (j in 1:nrow(goldn)){
+  goldn$FastingGlucose[j]<-ifelse(goldn$T2D_FG[j]==2,NA,goldn$FastingGlucose[j])
+}
+for (j in 1:nrow(goldn)){
+  goldn$FastingInsulin[j]<-ifelse(goldn$T2D_FI[j]==2,NA,goldn$FastingInsulin[j])
+}  
+
+### set FG to NA if FastingGlucose>=7&T2D_FG==1
+goldn$FastingInsulin<-ifelse(goldn$FastingGlucose>=7&goldn$T2D_FI==1,NA,goldn$FastingInsulin)
+goldn$FastingGlucose<-ifelse(goldn$FastingGlucose>=7&goldn$T2D_FG==1,NA,goldn$FastingGlucose)
+
+
 ped.final <- rbind(ped.final,goldn)
 
 ############################## GOLDN ##############################
@@ -1460,6 +1569,8 @@ colnames(hg)[which(colnames(hg)=="BMI_FG/BMI_FI")]<-"BMI_FG"
 colnames(hg)[which(colnames(hg)=="WGS Sequenced")]<-"sequenced"
 hg$age_FI<-hg$age_FG
 hg$BMI_FI<-hg$BMI_FG
+hg$T2D_FG = hg$T2D
+hg$T2D_FI = hg$T2D
 
 hg$FastingGlucose<-as.character(hg$FastingGlucose)
 hg$FastingGlucose<-as.numeric(hg$FastingGlucose)
@@ -1474,6 +1585,10 @@ summary(hg[which(hg$T2D==2),"FastingInsulin"])
 #Only keep FastingGlucose and FastingInsulin values for T2D=0 and T2D=1
 hg$FastingGlucose[which(hg$T2D==2)] <- NA
 hg$FastingInsulin[which(hg$T2D==2)] <- NA
+
+hg$T2D_FG<-ifelse(hg$T2D_FG==2,hg$T2D_FG,1)
+hg$T2D_FI<-ifelse(hg$T2D_FI==2,hg$T2D_FI,1)
+
 
 b<-names(fhs)[!names(fhs)%in%names(hg)]
 for(j in 1:length(b))
@@ -1506,7 +1621,7 @@ colnames(safs)[which(colnames(safs)=="sample.id")]<-"TOPMEDID"
 #colnames(safs)[which(colnames(safs)=="sex")]<-"sex.y"
 colnames(safs)[which(colnames(safs)=="Sex")]<-"sex"
 colnames(safs)[which(colnames(safs)=="Family.ID")]<-"Family_ID"
-colnames(safs)[which(colnames(safs)=="Family.ID")]<-"Family_ID"
+#colnames(safs)[which(colnames(safs)=="Family.ID")]<-"Family_ID"
 colnames(safs)[which(colnames(safs)=="Age_FG")]<-"age_FG"
 colnames(safs)[which(colnames(safs)=="Age.FI")]<-"age_FI"
 colnames(safs)[which(colnames(safs)=="Sequenced")]<-"sequenced"
@@ -1538,9 +1653,12 @@ for (j in 1:nrow(safs)){
 }	
 
 ### set FG to NA if FastingGlucose>=7&T2D_FG==1
+safs$FastingInsulin<-ifelse(safs$FastingGlucose>=7&safs$T2D_FI==1,NA,safs$FastingInsulin)
 safs$FastingGlucose<-ifelse(safs$FastingGlucose>=7&safs$T2D_FG==1,NA,safs$FastingGlucose)
 ####set A1C>7 to NA
 safs$HbA1c<-ifelse(safs$HbA1c>=6.5&safs$T2D_HbA1c==1,NA,safs$HbA1c)
+
+safs$FastingInsulin = safs$FastingInsulin / 6
 
 table(safs$sex)
 table(duplicated(safs$Individual_ID))###29
