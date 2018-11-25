@@ -36,10 +36,10 @@ fulldata.sqrt$age_FI_sq = fulldata.sqrt$age_FI**2
 #Add set MESA & ARIC 0 FI to lowest observed to all raw FastingInsulin values for appropriate log transform
 
 for(i in 1:length(fulldata.sqrt$FastingInsulin)){
-  if(fulldata.sqrt$FastingInsulin[i]==0 & fulldata.sqrt$study[i]=="ARIC"){
+  if(!is.na(fulldata.sqrt$FastingInsulin[i])&fulldata.sqrt$FastingInsulin[i]==0 & fulldata.sqrt$study[i]=="ARIC"){
     fulldata.sqrt$FastingInsulin[i]=1.033114
   }
-  if(fulldata.sqrt$FastingInsulin[i]==0 & fulldata.sqrt$study[i]=="MESA"){
+  if(!is.na(fulldata.sqrt$FastingInsulin[i])&fulldata.sqrt$FastingInsulin[i]==0 & fulldata.sqrt$study[i]=="MESA"){
     fulldata.sqrt$FastingInsulin[i]=0.9
   }
     
