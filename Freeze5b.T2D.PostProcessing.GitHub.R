@@ -8,7 +8,7 @@ ped.file <- args[4]
 trait <- args[5]
 clusterfile <- args[6]
 
-fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",",as.is=T)
+fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",",as.is=T) #44783
 print(dim(fulldata))
 head(fulldata)
 
@@ -63,13 +63,14 @@ fulldata$population[fulldata$ancestry == c("AMR")] = 'AMR'
 fulldata$population[fulldata$ancestry == c("MIXED")] = 'MIXED'
 fulldata$population[fulldata$ancestry == c("OTHER")] = 'OTHER'
 #fulldata$population[fulldata$study == c("Amish")] = 'AMISH'
-fulldata$population[fulldata$study == c("SAS")] = 'SAS'
+fulldata$population[fulldata$ancestry == c("SAS")] = 'SAS'
 table(fulldata$population, useNA = 'always')
+table(fulldata$population,fulldata$ancestry, useNA = 'always')
 
 #subset populations
-#subset to 4 major ancestry groups represented
+#subset to 5 major ancestry groups represented
 fulldata_sub = subset(fulldata, subset = population %in% c("AF","EU",
-                                                           "HS", "AS", "SAS")) #N=44732
+                                                           "HS", "AS", "SAS")) #N=44769
 
 table(fulldata_sub$population, useNA = 'always')
 
@@ -87,14 +88,14 @@ fulldata_sub_ancestry.sqrt <- cbind(fulldata_sub,
 
 table(fulldata_sub_ancestry.sqrt$population,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = "always")
 
-#gender vs ancestry & project or study
-table(fulldata_sub_ancestry.sqrt$study,fulldata_sub_ancestry.sqrt$t2d,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
+#gender vs ancestry & project 
 table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
 
 
-
 ###############################
-#exclude sparse cells - T2D all
+#exclude sparse cells - T2D all - PC cluster ancestry
+table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d_ctrl,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
+
 fulldata_sub_ancestry.sqrt$T2D.PCancestry <- fulldata_sub_ancestry.sqrt$t2d_ctrl
 
 ##
@@ -117,13 +118,31 @@ fulldata_sub_ancestry.sqrt$T2D.PCancestry[which(fulldata_sub_ancestry.sqrt$clust
 fulldata_sub_ancestry.sqrt$T2D.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="JHS")] <- NA
 fulldata_sub_ancestry.sqrt$T2D.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="SAS")] <- NA
 fulldata_sub_ancestry.sqrt$T2D.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="VTE")] <- NA
+
 fulldata_sub_ancestry.sqrt$T2D.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata_sub_ancestry.sqrt$topmed_project=="WHI")] <- NA
+
 
 table(fulldata_sub_ancestry.sqrt$T2D.PCancestry,fulldata_sub_ancestry.sqrt$t2d_ctrl,useNA = 'always')
 table(fulldata_sub_ancestry.sqrt$T2D.PCancestry,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = 'always')
 table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$T2D.PCancestry,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = 'always')
 
-#exclude sparse cells - no preT2D
+
+###############################
+#exclude sparse cells - T2D all - self-report ancestry
+table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d_ctrl,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population)
+
+fulldata_sub_ancestry.sqrt$t2d_ctrl_excl <- fulldata_sub_ancestry.sqrt$t2d_ctrl
+
+##
+fulldata_sub_ancestry.sqrt$t2d_ctrl_excl[which(fulldata_sub_ancestry.sqrt$population=="AF" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
+fulldata_sub_ancestry.sqrt$t2d_ctrl_excl[which(fulldata_sub_ancestry.sqrt$population=="AS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
+fulldata_sub_ancestry.sqrt$t2d_ctrl_excl[which(fulldata_sub_ancestry.sqrt$population=="HS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
+
+table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d_ctrl_excl,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population)
+
+###############################
+#exclude sparse cells - no preT2D - PC cluster ancestry 
+
 table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
 
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry <- fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl
@@ -131,11 +150,14 @@ fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry <- fulldata_sub_ancestry.sqrt$t2d
 ##
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata_sub_ancestry.sqrt$topmed_project=="SAFS")] <- NA
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata_sub_ancestry.sqrt$topmed_project=="SAS")] <- NA
+
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata_sub_ancestry.sqrt$topmed_project=="HyperGEN_GENOA")] <- NA
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata_sub_ancestry.sqrt$topmed_project=="JHS")] <- NA
+
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata_sub_ancestry.sqrt$topmed_project=="HyperGEN_GENOA")] <- NA
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata_sub_ancestry.sqrt$topmed_project=="SAFS")] <- NA
+
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="CFS")] <- NA
 fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="COPD")] <- NA
@@ -149,82 +171,103 @@ fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry[which(fulldata_sub_ancestry.sqrt$
 
 table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$T2Dnopre.PCancestry,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = 'always')
 
+###############################
+#exclude sparse cells - no preT2D - self report ancestry
+table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population)
+
+fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl_excl <- fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl
+
+##
+fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl_excl[which(fulldata_sub_ancestry.sqrt$population=="AF" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
+
+fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl_excl[which(fulldata_sub_ancestry.sqrt$population=="AS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
+
+fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl_excl[which(fulldata_sub_ancestry.sqrt$population=="HS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
+
+table(fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$t2d_nopre.ctrl_excl,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population,useNA = 'always')
+
+
 ########################################
 #########################################################
 ## recode high pret2d to t2d based on fg & hba1c
-summary(as.numeric(fulldata_sub_ancestry.sqrt$last_exam_fg)) #n=16833
+summary(as.numeric(fulldata_sub_ancestry.sqrt$last_exam_fg)) #NA=16889
 miss <- fulldata_sub_ancestry.sqrt[is.na(fulldata_sub_ancestry.sqrt$last_exam_fg),]
-table(miss$study,useNA = 'always')
+table(miss$study,useNA = 'always') #which studies have missing data? can we pull in data from the FG/FI/a1c files???
+## ARIC could be added from glycemic trait files, but when was it measured?? harmonization algorithm has fg set to na when t2d=2. should we consider updating harmonization document ???
 table(fulldata_sub_ancestry.sqrt$study,useNA = 'always')
-summary(as.numeric(fulldata_sub_ancestry.sqrt$last_exam_hba1c)) #n=30989
+summary(as.numeric(fulldata_sub_ancestry.sqrt$last_exam_hba1c)) #NA=31028
 miss <- fulldata_sub_ancestry.sqrt[is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c),]
 table(miss$study,useNA = 'always')
 
+table(fulldata_sub_ancestry.sqrt$t2d, useNA='always')
 
-fulldata_sub_ancestry.sqrt$t2dnew <- NA
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$t2d == 2 ] = 3
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$t2d == 0 ] = 4
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$t2d == 0 & is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)] = 5
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$t2d == 2 & is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)] = 6
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$t2d == 0 & is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)] = 7
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$t2d == 2 & is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)] = 8
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.105 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)] = 9
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$last_exam_fg < 5.5 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg) & fulldata_sub_ancestry.sqrt$t2d != 2] = 10
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$last_exam_fg < 5.5 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg) & fulldata_sub_ancestry.sqrt$t2d == 1] = NA
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.1 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)] = 11
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$last_exam_hba1c < 5.4 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)& fulldata_sub_ancestry.sqrt$t2d != 2 ] = 12
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$last_exam_hba1c < 5.4 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)& fulldata_sub_ancestry.sqrt$t2d == 1 ] = NA
+## Reclassified based on FG alone
+table(fulldata_sub_ancestry.sqrt$t2d, fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.0, useNA='always')
+table(fulldata_sub_ancestry.sqrt$study, fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.0,fulldata_sub_ancestry.sqrt$t2d, useNA='always')
 
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$t2dnew %in% c(4,5,7,10,12)] <- 0
-fulldata_sub_ancestry.sqrt$t2dnew[fulldata_sub_ancestry.sqrt$t2dnew %in% c(3,6,8,9,11)] <- 1
+## Reclassified based on HbA1c alone
+table(fulldata_sub_ancestry.sqrt$t2d, fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.0, useNA='always')
+table(fulldata_sub_ancestry.sqrt$study, fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.0,fulldata_sub_ancestry.sqrt$t2d, useNA='always')
+
+## Reclassified based on FG or HbA1c
+table(fulldata_sub_ancestry.sqrt$t2d, fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.0 | fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.0, useNA='always')
+table(fulldata_sub_ancestry.sqrt$study, fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.0 | fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.0,fulldata_sub_ancestry.sqrt$t2d, useNA='always')
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d <- NA
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$t2d==0)] = 0 # baseline all previous controls will be controls
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$t2d==1)] = 0 # baseline all previous prediabetes will be controls
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$t2d==2)] = 1 # all previous cases will be cases
+
+# Reclassify controls as cases
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.1 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)) 
+                                  | (fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.0 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)) 
+                                  & (fulldata_sub_ancestry.sqrt$t2d==0)] = 1
+
+# Reclassify prediabetes as cases
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d[(fulldata_sub_ancestry.sqrt$last_exam_fg >= 6.1 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_fg)) 
+                                  | (fulldata_sub_ancestry.sqrt$last_exam_hba1c >= 6.0 & !is.na(fulldata_sub_ancestry.sqrt$last_exam_hba1c)) 
+                                  & (fulldata_sub_ancestry.sqrt$t2d==1)] = 1
+
+table(t2d.who.pret2d=fulldata_sub_ancestry.sqrt$t2d.who.pret2d,t2d=fulldata_sub_ancestry.sqrt$t2d,useNA="always")
+
+###############################
+#######################
+## exclude sparse cell new t2d definition PC defined ancestry
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = 'always')
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry <- fulldata_sub_ancestry.sqrt$t2d.who.pret2d
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("SAFS","SAS"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen","HyperGEN_GENOA","JHS"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("HyperGEN_GENOA","SAFS"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen","CFS","COPD","FHS","GOLDN","GeneSTAR","JHS","SAS","VTE"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("WHI"))] <- NA
+
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry,useNA = 'always')
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d.PCancestry,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt)
+
+####################
+
+#######################
+## exclude sparse cell new t2d definition self report ancestry
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population,useNA = 'always')
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl <- fulldata_sub_ancestry.sqrt$t2d.who.pret2d
+
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl[which(fulldata_sub_ancestry.sqrt$population=="AF" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl[which(fulldata_sub_ancestry.sqrt$population=="AS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen"))] <- NA
+fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl[which(fulldata_sub_ancestry.sqrt$population=="HS" & fulldata_sub_ancestry.sqrt$topmed_project %in% c("AFGen"))] <- NA
 
 
-table(fulldata_sub_ancestry.sqrt$t2dnew,fulldata_sub_ancestry.sqrt$t2d,useNA = 'always')
-table(fulldata_sub_ancestry.sqrt$t2dnew,useNA = 'always')
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl,useNA = 'always')
+table(fulldata_sub_ancestry.sqrt$t2d.who.pret2d_excl,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population)
 
-##exclude sparse cells - T2D / no preT2D
-table(fulldata_sub_ancestry.sqrt$t2dnew,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = 'always')
-
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry <- fulldata_sub_ancestry.sqrt$t2dnew
-##
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata_sub_ancestry.sqrt$topmed_project=="SAFS")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata_sub_ancestry.sqrt$topmed_project=="SAS")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata_sub_ancestry.sqrt$topmed_project=="HyperGEN_GENOA")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata_sub_ancestry.sqrt$topmed_project=="JHS")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata_sub_ancestry.sqrt$topmed_project=="HyperGEN_GENOA")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata_sub_ancestry.sqrt$topmed_project=="SAFS")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="CFS")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="COPD")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="FHS")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="GOLDN")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="GeneSTAR")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="JHS")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="SAS")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata_sub_ancestry.sqrt$topmed_project=="VTE")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata_sub_ancestry.sqrt$topmed_project=="WHI")] <- NA
-table(fulldata_sub_ancestry.sqrt$t2dnew_excl_pcancestry,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt,useNA = 'always')
-
-
-
-table(fulldata_sub_ancestry.sqrt$t2dnew,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$sex,fulldata_sub_ancestry.sqrt$population,useNA = 'always')
-
-fulldata_sub_ancestry.sqrt$t2dnew_excl <- fulldata_sub_ancestry.sqrt$t2dnew
-
-fulldata_sub_ancestry.sqrt$t2dnew_excl[which(fulldata_sub_ancestry.sqrt$population=="AF" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl[which(fulldata_sub_ancestry.sqrt$population=="AS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
-fulldata_sub_ancestry.sqrt$t2dnew_excl[which(fulldata_sub_ancestry.sqrt$population=="HS" & fulldata_sub_ancestry.sqrt$topmed_project=="AFGen")] <- NA
-table(fulldata_sub_ancestry.sqrt$t2dnew_excl,fulldata_sub_ancestry.sqrt$topmed_project,fulldata_sub_ancestry.sqrt$population,useNA = 'always')
-
+####################
 
 ### Write out files for analysis
 
-## self-report ancestries
-for(anc in c("AF","EU","AS","HS")) {
-  write.table(fulldata_sub_ancestry.sqrt[which(fulldata_sub_ancestry.sqrt$ancestry==anc),], paste(f.dir,"/",out.pref,".",anc,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
-
-}
 ## PC-clustered ancestries
 for(anc in c("c.AF","c.EU","c.AS","c.HS","c.SAS")) {
   write.table(fulldata_sub_ancestry.sqrt[which(fulldata_sub_ancestry.sqrt$cluster.ancestry.sqrt==anc),], paste(f.dir,"/",out.pref,".",anc,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')

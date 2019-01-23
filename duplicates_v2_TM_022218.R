@@ -19,10 +19,18 @@ if(length(args) < 1) {
 # if (length(args) == 1){
   ## load duplicates 
   dups <- read.table(paste(f.dir,"freeze5b_duplicates_2018-01-10.txt",sep="/"),header=T)
-  # d<-read.table("freeze5b_duplicates.txt",header=T)
+  dim(dups) #[1] 1528    5
   
+  dups <- subset(dups, study1 %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR','GENOA','GenSalt','GOLDN','HVH','HyperGEN',
+                                  'Mayo_VTE','JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WGHS','WHI') &
+                   study2 %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR','GENOA','GenSalt','GOLDN','HVH','HyperGEN',
+                                 'Mayo_VTE','JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WGHS','WHI')) #n=50372, drop 4127
+  dim(dups) #  [1] 376   5
+
   ## load map file
-  map <- read.table(paste(f.dir,"freeze5b_sample_annot_2017-12-01.txt",sep="/"),header=T)
+  map <- read.table(paste(f.dir,"freeze5b_sample_annot_2018-07-13.txt",sep="/"),header=T)
+  map <- subset(map, study %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR','GENOA','GenSalt','GOLDN','HVH','HyperGEN',
+                                  'Mayo_VTE','JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WGHS','WHI')) #n=50372, drop 4127
   
   # linker <- read.table("freeze5b_sample_annot_2017-12-01.txt",header=T)
   
@@ -181,17 +189,17 @@ if(length(args) == 5) {
      trait <- args[5]
   
   
-  ped <- read.table(paste(f.dir,ped.file,sep="/"),header=T,sep=",") #n=54442
+  ped <- read.table(paste(f.dir,ped.file,sep="/"),header=T,sep=",",as.is=T) #n=50168
+  table(duplicated(ped$unique_subject_key),useNA = "always")
   
   # dups <- read.table("duplicates.txt",header=T)
   # dups <- read.table(paste(f.dir,"freeze5b_duplicates.txt",sep="/"),header=T)
   
-  if(trait %in% colnames(ped)==FALSE) {
+  if(! trait %in% colnames(ped)) {
    print(trait)
     stop("Trait entered must match column name in phenotype file")
   }
   
-  if(trait %in% colnames(ped)==TRUE){
     ####ACROSS STUDIES: indicates which duplicate to remove based on missing trait data and cohort type 
     
     ####TRAIT
@@ -205,85 +213,71 @@ if(length(args) == 5) {
     names(p3) <- c(id.col, "TRAIT2")
     dups<-merge(dups,p3,by.x = 'ID2',by.y = id.col,all.x=T)
     
-    dups$keep1_TRAIT<-dups$keep1
-    dups$keep2_TRAIT<-dups$keep2
+    dups$keep1_TRAIT<-NA
+    dups$keep2_TRAIT<-NA
     
     dups$reason_TRAIT <- NA
     
+    table(is.na(dups$TRAIT1),is.na(dups$TRAIT2),useNA = "always")
+    #      FALSE TRUE <NA> # 7/19/2018 AKM
+    #FALSE   327   17    0
+    #TRUE     12   20    0
+    #<NA>      0    0    0
     
+    # old.dups <- dups  # for debugging
     for (j in 1:nrow(dups)){
       
-      # Assumes that the trait values we want are >= 0 
-      if(is.na(dups$TRAIT1[j])==F & is.na(dups$TRAIT2[j])==F & dups$TRAIT1[j]>=0 & dups$TRAIT2[j]>=0){
+      # For situations when both TRAIT1 and TRAIT2 are not missing
+      if(!is.na(dups$TRAIT1[j]) & !is.na(dups$TRAIT2[j])) {
         
-        # what is the purpose of these next two lines?
-        dups$keep1_TRAIT[j]<-ifelse(is.na(dups$TRAIT1[j])==F,dups$keep1[j],ifelse(is.na(dups$TRAIT1[j])==T,0,NA))
-        dups$keep2_TRAIT[j]<-ifelse(is.na(dups$TRAIT2[j])==F,dups$keep2[j],ifelse(is.na(dups$TRAIT2[j])==T,0,NA))
+        # use same decision as before
+        dups$keep1_TRAIT[j] <- dups$keep1[j]
+        dups$keep2_TRAIT[j] <- dups$keep2[j]
         
         ##for additional output files
-        if(is.na(dups$keep1[j])==F&is.na(dups$keep2[j])==F){
-          if(dups$keep1[j]==1&as.character(dups$study1[j])!=as.character(dups$study2[j])){
-            dups$reason_TRAIT[j] <- "used duplicate from older study"
+        if(!is.na(dups$keep1[j]) & !is.na(dups$keep2[j])){
+          
+          if(dups$keep1[j]==1 & as.character(dups$study1[j]) != as.character(dups$study2[j])) {
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; used duplicate from population-based and/or older study"
           }
-          else if(dups$keep2[j]==1&as.character(dups$study1[j])!=as.character(dups$study2[j])){
-            dups$reason_TRAIT[j] <- "used duplicate from population-based and/or older study"
+          else if(dups$keep2[j]==1 & as.character(dups$study1[j]) != as.character(dups$study2[j])) {
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; used duplicate from population-based and/or older study"
           }
-          else if(dups$keep1[j]==1&dups$keep2[j]==1){
-            dups$reason_TRAIT[j] <- "kept both; monozygotic twins" 
+          else if(dups$keep1[j]==1 & dups$keep2[j]==1){
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; kept both; monozygotic twins" 
           }
-          else if(dups$keep1[j]==1&dups$keep2[j]==0&as.character(dups$study1[j])==as.character(dups$study2[j])){
-            dups$reason_TRAIT[j] <- "kept duplicate with higher callrate"
+          else if(dups$keep1[j]==1 & dups$keep2[j]==0 & as.character(dups$study1[j])==as.character(dups$study2[j])){
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; same cohort; kept duplicate with higher callrate"
           }
-          else if(dups$keep2[j]==1&dups$keep1[j]==0&as.character(dups$study1[j])==as.character(dups$study2[j])){
-            dups$reason_TRAIT[j] <- "kept duplicate with higher callrate"
+          else if(dups$keep2[j]==1&dups$keep1[j]==0 & as.character(dups$study1[j])==as.character(dups$study2[j])){
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; same cohort; kept duplicate with higher callrate"
           }
         }
-      }
-      else if(is.na(dups$TRAIT1[j])==T&is.na(dups$TRAIT2[j])==F)
+      } else if(is.na(dups$TRAIT1[j]) & !is.na(dups$TRAIT2[j])) # for situations where TRAIT1 is missing and TRAIT2 is not missing
       {
-        dups$keep1_TRAIT[j]<-0
-        dups$keep2_TRAIT[j]<-1
-        dups$reason_TRAIT[j] <- "missing trait data"
-      } 
-      else if(is.na(dups$TRAIT1[j])==F&is.na(dups$TRAIT2[j])==T)
-      {
-        dups$keep1_TRAIT[j]<-1
-        dups$keep2_TRAIT[j]<-0
-        dups$reason_TRAIT[j] <- "missing trait data"
+         dups$keep1_TRAIT[j]<-0
+         dups$keep2_TRAIT[j]<-1
+         dups$reason_TRAIT[j] <- "TRAIT1 individual missing trait data"
+       } else if(!is.na(dups$TRAIT1[j]) & is.na(dups$TRAIT2[j])) # for situations where TRAIT1 is not missing and TRAIT2 is missing
+       {
+         dups$keep1_TRAIT[j]<-1
+         dups$keep2_TRAIT[j]<-0
+         dups$reason_TRAIT[j] <- "TRAIT2 individual missing trait data"
       }
       # changes so that we keep individuals with NA for trait in phenotype file
-      else if (is.na(dups$TRAIT1[j])==T&is.na(dups$TRAIT2[j])==T)
-      {
-        dups$keep1_TRAIT[j]<-dups$keep1[j]
-        dups$keep2_TRAIT[j]<-dups$keep2[j]
-        dups$reason_TRAIT[j] <- "missing trait data"
-      }
-      else if (dups$TRAIT1[j]<0&dups$TRAIT2[j]>=0) ##for binary trait if negative numbers are used for NA
-      {
-        dups$keep1_TRAIT[j]<-0
-        dups$keep2_TRAIT[j]<-1
-        dups$reason_TRAIT[j] <- "missing trait data"
-      }
-      else if (dups$TRAIT1[j]>=0&dups$TRAIT2[j]<0) ##for binary trait if negative numbers are used for NA
-      {
-        dups$keep1_TRAIT[j]<-1
-        dups$keep2_TRAIT[j]<-0
-        dups$reason_TRAIT[j] <- "missing trait data"
-      }
-      else if(dups$TRAIT1[j]<0&dups$TRAIT2[j]<0)  ##for binary trait if negative numbers are used for NA
-      {
-        dups$keep1_TRAIT[j]<-dups$keep1[j]
-        dups$keep2_TRAIT[j]<-dups$keep2[j]
-        dups$reason_TRAIT[j] <- "missing trait data"
-      }
-      else{ 
-        dups$keep1_TRAIT[j]<-NA
-        dups$keep2_TRAIT[j]<-NA
-        dups$reason_TRAIT[j] <- "something else"
+      else if (is.na(dups$TRAIT1[j]) & is.na(dups$TRAIT2[j]))  # for situations where TRAIT1 is missing and TRAIT2 is missing 
+       {
+         dups$keep1_TRAIT[j]<-dups$keep1[j]
+         dups$keep2_TRAIT[j]<-dups$keep2[j]
+         dups$reason_TRAIT[j] <- "TRAIT1 and TRAIT2 individuals both missing trait data"
+      } else { 
+         dups$keep1_TRAIT[j]<-NA
+         dups$keep2_TRAIT[j]<-NA
+         dups$reason_TRAIT[j] <- "something else; should be fixed"
       }
     }
     
-    print(table(dups$keep1_TRAIT,dups$keep2_TRAIT,useNA='always'))
+    print(table(keep1_TRAIT=dups$keep1_TRAIT,keep2_TRAIT=dups$keep2_TRAIT,dups$reason_TRAIT,useNA='always'))
   #  print("Error if NAs occur")
     
     
@@ -295,34 +289,25 @@ if(length(args) == 5) {
     
     notkeep <- rbind(notkeep1,notkeep2)
     notkeep.ids <- as.character(notkeep$ID)
-    # not_keep1<-subset(dups, keep1_TRAIT==0)
-    # not_keep1<-not_keep1[c("ID1","keep1_TRAIT")]
-    
-    # not_keep2<-subset(dups, keep2_TRAIT==0)
-    # not_keep2<-not_keep2[c("ID2","keep2_TRAIT")]
-    
-    # names<-c("ID","KEEP_TRAIT")
-    # not_keep<-data.frame()
-    # colnames(not_keep1)<-names
-    # colnames(not_keep2)<-names
-    # not_keep <-rbind(not_keep1, not_keep2)
-    
+  
     ped$keep_trait <- rep(1,NROW(ped))
     ped$keep_trait[ped[,id.col] %in% notkeep.ids] <- 0
     
+    table(ped$keep_trait,ped$study,useNA="always")
+    
+    # does this take care of duplicate IDs from trait harmonization step?
+    fulldata.dup.all <- ped[which(ped$unique_subject_key %in% ped$unique_subject_key[which(duplicated(ped$unique_subject_key))]),]
+    table(duplicated(fulldata.dup.all$unique_subject_key),useNA = "always")
+    
+    fulldata.dup.all.dups.removed <- fulldata.dup.all[which(fulldata.dup.all$keep_trait==1),]
     # ped <-merge(ped, not_keep,by.x=id.col,by.y="ID",all.x=T)
-    
-    # ped$KEEP_TRAIT[is.na(ped$KEEP_TRAIT)] <- 0
-    # ped$KEEP_TRAIT[is.na(ped$KEEP_TRAIT) & ped[,trait] < 0] <- 0 ##if trait is binary and uses negative number for NA
-    # ped$KEEP_TRAIT[is.na(ped$KEEP_TRAIT)&!is.na(ped[,trait])] <- 1
-    
-    # final <- subset(p, (!is.na(p$TRAIT)))
-    # final <-subset(final, KEEP_TRAIT==1)
-    
-    ped <- subset(ped, study %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR','GENOA','GenSalt','GOLDN','HVH','HyperGEN',
-                 'JHS','MESA','MGH_AF','Partners','SAFS','SAS','VAFAR','VU_AF','WHI'))
+    table(duplicated(fulldata.dup.all.dups.removed$unique_subject_key),useNA = "always")
 
     ped <- ped[!is.na(ped[,trait]),]
+    
+    table(duplicated(ped$unique_subject_key[ped$keep_trait == 1]),useNA = "always")
+    
+    
     write.table(ped[ped$keep_trait == 1,],paste(f.dir,"/",out.pref,".no.duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
     
     ## NOTE: 13MAR2018 sex.x and sex.y from fulldata (harmonization) file is dropped
@@ -349,9 +334,11 @@ if(length(args) == 5) {
     colnames(removed2_TRAIT) <- names
     
     removed_TRAIT <- rbind(removed1_TRAIT, removed2_TRAIT)
+
+    write.table(dups,paste(f.dir,"/",out.pref,"duplicates.with.trait.",trait,".txt",sep=""),row.names=F,col.names=T,quote=F,sep='\t')
     
     write.table(removed_TRAIT, paste(f.dir,"/",out.pref,".removed.IDs.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
-    }
+    
 }
 
     

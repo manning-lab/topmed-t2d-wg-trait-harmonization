@@ -6,15 +6,15 @@ get_pheno_data <- function(f.dir){
   
   ## T2D Harmonization  Source Files
   # list of files:
-  sample.file <- paste(f.dir, "freeze5b_sample_annot_2017-12-01.txt", sep="/")
+  sample.file <- paste(f.dir, "freeze5b_sample_annot_2018-07-13.txt", sep="/")
   
   afp.file <- paste(f.dir, "phs001024.v2.pht005693.v1.p1.c1.TOPMed_WGS_Partners_AFGen_Subject_Phenotypes.HMB.txt", sep="/")
   afvub.file <- paste(f.dir, "VUH_Ablation_dbGaP_SubjectPhenotypesDS_v2.txt", sep="/")
   afccaf.file <- paste(f.dir, "CCAF_dbGaP_SubjectPhenotypesDS_v5.txt", sep="/")
   amish.file <- paste(f.dir, "Amish_HuichunXu_May152017_T2D.ped", sep="/")
   
-  ARIC.AF.file <- paste(f.dir, "ARIC_AA_NMAYA_20161220_T2D.ped", sep="/")
-  ARIC.EU.file <- paste(f.dir, "ARIC_EU_NMAYA_20161220_T2D.ped", sep="/")
+  ARIC.AF.file <- paste(f.dir, "ARIC_AA_NDAYA_20161220_T2D_ped.csv", sep="/")
+  ARIC.EU.file <- paste(f.dir, "ARIC_EU_NDAYA_20161220_T2D_ped.csv", sep="/")
   chs.file <- paste(f.dir, "CHS_FLOYD_201708018_T2DPhenotype.PED", sep="/")
   cfs.file <- paste(f.dir, "CFS_12May17_T2D_Freeze4.ped", sep="/")
   copd.1.file <- paste(f.dir, "phs000179.v5.pht002239.v4.p2.c1.COPDGene_Subject_Phenotypes.HMB.txt", sep="/")
@@ -82,8 +82,8 @@ get_pheno_data <- function(f.dir){
   
   raw.HVH = read.table(HVH.file,header=T,sep='\t',as.is=T) #n=708
   
-  aric_aa = read.table(ARIC.AF.file,header=T,sep='\t',as.is=T) ## n=353
-  aric_ea = read.table(ARIC.EU.file,header=T,sep='\t',as.is=T) ## n=3877
+  aric_aa = read.table(ARIC.AF.file,header=T,sep=',',as.is=T) ## n=4141
+  aric_ea = read.table(ARIC.EU.file,header=T,sep=',',as.is=T) ## n=11412
   aric_ea$ancestry = "EU"
   aric_aa$ancestry = "AF"
   aric <- rbind(aric_ea,aric_aa) #n=4230

@@ -2,6 +2,7 @@
 # $1 = f.dir
 # $2 = out.pref
 # $3 = trait 
+# $4 = continuous covariates for summary plot
 
 # get a unique identified for the users current branch, this links back to the last commit on the branch that the user is working. Can be used to see the exact code state of the code (to the last remote commit)
 git_tag=$(git describe --always --dirty)
@@ -49,8 +50,13 @@ spinner $!
 echo "Done!"
 
 
-(R --vanilla --args $1 $2.$user.$curdate TOPMEDID $2.$user.$curdate.no.duplicates.csv $3 freeze5b_sample_annot_2017-12-01.T2D_cohorts.clusters_v2.csv < Freeze5b.FI_FG.PostProcessing.GitHub.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
+(R --vanilla --args $1 $2.$user.$curdate TOPMEDID $2.$user.$curdate.no.duplicates.csv $3 clusters.list.sqrt_v4.RData < Freeze5b.FI_FG.PostProcessing.GitHub.R >> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
 echo "Running Post-Processing script" 
+spinner $! 
+echo "Done!"
+
+(R --vanilla --args $2.$user.$curdate.for_analysis.csv $3 $4 sex $2.$user.$curdate.for_analysis topmed_project ancestry $1 < PhenotypeSummary.R T2D_FG>> $1/$2.$user.$curdate.harm.stdout.txt 2>&1) &
+echo "Running Trait Summary script" 
 spinner $! 
 echo "Done!"
 

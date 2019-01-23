@@ -8,28 +8,83 @@ ped.file <- args[4]
 trait <- args[5]
 clusterfile <- args[6]
 
-fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",")
+fulldata <- read.table(paste(f.dir,"/",ped.file,sep=""),header=T,sep=",",as.is=T)
 print(dim(fulldata))
 head(fulldata)
 
 ## add clusters
+load(paste(f.dir,"/",clusterfile,sep=""))
+i <- 7
 
-clusters <- read.table(paste(f.dir,"/",clusterfile,sep=""),sep=",",as.is=T,header=T)
+table(fulldata$ancestry,clusters.list.sqrt[[i]]$clust.list.to.return[fulldata[,id.col]],useNA = "always")
 
-clusters$clustered.ancestry.notPCscaled <- NA
+##Assign ancestry labels
+anc.labels.sqrt <- c("c.AF","c.EU","c.AF","c.AS","c.HS","c.SAS","c.EU")
 
-clusters$clustered.ancestry.notPCscaled[which(clusters$cluster == 1)] <- "cAF" 
-clusters$clustered.ancestry.notPCscaled[which(clusters$cluster %in% c(2,3,7,8))] <- "cEU"
-clusters$clustered.ancestry.notPCscaled[which(clusters$cluster == 4)] <- "cAS"
-clusters$clustered.ancestry.notPCscaled[which(clusters$cluster == 5)] <- "cHS" 
-clusters$clustered.ancestry.notPCscaled[which(clusters$cluster == 6)] <- "cSAS" 
-clusters$clustered.ancestry.notPCscaled[which(clusters$cluster %in% c(9, 10))] <- "cAmish"
-head(clusters)
+# add cluster assignment to dataset
+fulldata.sqrt <- cbind(fulldata, cluster.ancestry.sqrt=anc.labels.sqrt[clusters.list.sqrt[[i]]$clust.list.to.return[fulldata[,id.col]]])
 
-print(dim(fulldata))
-fulldata <- merge(fulldata,clusters[,c("sample.id","cluster","clustered.ancestry.notPCscaled")],by.x=id.col,by.y="sample.id",all.x=TRUE)
+table(fulldata.sqrt$ancestry,fulldata.sqrt$cluster.ancestry.sqrt,useNA = "always")
 
 print(dim(fulldata))
-table(fulldata$ancestry, fulldata$clustered.ancestry.notPCscaled,useNA = "always")
 
-write.table(fulldata, paste(f.dir,"/",out.pref,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+###
+#Add AgeSq and log(FI) recode sex as M/F
+fulldata.sqrt$age_FG_sq = fulldata.sqrt$age_FG**2
+fulldata.sqrt$age_FI_sq = fulldata.sqrt$age_FI**2
+
+#Add set MESA & ARIC 0 FI to lowest observed to all raw FastingInsulin values for appropriate log transform
+
+for(i in 1:length(fulldata.sqrt$FastingInsulin)){
+  if(!is.na(fulldata.sqrt$FastingInsulin[i])&fulldata.sqrt$FastingInsulin[i]==0 & fulldata.sqrt$study[i]=="ARIC"){
+    fulldata.sqrt$FastingInsulin[i]=1.033114
+  }
+  if(!is.na(fulldata.sqrt$FastingInsulin[i])&fulldata.sqrt$FastingInsulin[i]==0 & fulldata.sqrt$study[i]=="MESA"){
+    fulldata.sqrt$FastingInsulin[i]=0.9
+  }
+    
+}
+fulldata.sqrt$logFI = log(fulldata.sqrt$FastingInsulin)
+
+
+for(i in 1:length(fulldata.sqrt$sex)){
+  if(fulldata.sqrt$sex[i]==1){
+    fulldata.sqrt$sex[i]='M'
+  }
+  if(fulldata.sqrt$sex[i]==2){
+    fulldata.sqrt$sex[i]='F'
+  }
+  
+}
+######################
+## exclude sparse cell new t2d definition PC defined ancestry
+table(fulldata.sqrt$STUDY_ANCESTRY, fulldata.sqrt$cluster.ancestry.sqrt)
+
+fulldata.sqrt$FastingGlucose.PCancestry <- fulldata.sqrt$FastingGlucose
+fulldata.sqrt$logFI.PCancestry <- fulldata.sqrt$logFI
+
+fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata.sqrt$STUDY_ANCESTRY %in% c("ARIC_EU","MESA_EU","SAFS_HS","SAS","WHI_EU"))] <- NA
+fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("HyperGEN_AF","JHS_AF","MESA_HS"))] <- NA
+fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata.sqrt$STUDY_ANCESTRY %in% c("MESA_AF","WHI_AS"))] <- NA
+fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("CHS_AF","FHS_3_EU","MESA_AF","MESA_AS","SAS","WHI_AF","WHI_AS"))] <- NA
+fulldata.sqrt$FastingGlucose.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("WHI_AS"))] <- NA
+
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AF" & fulldata.sqrt$STUDY_ANCESTRY %in% c("ARIC_EU","MESA_EU","SAFS_HS","SAS","WHI_EU"))] <- NA
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.AS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("HyperGEN_AF","JHS_AF","MESA_HS"))] <- NA
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.EU" & fulldata.sqrt$STUDY_ANCESTRY %in% c("MESA_AF","WHI_AS", "SAFS_HS"))] <- NA
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.HS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("CHS_AF","FHS_3_EU","MESA_AF","MESA_AS","SAS","WHI_AF","WHI_AS"))] <- NA
+fulldata.sqrt$logFI.PCancestry[which(fulldata.sqrt$cluster.ancestry.sqrt=="c.SAS" & fulldata.sqrt$STUDY_ANCESTRY %in% c("WHI_AS"))] <- NA
+
+
+write.table(fulldata.sqrt, paste(f.dir,"/",out.pref,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+
+### Write out files for analysis
+
+## PC-clustered ancestries
+for(anc in c("c.AF","c.EU","c.AS","c.HS","c.SAS")) {
+  write.table(fulldata.sqrt[which(fulldata.sqrt$cluster.ancestry.sqrt==anc),], paste(f.dir,"/",out.pref,".",anc,".for_analysis.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+  
+  
+}
+
+
