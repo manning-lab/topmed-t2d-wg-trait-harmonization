@@ -1,0 +1,268 @@
+process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped.file=NULL, trait=NULL, out.pref){
+  ## load duplicates 
+  dups <- read.table(paste(f.dir,f9_dup,sep="/"),header=T,stringsAsFactors = F)
+  dups <- subset(dups, study1 %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR',
+                                     'GENOA','GenSalt','GOLDN','HVH','HyperGEN',
+                                     'JHS','MESA','MGH_AF','Partners','SAFS','SAS','Samoan','VAFAR',
+                                     'VU_AF','WHI','BioMe','HCHS_SOL','THRV','miRhythm','AustralianFamilialAF','CARDIA') &
+                   study2 %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR',
+                                 'GENOA','GenSalt','GOLDN','HVH','HyperGEN',
+                                 'JHS','MESA','MGH_AF','Partners','SAFS','SAS','Samoan','VAFAR',
+                                 'VU_AF','WHI','BioMe','HCHS_SOL','THRV','miRhythm','AustralianFamilialAF','CARDIA')) 
+  ## load map file
+  map <- read.table(paste(f.dir,f9_sample,sep="/"),header=T,stringsAsFactors = F)
+  map <- subset(map, study %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR',
+                                  'GENOA','GenSalt','GOLDN','HVH','HyperGEN',
+                                  'JHS','MESA','MGH_AF','Partners','SAFS','SAS','Samoan','VAFAR',
+                                  'VU_AF','WHI','BioMe','HCHS_SOL','THRV','miRhythm','AustralianFamilialAF','CARDIA')) 
+  
+  t<-table(map$study,map$seq_center)
+  t<-prop.table(t,1)
+  t
+  
+  ### add center
+  map <- map[,c("sample.id","seq_center","topmed_project")]
+  names(map)<-c("sample.id","center1","topmed_project1")
+  dups <- merge(dups, map, by.x = "ID1", by.y = "sample.id", all.x = T)
+  names(map)<-c("sample.id","center2","topmed_project2")
+  dups <- merge(dups, map, by.x = "ID2", by.y = "sample.id", all.x = T)
+  
+  #### add call rate
+  qc <- read.table(paste(f.dir,"freeze8_sample_qc_old_style_headers.tsv",sep="/"),header=T)
+  qc = qc[,c("s","sa.qc.callRate")]
+  names(qc) <- c("s","cr1")
+  dups = merge(dups,qc,by.x="ID1",by.y="s",all.x=T)
+  names(qc) <- c("s","cr2")
+  dups = merge(dups,qc,by.x="ID2",by.y="s",all.x=T)
+  
+  ###add center percentage
+  for (j in 1:nrow(dups)) {
+    dups$p1[j]<-ifelse(dups$study1[j]%in%row.names(t),t[as.character(dups$study1[j]),as.character(dups$center1[j])],NA)
+    dups$p2[j]<-ifelse(dups$study2[j]%in%row.names(t),t[as.character(dups$study2[j]),as.character(dups$center2[j])],NA)
+  }
+  
+  ##remove controls#### (AKM - remove this step so we can document the removal of controls further down in the script)
+  #dups <- dups[which(!(dups$study1 %in% c("CONTROL")) & !(dups$study2%in%c("CONTROL"))),]
+  
+  # Within study duplicates
+  ## Choose the duplicate from the sequencing center that has the highest sequencing percentage.
+  ## print table of duplicate pairs in the duplicates file
+  print(table(dups$study1,dups$study2))
+  dups$keep1 <- NA; dups$keep2 <- NA
+  dups$REASON_keep <- NA
+  
+  #####FOR WITHIN THE SAME STUDY: Keeps monozygotic twins and chooses duplicates with highest sequencing call rate
+  for (j in 1:nrow(dups)) {
+    if (as.character(dups$study1[j])==as.character(dups$study2[j])) {
+      if (!is.na(dups$MZtwinID[j])) { ###keep MZtwin
+        dups$keep1[j]<-1;
+        dups$keep2[j]<-1
+        dups$REASON_keep[j] <- "keep MZtwin"
+      } else if (as.character(dups$center1[j])!=as.character(dups$center2[j]) & !is.na(dups$p1[j])& !is.na(dups$p2[j])) {
+          dups$keep1[j]<-ifelse(dups$p1[j]>=dups$p2[j],1,0)
+          dups$keep2[j]<-1-dups$keep1[j]
+          dups$REASON_keep[j] <- "Samples are from different centers, choose sample with higher proportion of cohort"
+      } else if (as.character(dups$center1[j])==as.character(dups$center2[j])){
+        dups$keep1[j]<-ifelse( (dups$cr1[j]>=dups$cr2[j]) | (!is.na(dups$cr1[j])&is.na(dups$cr2[j])),1,0)
+        dups$keep1[j]<-ifelse( (is.na(dups$cr1[j])&!is.na(dups$cr2[j])),0,dups$keep1[j])
+        dups$keep2[j]<-1-dups$keep1[j]
+        dups$REASON_keep[j] <- "Samples are from same centers, Choose duplicate with highest sequencing call rate / choose sample with meeting callrate"
+    }
+    
+    ###FOR ACROSS STUDIES: ranks duplicates according to cohort type, such as population-based or with longest follow up#####
+    #ARIC>  DHS, GOLDN, GENOA, HyperGEN, Mayo_VTE, MESA, WHI, JHS, GeneSTAR, CHS, COPDGene
+    else if ((as.character(dups$study1[j])=='ARIC'&as.character(dups$study2[j])%in%c("DHS","GOLDN","GENOA","HyperGEN","Mayo_VTE", "MESA", "WHI", "JHS", "GeneSTAR", "CHS", "COPDGene")) |
+             (as.character(dups$study2[j])=='ARIC'&as.character(dups$study1[j])%in%c("DHS","GOLDN","GENOA","HyperGEN","Mayo_VTE", "MESA", "WHI", "JHS", "GeneSTAR", "CHS", "COPDGene")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='ARIC',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "ARIC>  DHS, GOLDN, GENOA, HyperGEN, Mayo_VTE, MESA, WHI, JHS, GeneSTAR, CHS, COPDGene"
+    }#FHS>   COPDGene, MGH_AF, WHI
+    else if ((as.character(dups$study1[j])=='FHS'&as.character(dups$study2[j])%in%c("COPDGene","MGH_AF","WHI"))|
+             (as.character(dups$study2[j])=='FHS'&as.character(dups$study1[j])%in%c("COPDGene","MGH_AF","WHI")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='FHS',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#FHS>   COPDGene, MGH_AF, WHI"
+    }#GeneSTAR>  COPDGene
+    else if ((as.character(dups$study1[j])=='GeneSTAR'&as.character(dups$study2[j])%in%c("COPDGene"))|
+             (as.character(dups$study2[j])=='GeneSTAR'&as.character(dups$study1[j])%in%c("COPDGene")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='GeneSTAR',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#GeneSTAR>  COPDGene"
+    }#HyperGEN>          COPDGene, DHS
+    else if ((as.character(dups$study1[j])=='HyperGEN'&as.character(dups$study2[j])%in%c("COPDGene", "DHS"))|
+             (as.character(dups$study2[j])=='HyperGEN'&as.character(dups$study1[j])%in%c("COPDGene", "DHS")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='HyperGEN',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#HyperGEN>          COPDGene, DHS"
+    }
+    ##JHS>       GENOA
+    else if ((as.character(dups$study1[j])=='JHS'&as.character(dups$study2[j])%in%c("GENOA"))|
+             (as.character(dups$study2[j])=='JHS'&as.character(dups$study1[j])%in%c("GENOA")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='JHS',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#JHS>       GENOA"
+    }
+    ##MESA>   COPDGene, DHS, GENOA, HyperGEN, GeneSTAR, BioMe
+    else if ((as.character(dups$study1[j])=='MESA'&as.character(dups$study2[j])%in%c("COPDGene", "DHS", "GENOA", "HyperGEN", "GeneSTAR", "BioMe"))|
+             (as.character(dups$study2[j])=='MESA'&as.character(dups$study1[j])%in%c("COPDGene", "DHS", "GENOA", "HyperGEN", "GeneSTAR", "BioMe")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='MESA',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#MESA>   COPDGene, DHS, GENOA, HyperGEN, GeneSTAR, BioMe"
+    }
+    ###VU_AF> WGHS
+    else if ((as.character(dups$study1[j])=='VU_AF'&as.character(dups$study2[j])%in%c("WGHS"))|
+             (as.character(dups$study2[j])=='VU_AF'&as.character(dups$study1[j])%in%c("WGHS")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='VU_AF',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#VU_AF> WGHS"
+    }
+    ###WHI> COPDGene, HyperGEN, Mayo_VTE, MESA, THRV, HVH
+    else if ((as.character(dups$study1[j])=='WHI'&as.character(dups$study2[j])%in%c("COPDGene", "HyperGEN", "Mayo_VTE", "MESA", "THRV", 'HVH'))|
+             (as.character(dups$study2[j])=='WHI'&as.character(dups$study1[j])%in%c("COPDGene", "HyperGEN", "Mayo_VTE", "MESA", "THRV", 'HVH')))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='WHI',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#WHI> COPDGene, HyperGEN, Mayo_VTE, MESA, THRV, HVH"
+    } 
+    ####CHS > MESA, WHI, DHS, HyperGEN
+    else if ((as.character(dups$study1[j])=='CHS'&as.character(dups$study2[j])%in%c("MESA", "WHI", 'DHS', "HyperGEN"))|
+             (as.character(dups$study2[j])=='CHS'&as.character(dups$study1[j])%in%c("MESA", "WHI", 'DHS', "HyperGEN")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='CHS',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#CHS > MESA, WHI, DHS, HyperGEN"
+    } 
+    ####MGH_AF > VU_AF, CCAF, Partners
+    else if ((as.character(dups$study1[j])=='MGH_AF'&as.character(dups$study2[j])%in%c("CCAF", "VU_AF", "Partners"))|
+             (as.character(dups$study2[j])=='MGH_AF'&as.character(dups$study1[j])%in%c("CCAF", "VU_AF", "Partners")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='MGH_AF',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#MGH_AF > VU_AF, CCAF, Partners"
+    } 
+    
+    ####CARDIA > COPDGene, HyperGEN
+    else if ((as.character(dups$study1[j])=='CARDIA'&as.character(dups$study2[j])%in%c("COPDGene", "HyperGEN"))|
+             (as.character(dups$study2[j])=='CARDIA'&as.character(dups$study1[j])%in%c("COPDGene", "HyperGEN")))
+    { 
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='CARDIA',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#CARDIA > COPDGene, HyperGEN"
+    } 
+    ####BioMe > COPDGene
+    else if ((as.character(dups$study1[j])=='BioMe'&as.character(dups$study2[j])%in%c("COPDGene"))|
+             (as.character(dups$study2[j])=='BioMe'&as.character(dups$study1[j])%in%c("COPDGene")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='BioMe',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#BioMe > COPDGene"
+    } 
+    ####HCHS_Sol > BioMe
+    else if ((as.character(dups$study1[j])=='HCHS_SOL'&as.character(dups$study2[j])%in%c("BioMe"))|
+             (as.character(dups$study2[j])=='HCHS_SOL'&as.character(dups$study1[j])%in%c("BioMe")))
+    {
+      dups$keep1[j]<-ifelse(as.character(dups$study1[j])=='HCHS_SOL',1,0)
+      dups$keep2[j]<-1-dups$keep1[j]
+      dups$REASON_keep[j] <- "#HCHS_Sol > BioMe
+    } 
+  }
+  
+  dups <- dups[c("ID1", "ID2", "study1", "study2", "MZtwinID", "center1", "center2", "cr1", "cr2", "p1", "p2", "keep1", "keep2","topmed_project1","topmed_project2","REASON_keep")]
+  write.table(dups,paste(f.dir,"/",out.pref,"_duplicates_step1_sample_list.txt",sep=""),row.names=F,col.names=T,quote=F,sep='\t')
+  
+  
+  if( !(is.null(id.col) & is.null(ped.file) & is.null(trait)) ) {
+    ped <- read.table(paste(f.dir,ped.file,sep="/"),header=T,sep=",",as.is=T) 
+    table(duplicated(ped$unique_subject_key),useNA = "always")
+    
+    if(! trait %in% colnames(ped)) {
+      print(trait)
+      stop("Trait entered must match column name in phenotype file")
+    }
+    
+    ####ACROSS STUDIES: indicates which duplicate to remove based on missing trait data and cohort type 
+    ####TRAIT
+    p3 <- ped[,c(id.col, trait)]
+    names(p3) <- c(id.col, "TRAIT1")
+    dups<-merge(dups,p3,by.x = 'ID1',by.y = id.col,all.x=T)
+    p3 <- ped[,c(id.col, trait)]
+    names(p3) <- c(id.col, "TRAIT2")
+    dups<-merge(dups,p3,by.x = 'ID2',by.y = id.col,all.x=T)
+    dups$keep1_TRAIT<-NA;    dups$keep2_TRAIT<-NA
+    dups$reason_TRAIT <- NA
+    table(is.na(dups$TRAIT1),is.na(dups$TRAIT2),useNA = "always")
+    
+    for (j in 1:nrow(dups)){
+      # For situations when both TRAIT1 and TRAIT2 are not missing
+      if(!is.na(dups$TRAIT1[j]) & !is.na(dups$TRAIT2[j])) {
+        
+        # use same decision as before
+        dups$keep1_TRAIT[j] <- dups$keep1[j]
+        dups$keep2_TRAIT[j] <- dups$keep2[j]
+        
+        ##for additional output files
+        if(!is.na(dups$keep1[j]) & !is.na(dups$keep2[j])){
+          if(dups$keep1[j]==1 & as.character(dups$study1[j]) != as.character(dups$study2[j])) {
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; used duplicate from population-based and/or older study"
+          } else if(dups$keep2[j]==1 & as.character(dups$study1[j]) != as.character(dups$study2[j])) {
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; used duplicate from population-based and/or older study"
+          } else if(dups$keep1[j]==1 & dups$keep2[j]==1){
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; kept both; monozygotic twins" 
+          } else if(dups$keep1[j]==1 & dups$keep2[j]==0 & as.character(dups$study1[j])==as.character(dups$study2[j])){
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; same cohort; kept duplicate with higher callrate"
+          } else if(dups$keep2[j]==1&dups$keep1[j]==0 & as.character(dups$study1[j])==as.character(dups$study2[j])){
+            dups$reason_TRAIT[j] <- "Both TRAIT1 and TRAIT2 not NA; same cohort; kept duplicate with higher callrate"
+          }
+        }
+      } else if(is.na(dups$TRAIT1[j]) & !is.na(dups$TRAIT2[j])) { # for situations where TRAIT1 is missing and TRAIT2 is not missing
+        dups$keep1_TRAIT[j]<-0
+        dups$keep2_TRAIT[j]<-1
+        dups$reason_TRAIT[j] <- "TRAIT1 individual missing trait data"
+      } else if(!is.na(dups$TRAIT1[j]) & is.na(dups$TRAIT2[j])) { # for situations where TRAIT1 is not missing and TRAIT2 is missing
+        dups$keep1_TRAIT[j]<-1
+        dups$keep2_TRAIT[j]<-0
+        dups$reason_TRAIT[j] <- "TRAIT2 individual missing trait data"
+      }
+      # changes so that we keep individuals with NA for trait in phenotype file
+      else if (is.na(dups$TRAIT1[j]) & is.na(dups$TRAIT2[j])) { # for situations where TRAIT1 is missing and TRAIT2 is missing 
+        dups$keep1_TRAIT[j]<-dups$keep1[j]
+        dups$keep2_TRAIT[j]<-dups$keep2[j]
+        dups$reason_TRAIT[j] <- "TRAIT1 and TRAIT2 individuals both missing trait data"
+      } else { 
+        dups$keep1_TRAIT[j]<-NA
+        dups$keep2_TRAIT[j]<-NA
+        dups$reason_TRAIT[j] <- "something else; should be fixed"
+      }
+    }
+    
+    print(table(keep1_TRAIT=dups$keep1_TRAIT,keep2_TRAIT=dups$keep2_TRAIT,dups$reason_TRAIT,useNA='always'))
+    
+    ####OUTPUT: to subset for TRAIT and to remove duplicates as determined by algorithm####
+    notkeep1 <- subset(dups[,c("ID1","keep1_TRAIT")], keep1_TRAIT==0)
+    notkeep2 <- subset(dups[,c("ID2","keep2_TRAIT")], keep2_TRAIT==0)
+    names(notkeep1) <- c("ID","notkeep");    names(notkeep2) <- c("ID","notkeep")
+    notkeep <- rbind(notkeep1,notkeep2)
+    notkeep.ids <- as.character(notkeep$ID)
+    ped$keep_trait <- rep(1,NROW(ped))
+    ped$keep_trait[ped[,id.col] %in% notkeep.ids] <- 0
+    table(ped$keep_trait,ped$study,useNA="always")
+    
+    #Output harmonized file with duplicates removed according to previous steps and duplicates
+    fulldata.dup.all <- ped[which(ped$unique_subject_key %in% ped$unique_subject_key[which(duplicated(ped$unique_subject_key))]),]
+    table(duplicated(fulldata.dup.all$unique_subject_key),useNA = "always")
+    fulldata.dup.all.dups.removed <- fulldata.dup.all[which(fulldata.dup.all$keep_trait==1),]
+    table(duplicated(fulldata.dup.all.dups.removed$unique_subject_key),useNA = "always")
+    ped <- ped[!is.na(ped[,trait]),]
+    table(duplicated(ped$unique_subject_key[ped$keep_trait == 1]),useNA = "always")
+    write.table(ped[ped$keep_trait == 1,],paste(f.dir,"/",out.pref,"_harmonized_removed_duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
+    write.table(dups, paste(f.dir,"/",out.pref,"_harmonized_duplicates.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
+  }
+  
+}
