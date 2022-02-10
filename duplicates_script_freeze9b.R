@@ -1,28 +1,19 @@
-process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped.file=NULL, trait=NULL, out.pref, t2d.trait=NULL) {
+process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped=ped, qc=qc, trait=NULL, out.pref, t2d.trait=NULL) {
   
   ## load duplicates 
   dups <- read.table(paste(f.dir,f9_dup,sep="/"),header=T,stringsAsFactors = F)
-  dups <- subset(dups, study1 %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR',
-                                     'GENOA','GenSalt','GOLDN','HVH','HyperGEN',
-                                     'JHS','MESA','MGH_AF','Partners','SAFS','SAS','Samoan','VAFAR',
-                                     'VU_AF','WHI','BioMe','HCHS_SOL','THRV','miRhythm','AustralianFamilialAF','CARDIA') &
-                   study2 %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR',
-                                 'GENOA','GenSalt','GOLDN','HVH','HyperGEN',
-                                 'JHS','MESA','MGH_AF','Partners','SAFS','SAS','Samoan','VAFAR',
-                                 'VU_AF','WHI','BioMe','HCHS_SOL','THRV','miRhythm','AustralianFamilialAF','CARDIA')) 
+  dups <- subset(dups, study1 %in% unique(ped$study) &
+                   study2 %in% unique(ped$study)) 
+  print(dim(dups))
+
   ## load map file
   map <- read.table(paste(f.dir,f9_sample,sep="/"),header=T,stringsAsFactors = F)
-  map <- subset(map, study %in% c('Amish','ARIC','CCAF','CFS','CHS','COPDGene','DHS','FHS','GeneSTAR',
-                                  'GENOA','GenSalt','GOLDN','HVH','HyperGEN',
-                                  'JHS','MESA','MGH_AF','Partners','SAFS','SAS','Samoan','VAFAR',
-                                  'VU_AF','WHI','BioMe','HCHS_SOL','THRV','miRhythm','AustralianFamilialAF','CARDIA')) 
+  map <- subset(map, study %in% unique(ped$study)) 
   
   t<-table(map$study,map$seq_center)
   t<-prop.table(t,1)
   t
-  
-  ped <- read.table(paste(f.dir,ped.file,sep="/"),header=T,sep=",",as.is=T) 
-  
+    
   if(! trait %in% colnames(ped)) {
     print(trait)
     stop("Trait entered must match column name in phenotype file")
@@ -34,15 +25,15 @@ process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped.file=
   dups <- merge(dups, map, by.x = "ID1", by.y = "sample.id", all.x = T)
   names(map)<-c("sample.id","center2","topmed_project2")
   dups <- merge(dups, map, by.x = "ID2", by.y = "sample.id", all.x = T)
-  
+
   #### add call rate
-  qc <- read.table(paste(f.dir,"freeze8_sample_qc_old_style_headers.tsv",sep="/"),header=T)
   qc = qc[,c("s","sa.qc.callRate")]
   names(qc) <- c("s","cr1")
   dups = merge(dups,qc,by.x="ID1",by.y="s",all.x=T)
   names(qc) <- c("s","cr2")
   dups = merge(dups,qc,by.x="ID2",by.y="s",all.x=T)
   
+    
   ###add center percentage
   for (j in 1:nrow(dups)) {
     dups$p1[j]<-ifelse(dups$study1[j]%in%row.names(t),t[as.character(dups$study1[j]),as.character(dups$center1[j])],NA)
@@ -52,12 +43,21 @@ process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped.file=
   ### add trait column
   ####ACROSS STUDIES: indicates which duplicate to remove based on missing trait data and cohort type 
   ####TRAIT
+  print(table(dups[,'ID1'] %in% ped[,id.col] ))
+  print(table(dups[,'ID2'] %in% ped[,id.col] ))
+  print(table(dups[,'ID1'] %in% ped[,id.col],dups[,'ID2'] %in% ped[,id.col] ))
+    
+  #only deal with the duplicates that are in the current ped file
+  dups <- dups[which(dups[,'ID1'] %in% ped[,id.col] & dups[,'ID2'] %in% ped[,id.col]),]
+    
   p3 <- ped[,c(id.col, trait)]
   names(p3) <- c(id.col, "TRAIT1")
   dups<-merge(dups,p3,by.x = 'ID1',by.y = id.col,all.x=T)
   p3 <- ped[,c(id.col, trait)]
   names(p3) <- c(id.col, "TRAIT2")
   dups<-merge(dups,p3,by.x = 'ID2',by.y = id.col,all.x=T)
+    
+  print(dim(dups))
   
   dups$keep1_TRAIT<-NA;    
   dups$keep2_TRAIT<-NA
@@ -189,7 +189,7 @@ process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped.file=
     
     #dups <- dups[c("ID1", "ID2", "study1", "study2", "MZtwinID", "center1", "center2", "cr1", "cr2", "p1", "p2", "keep1", "keep2","topmed_project1","topmed_project2","REASON_keep")]
     print("After Step 1, if there are any rows with missing keep1 and keep2, this needs to be fixed")
-    print(table(keep1=dups$keep1,keep2=dups$keep2,dups$reason_keep,useNA='always'))
+    print(table(keep1=dups$keep1,keep2=dups$keep2,dups$REASON_keep,useNA='always'))
     
     for (j in 1:nrow(dups)) {
       if(dups$topmed_project1[j] == "Control" & dups$topmed_project2[j] == "Control") 
@@ -212,12 +212,12 @@ process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped.file=
         dups$keep2_TRAIT[j] <- dups$keep2[j]
         dups$reason_TRAIT[j] <- "Both Trait1 and Trait2 are missing; Using Same decision as keep1 and keep2"
       } else if(!is.na(dups$TRAIT1[j]) & !is.na(dups$TRAIT2[j])) { # For situations when both TRAIT1 and TRAIT2 are not missing
-        if(is.null(t2d_trait)) {
+        if(is.null(t2d.trait)) {
           # use same decision as before
           dups$keep1_TRAIT[j] <- dups$keep1[j]
           dups$keep2_TRAIT[j] <- dups$keep2[j]
           dups$reason_TRAIT[j] <- "Quantitative trait; Using Same decision as keep1 and keep2"
-        } else if(!is.null(t2d_trait)) {
+        } else if(!is.null(t2d.trait)) {
           ## Added for incident T2D AKM 2/4/2022
           if(dups$TRAIT1[j] == 1 & dups$TRAIT2[j] == 0) {
             dups$keep1_TRAIT[j] <- 1
