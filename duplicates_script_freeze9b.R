@@ -1,4 +1,4 @@
-process_duplicates <- function( f.dir, dups, f9_sample, id.col=NULL, ped.file=NULL, trait=NULL, out.pref, t2d.trait=NULL) {
+process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped.file=NULL, trait=NULL, out.pref, t2d.trait=NULL) {
   
   ## load duplicates 
   dups <- read.table(paste(f.dir,f9_dup,sep="/"),header=T,stringsAsFactors = F)
