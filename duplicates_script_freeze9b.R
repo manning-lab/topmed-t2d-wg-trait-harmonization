@@ -187,7 +187,7 @@ process_duplicates <- function( f.dir, dups, f9_sample, id.col=NULL, ped.file=NU
     } 
   }
     
-    dups <- dups[c("ID1", "ID2", "study1", "study2", "MZtwinID", "center1", "center2", "cr1", "cr2", "p1", "p2", "keep1", "keep2","topmed_project1","topmed_project2","REASON_keep")]
+    #dups <- dups[c("ID1", "ID2", "study1", "study2", "MZtwinID", "center1", "center2", "cr1", "cr2", "p1", "p2", "keep1", "keep2","topmed_project1","topmed_project2","REASON_keep")]
     print("After Step 1, if there are any rows with missing keep1 and keep2, this needs to be fixed")
     print(table(keep1=dups$keep1,keep2=dups$keep2,dups$reason_keep,useNA='always'))
     
@@ -251,7 +251,8 @@ process_duplicates <- function( f.dir, dups, f9_sample, id.col=NULL, ped.file=NU
     }
       print("After Step 2, if there are any rows with missing keep1_TRAIT and keep2_TRAIT, this needs to be fixed")
       print(table(keep1_TRAIT=dups$keep1_TRAIT,keep2_TRAIT=dups$keep2_TRAIT,dups$reason_TRAIT,useNA='always'))
-      
+
+      return(dups)
 }
   
 do.subsetting <- function() {
