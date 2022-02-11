@@ -255,25 +255,14 @@ process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped=ped, 
       return(dups)
 }
   
-do.subsetting <- function() {
+do.subsetting <- function(dups) {
     ####OUTPUT: to subset for TRAIT and to remove duplicates as determined by algorithm####
     notkeep1 <- subset(dups[,c("ID1","keep1_TRAIT")], keep1_TRAIT==0)
     notkeep2 <- subset(dups[,c("ID2","keep2_TRAIT")], keep2_TRAIT==0)
-    names(notkeep1) <- c("ID","notkeep");    names(notkeep2) <- c("ID","notkeep")
+    names(notkeep1) <- c("ID","notkeep");    
+    names(notkeep2) <- c("ID","notkeep")
     notkeep <- rbind(notkeep1,notkeep2)
     notkeep.ids <- as.character(notkeep$ID)
-    ped$keep_trait <- rep(1,NROW(ped))
-    ped$keep_trait[ped[,id.col] %in% notkeep.ids] <- 0
-    table(ped$keep_trait,ped$study,useNA="always")
     
-    #Output harmonized file with duplicates removed according to previous steps and duplicates
-    fulldata.dup.all <- ped[which(ped$unique_subject_key %in% ped$unique_subject_key[which(duplicated(ped$unique_subject_key))]),]
-    table(duplicated(fulldata.dup.all$unique_subject_key),useNA = "always")
-    fulldata.dup.all.dups.removed <- fulldata.dup.all[which(fulldata.dup.all$keep_trait==1),]
-    table(duplicated(fulldata.dup.all.dups.removed$unique_subject_key),useNA = "always")
-    ped <- ped[!is.na(ped[,trait]),]
-    table(duplicated(ped$unique_subject_key[ped$keep_trait == 1]),useNA = "always")
-    write.table(ped[ped$keep_trait == 1,],paste(f.dir,"/",out.pref,"_harmonized_removed_duplicates.csv",sep=""),row.names=F,col.names=T,quote=F,sep=',')
-    write.table(dups, paste(f.dir,"/",out.pref,"_harmonized_duplicates.csv",sep=""), row.names=F, col.names=T, quote=F, sep=',')
- }
-  
+    return(notkeep.ids)
+}
