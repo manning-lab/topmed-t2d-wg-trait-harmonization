@@ -192,17 +192,17 @@ process_duplicates <- function( f.dir, f9_dup, f9_sample, id.col=NULL, ped=ped, 
     print(table(keep1=dups$keep1,keep2=dups$keep2,dups$REASON_keep,useNA='always'))
     
     for (j in 1:nrow(dups)) {
-      if(dups$topmed_project1[j] == "Control" & dups$topmed_project2[j] == "Control") 
+      if((!is.na(dups$topmed_project1) & !is.na(dups$topmed_project2)) & dups$topmed_project1[j] == "Control" & dups$topmed_project2[j] == "Control") 
       {     # finally, make sure that "control samples" are not chosen
         dups$keep1_TRAIT[j] <- 0
         dups$keep2_TRAIT[j] <- 0  
         dups$reason_TRAIT[j] <- "Both ID1 and ID2 from CONTROL samples"
-      } else if(dups$topmed_project1[j] == "Control" & dups$topmed_project2[j] != "Control") {
+      } else if((!is.na(dups$topmed_project1) & !is.na(dups$topmed_project2)) & dups$topmed_project1[j] == "Control" & dups$topmed_project2[j] != "Control") {
         dups$keep1_TRAIT[j] <- 0
         dups$keep2_TRAIT[j] <- 1  
         dups$reason_TRAIT[j] <- "ID1 from CONTROL samples"
         
-      } else if(dups$topmed_project1[j] != "Control" & dups$topmed_project2[j] == "Control") {
+      } else if((!is.na(dups$topmed_project1) & !is.na(dups$topmed_project2)) & dups$topmed_project1[j] != "Control" & dups$topmed_project2[j] == "Control") {
         dups$keep1_TRAIT[j] <- 1
         dups$keep2_TRAIT[j] <- 0  
         dups$reason_TRAIT[j] <- "ID2 from CONTROL samples"
